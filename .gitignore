@@ -1,4 +1,12 @@
-.class
-.classpath
-.project
+# Common file extenions #
+*.class
+*.classpath
+*.project
+
+# Target folder #
 target/
+
+# Package files #
+*.jar
+*.war
+*.ear
