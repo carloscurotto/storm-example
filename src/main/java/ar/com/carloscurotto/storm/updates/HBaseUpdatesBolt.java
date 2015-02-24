@@ -1,38 +1,43 @@
-package ar.com.carloscurotto.storm.wordcount;
+package ar.com.carloscurotto.storm.updates;
 
 import java.util.Map;
 
+import ar.com.carloscurotto.storm.updates.repository.HBaseUpdateCountsRepository;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
-import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
 
-public class SplitSentenceBolt extends BaseRichBolt {
+public class HBaseUpdatesBolt extends BaseRichBolt {
 
     private static final long serialVersionUID = 1L;
 
-    private OutputCollector collector;
+    private HBaseUpdateCountsRepository counts;
+
+    public HBaseUpdatesBolt(HBaseUpdateCountsRepository theCounts) {
+        this.counts = theCounts;
+    }
 
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map theConfiguration, TopologyContext theTopologyContext, OutputCollector theCollector) {
-        collector = theCollector;
     }
 
     @Override
-    public void execute(Tuple tuple) {
-        String sentence = tuple.getString(0);
-        for (String word : sentence.split(" ")) {
-            collector.emit(tuple, new Values(word));
+    public void execute(Tuple theTuple) {
+        String update = theTuple.getString(0);
+        Integer count = counts.get(update);
+        if (count == null) {
+            count = 1;
+        } else {
+            count++;
         }
-        collector.ack(tuple);
+        counts.put(update, count);
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("word"));
     }
+
 }
