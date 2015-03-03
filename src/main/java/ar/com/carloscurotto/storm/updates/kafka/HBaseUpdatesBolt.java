@@ -13,6 +13,7 @@ public class HBaseUpdatesBolt extends BaseRichBolt {
 
     private static final long serialVersionUID = 1L;
 
+    private OutputCollector collector;
     private HBaseUpdateCountsRepository counts;
 
     public HBaseUpdatesBolt(HBaseUpdateCountsRepository theCounts) {
@@ -22,6 +23,7 @@ public class HBaseUpdatesBolt extends BaseRichBolt {
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map theConfiguration, TopologyContext theTopologyContext, OutputCollector theCollector) {
+        collector = theCollector;
     }
 
     @Override
@@ -34,6 +36,7 @@ public class HBaseUpdatesBolt extends BaseRichBolt {
             count++;
         }
         counts.put(update, count);
+        collector.ack(theTuple);
     }
 
     @Override

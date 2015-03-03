@@ -26,10 +26,11 @@ public class RouterUpdatesBolt extends BaseRichBolt {
     public void execute(Tuple theTuple) {
         String update = theTuple.getString(0);
         if (update.contains("gloss")) {
-            collector.emit("gloss-stream", new Values(update));
+            collector.emit("gloss-stream", theTuple, new Values(update));
         } else {
-            collector.emit("hbase-stream", new Values(update));
+            collector.emit("hbase-stream", theTuple, new Values(update));
         }
+        collector.ack(theTuple);
     }
 
     @Override

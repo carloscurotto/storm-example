@@ -38,7 +38,8 @@ public class GlossUpdatesBolt extends BaseRichBolt {
             count++;
         }
         counts.put(update, count);
-        collector.emit("hbase-stream", new Values(update));
+        collector.emit("hbase-stream", theTuple, new Values(update));
+        collector.ack(theTuple);
     }
 
     @Override
