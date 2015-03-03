@@ -36,6 +36,7 @@ public class HBaseUpdatesBolt extends BaseRichBolt {
             count++;
         }
         counts.put(update, count);
+        System.out.println("Update tuple received [" + update + ", " + count + "]");
         collector.ack(theTuple);
     }
 
