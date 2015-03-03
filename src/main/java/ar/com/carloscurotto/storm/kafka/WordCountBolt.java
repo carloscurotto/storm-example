@@ -8,7 +8,6 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
 
 public class WordCountBolt extends BaseRichBolt {
 
@@ -37,7 +36,7 @@ public class WordCountBolt extends BaseRichBolt {
             count++;
         }
         counts.put(word, count);
-        collector.emit(tuple, new Values(word, count));
+        System.out.println("Word tuple received [" + word + ", " + count + "]");
         collector.ack(tuple);
     }
 
