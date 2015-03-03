@@ -9,7 +9,6 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
-
 public class FixedUpdatesSpout extends BaseRichSpout {
 
     private static final long serialVersionUID = 1L;
