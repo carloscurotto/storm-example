@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.wordcount;
+package ar.com.carloscurotto.storm.wordcount.kafka;
 
 import java.io.Serializable;
 import java.util.Set;

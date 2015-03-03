@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.wordcount;
+package ar.com.carloscurotto.storm.wordcount.kafka;
 
 import java.util.Map;
 
@@ -8,13 +8,17 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
 
-public class SplitSentenceBolt extends BaseRichBolt {
+public class WordCountBolt extends BaseRichBolt {
 
     private static final long serialVersionUID = 1L;
 
     private OutputCollector collector;
+    private WordCountsRepository counts;
+
+    public WordCountBolt(WordCountsRepository theCounts) {
+        counts = theCounts;
+    }
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -24,15 +28,20 @@ public class SplitSentenceBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-        String sentence = tuple.getString(0);
-        for (String word : sentence.split(" ")) {
-            collector.emit(tuple, new Values(word));
+        String word = tuple.getString(0);
+        Integer count = counts.get(word);
+        if (count == null) {
+            count = 1;
+        } else {
+            count++;
         }
+        counts.put(word, count);
+        System.out.println("Word tuple received [" + word + ", " + count + "]");
         collector.ack(tuple);
     }
 
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("word"));
+        declarer.declare(new Fields("word", "count"));
     }
 }

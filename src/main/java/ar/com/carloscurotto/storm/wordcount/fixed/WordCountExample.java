@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.wordcount;
+package ar.com.carloscurotto.storm.wordcount.fixed;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;

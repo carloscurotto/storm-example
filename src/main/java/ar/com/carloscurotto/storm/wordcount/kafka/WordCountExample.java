@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.kafka;
+package ar.com.carloscurotto.storm.wordcount.kafka;
 
 import storm.kafka.BrokerHosts;
 import storm.kafka.KafkaSpout;

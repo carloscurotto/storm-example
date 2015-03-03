@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.kafka;
+package ar.com.carloscurotto.storm.wordcount.kafka;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -23,7 +23,7 @@ public class KafkaSentenceScheme implements Scheme {
 
     @Override
     public Fields getOutputFields() {
-        return new Fields("sentence");
+        return new Fields("update");
     }
 
 }

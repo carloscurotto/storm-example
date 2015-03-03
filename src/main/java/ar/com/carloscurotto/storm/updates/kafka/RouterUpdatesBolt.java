@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.wordcount;
+package ar.com.carloscurotto.storm.updates.kafka;
 
 import java.util.Map;
 
@@ -10,16 +10,11 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-public class WordCountBolt extends BaseRichBolt {
+public class RouterUpdatesBolt extends BaseRichBolt {
 
     private static final long serialVersionUID = 1L;
-    
+
     private OutputCollector collector;
-    private WordCountsRepository counts;
-    
-    public WordCountBolt(WordCountsRepository theCounts) {
-        counts = theCounts;
-    }
 
     @SuppressWarnings("rawtypes")
     @Override
@@ -28,20 +23,19 @@ public class WordCountBolt extends BaseRichBolt {
     }
 
     @Override
-    public void execute(Tuple tuple) {
-        String word = tuple.getString(0);
-        Integer count = counts.get(word);
-        if (count == null) {
-            count = 1;
+    public void execute(Tuple theTuple) {
+        String update = theTuple.getString(0);
+        if (update.contains("gloss")) {
+            collector.emit("gloss-stream", new Values(update));
         } else {
-            count++;
+            collector.emit("hbase-stream", new Values(update));
         }
-        counts.put(word, count);
-        collector.emit(new Values(word, count));
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer declarer) {
-        declarer.declare(new Fields("word", "count"));
+    public void declareOutputFields(OutputFieldsDeclarer theDeclarer) {
+        theDeclarer.declareStream("gloss-stream", new Fields("update"));
+        theDeclarer.declareStream("hbase-stream", new Fields("update"));
     }
+
 }

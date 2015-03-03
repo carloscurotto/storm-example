@@ -1,8 +1,8 @@
-package ar.com.carloscurotto.storm.updates;
+package ar.com.carloscurotto.storm.updates.fixed;
 
-import ar.com.carloscurotto.storm.updates.repository.GlossUpdateCountsRepository;
-import ar.com.carloscurotto.storm.updates.repository.HBaseUpdateCountsRepository;
-import ar.com.carloscurotto.storm.updates.repository.HazelcastInstanceProvider;
+import ar.com.carloscurotto.storm.updates.fixed.repository.GlossUpdateCountsRepository;
+import ar.com.carloscurotto.storm.updates.fixed.repository.HBaseUpdateCountsRepository;
+import ar.com.carloscurotto.storm.updates.fixed.repository.HazelcastInstanceProvider;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.topology.TopologyBuilder;

@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.updates.repository;
+package ar.com.carloscurotto.storm.updates.fixed.repository;
 
 import java.io.Serializable;
 

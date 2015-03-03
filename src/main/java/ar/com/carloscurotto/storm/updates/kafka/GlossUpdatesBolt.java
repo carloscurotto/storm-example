@@ -1,8 +1,8 @@
-package ar.com.carloscurotto.storm.updates;
+package ar.com.carloscurotto.storm.updates.kafka;
 
 import java.util.Map;
 
-import ar.com.carloscurotto.storm.updates.repository.GlossUpdateCountsRepository;
+import ar.com.carloscurotto.storm.updates.fixed.repository.GlossUpdateCountsRepository;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;

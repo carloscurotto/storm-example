@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.updates;
+package ar.com.carloscurotto.storm.wordcount.fixed;
 
 import java.util.Map;
 
@@ -9,16 +9,16 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 
-public class FixedUpdatesSpout extends BaseRichSpout {
+public class FixedSentencesSpout extends BaseRichSpout {
 
     private static final long serialVersionUID = 1L;
-
+    
     private SpoutOutputCollector collector;
-    private String[] updates;
+    private String[] sentences;
     private int index;
-
-    public FixedUpdatesSpout(String[] theUpdates) {
-        updates = theUpdates;
+    
+    public FixedSentencesSpout(String[] theSentences) {
+        sentences = theSentences;
     }
 
     @SuppressWarnings("rawtypes")
@@ -29,21 +29,15 @@ public class FixedUpdatesSpout extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
-        if (index < updates.length) {
-            String update = updates[index];
-            if (update.contains("gloss")) {
-                collector.emit("gloss-stream", new Values(update));
-            } else {
-                collector.emit("hbase-stream", new Values(update));
-            }
+        if (index < sentences.length) {
+            String sentence = sentences[index];
+            collector.emit(new Values(sentence));
             index++;
         }
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer theDeclarer) {
-        theDeclarer.declareStream("gloss-stream", new Fields("update"));
-        theDeclarer.declareStream("hbase-stream", new Fields("update"));
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        declarer.declare(new Fields("sentence"));
     }
-
 }

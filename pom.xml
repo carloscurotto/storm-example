@@ -96,7 +96,7 @@
             <configuration>
               <archive>
                 <manifest>
-                  <mainClass>ar.com.carloscurotto.storm.kafka.WordCountExample</mainClass>
+                  <mainClass>ar.com.carloscurotto.storm.updates.kafka.UpdateCountExample</mainClass>
                 </manifest>
               </archive>
               <descriptorRefs>

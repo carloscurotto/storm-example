@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.updates.repository;
+package ar.com.carloscurotto.storm.updates.kafka.repository;
 
 public class HBaseUpdateCountsRepository extends AbstractUpdateCountsRepository {
 
