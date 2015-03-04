@@ -37,6 +37,7 @@ public class WordCountExample {
 
         Config configuration = new Config();
         configuration.setDebug(false);
+        configuration.setNumWorkers(4);
 
         if (args != null && args.length > 0) {
             configuration.setNumWorkers(3);

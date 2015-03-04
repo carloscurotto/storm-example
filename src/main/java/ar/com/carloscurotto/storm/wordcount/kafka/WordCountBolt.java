@@ -16,14 +16,19 @@ public class WordCountBolt extends BaseRichBolt {
     private OutputCollector collector;
     private WordCountsRepository counts;
 
-    public WordCountBolt(WordCountsRepository theCounts) {
-        counts = theCounts;
-    }
-
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map theConfiguration, TopologyContext theTopologyContext, OutputCollector theCollector) {
         collector = theCollector;
+        counts = new WordCountsRepository();
+        counts.start();
+    }
+
+    @Override
+    public void cleanup() {
+        System.out.println(counts);
+        counts.stop();
+        counts = null;
     }
 
     @Override
