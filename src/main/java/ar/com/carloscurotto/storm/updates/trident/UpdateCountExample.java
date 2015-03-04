@@ -6,11 +6,13 @@ import storm.kafka.trident.TransactionalTridentKafkaSpout;
 import storm.kafka.trident.TridentKafkaConfig;
 import storm.trident.Stream;
 import storm.trident.TridentTopology;
+import storm.trident.fluent.GroupedStream;
 import ar.com.carloscurotto.storm.updates.trident.repository.GlossUpdateCountsRepository;
 import ar.com.carloscurotto.storm.updates.trident.repository.HBaseUpdateCountsRepository;
 import ar.com.carloscurotto.storm.updates.trident.repository.HazelcastInstanceProvider;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.StormSubmitter;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.tuple.Fields;
@@ -33,13 +35,19 @@ public class UpdateCountExample {
         HBaseUpdateCountsRepository hbaseRepository = new HBaseUpdateCountsRepository();
 
         TridentTopology trident = new TridentTopology();
-        Stream updatesStream = trident.newStream("spout", createTransactionalKafkaSpout());
+        Stream updatesStream = trident.newStream("spout", createTransactionalKafkaSpout()).parallelismHint(1);
 
-        Stream externalInternalStream = updatesStream.each(new Fields("update"), new ExternalInternalFilter());
-        externalInternalStream.each(new Fields("update"), new GlossFunction(glossRepository), new Fields("update-gloss"))
+        GroupedStream externalInternalStream =
+                updatesStream.each(new Fields("update"), new ExternalInternalFilter()).parallelismHint(5)
+                        .groupBy(new Fields("update"));
+        externalInternalStream
+                .each(new Fields("update"), new GlossFunction(glossRepository), new Fields("update-gloss")).toStream()
+                .groupBy(new Fields("update-gloss"))
                 .each(new Fields("update-gloss"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"));
 
-        Stream internalOnlyStream = updatesStream.each(new Fields("update"), new InternalOnlyFilter());
+        GroupedStream internalOnlyStream =
+                updatesStream.each(new Fields("update"), new InternalOnlyFilter()).parallelismHint(5)
+                        .groupBy(new Fields("update"));
         internalOnlyStream.each(new Fields("update"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"));
 
         StormTopology topology = trident.build();
@@ -47,20 +55,25 @@ public class UpdateCountExample {
         Config configuration = new Config();
         configuration.setDebug(false);
 
-        LocalCluster cluster = new LocalCluster();
+        if (args != null && args.length > 0) {
+            configuration.setNumWorkers(3);
+            StormSubmitter.submitTopologyWithProgressBar("update-count", configuration, topology);
+        } else {
+            LocalCluster cluster = new LocalCluster();
+            cluster.submitTopology("update-count", configuration, topology);
 
-        cluster.submitTopology("update-count", configuration, topology);
+            System.out.println("Press any key to stop processing...");
+            System.in.read();
 
-        System.out.println("Press any key to stop processing...");
-        System.in.read();
+            cluster.killTopology("update-count");
 
-        cluster.killTopology("update-count");
+            cluster.shutdown();
 
-        cluster.shutdown();
+            System.out.println(glossRepository);
+            System.out.println(hbaseRepository);
 
-        System.out.println(glossRepository);
-        System.out.println(hbaseRepository);
+            HazelcastInstanceProvider.stop();
+        }
 
-        HazelcastInstanceProvider.stop();
     }
 }
