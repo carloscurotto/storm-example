@@ -1,7 +1,10 @@
 package ar.com.carloscurotto.storm.wordcount.trident;
 
+import java.util.Map;
+
 import storm.trident.operation.BaseFunction;
 import storm.trident.operation.TridentCollector;
+import storm.trident.operation.TridentOperationContext;
 import storm.trident.tuple.TridentTuple;
 
 public class WordCountFunction extends BaseFunction {
@@ -10,8 +13,22 @@ public class WordCountFunction extends BaseFunction {
 
     private WordCountsRepository counts;
 
-    public WordCountFunction(WordCountsRepository theCounts) {
-        counts = theCounts;
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void prepare(Map configuration, TridentOperationContext context) {
+        System.out.println("initializing counts...");
+        counts = new WordCountsRepository();
+        counts.start();
+        System.out.println("initialized counts.");
+    }
+
+    @Override
+    public void cleanup() {
+        System.out.println("Destroying counts...");
+        System.out.println(counts);
+        counts.stop();
+        counts = null;
+        System.out.println("Destroyed counts.");
     }
 
     @Override
