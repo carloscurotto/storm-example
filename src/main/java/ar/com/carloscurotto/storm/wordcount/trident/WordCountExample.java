@@ -1,15 +1,14 @@
 package ar.com.carloscurotto.storm.wordcount.trident;
 
 import storm.kafka.BrokerHosts;
-import storm.kafka.KafkaSpout;
-import storm.kafka.SpoutConfig;
 import storm.kafka.ZkHosts;
+import storm.kafka.trident.TransactionalTridentKafkaSpout;
+import storm.kafka.trident.TridentKafkaConfig;
 import storm.trident.TridentTopology;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
-import backtype.storm.topology.IRichSpout;
 import backtype.storm.tuple.Fields;
 
 /**
@@ -18,15 +17,12 @@ import backtype.storm.tuple.Fields;
  * @author carloscurotto
  */
 public class WordCountExample {
-
-    private static IRichSpout createKafkaSpout() {
+    
+    private static TransactionalTridentKafkaSpout createTransactionalKafkaSpout() {
         BrokerHosts hosts = new ZkHosts("localhost:2181");
-        String topic = "test";
-        String zkRoot = "/kafkastorm";
-        String consumerGroupId = "StormSpout";
-        SpoutConfig spoutConfig = new SpoutConfig(hosts, topic, zkRoot, consumerGroupId);
+        TridentKafkaConfig spoutConfig = new TridentKafkaConfig(hosts, "test");
         spoutConfig.scheme = new SchemeAsMultiScheme(new KafkaSentenceScheme());
-        return new KafkaSpout(spoutConfig);
+        return new TransactionalTridentKafkaSpout(spoutConfig);
     }
 
     public static void main(String[] args) throws Exception {
@@ -35,14 +31,13 @@ public class WordCountExample {
         repository.start();
 
         TridentTopology trident = new TridentTopology();
-        trident.newStream("spout", createKafkaSpout()).parallelismHint(1).shuffle()
-                .each(new Fields("sentence"), new SplitSentenceFunction(), new Fields("word")).parallelismHint(1)
+        trident.newStream("spout", createTransactionalKafkaSpout())
+                .each(new Fields("sentence"), new SplitSentenceFunction(), new Fields("word"))
                 .groupBy(new Fields("word"))
                 .each(new Fields("word"), new WordCountFunction(repository), new Fields("count"));
         StormTopology topology = trident.build();
 
         Config configuration = new Config();
-        configuration.setDebug(true);
 
         LocalCluster cluster = new LocalCluster();
 
