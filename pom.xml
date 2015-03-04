@@ -95,7 +95,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>ar.com.carloscurotto.storm.wordcount.trident.WordCountExample</mainClass>
+							<mainClass>ar.com.carloscurotto.storm.updates.trident.UpdateCountExample</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

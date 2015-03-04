@@ -17,7 +17,7 @@ import backtype.storm.tuple.Fields;
  * @author carloscurotto
  */
 public class WordCountExample {
-    
+
     private static TransactionalTridentKafkaSpout createTransactionalKafkaSpout() {
         BrokerHosts hosts = new ZkHosts("localhost:2181");
         TridentKafkaConfig spoutConfig = new TridentKafkaConfig(hosts, "test");
@@ -38,6 +38,7 @@ public class WordCountExample {
         StormTopology topology = trident.build();
 
         Config configuration = new Config();
+        configuration.setDebug(false);
 
         LocalCluster cluster = new LocalCluster();
 
