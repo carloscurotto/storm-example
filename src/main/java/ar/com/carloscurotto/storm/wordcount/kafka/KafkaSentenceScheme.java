@@ -23,7 +23,7 @@ public class KafkaSentenceScheme implements Scheme {
 
     @Override
     public Fields getOutputFields() {
-        return new Fields("update");
+        return new Fields("sentence");
     }
 
 }

@@ -42,7 +42,6 @@ public class WordCountExample {
         configuration.setDebug(true);
 
         if (args != null && args.length > 0) {
-            configuration.setNumWorkers(3);
             StormSubmitter.submitTopologyWithProgressBar("word-count", configuration, topology);
         } else {
             LocalCluster cluster = new LocalCluster();
