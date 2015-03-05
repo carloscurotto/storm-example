@@ -26,14 +26,19 @@ public class WordCountExample {
         return new TransactionalTridentKafkaSpout(spoutConfig);
     }
 
+
+
     public static void main(String[] args) throws Exception {
 
         TridentTopology trident = new TridentTopology();
-        trident.newStream("spout", createTransactionalKafkaSpout()).parallelismHint(1)
-                .each(new Fields("sentence"), new SplitSentenceFunction(), new Fields("word"))
-                .groupBy(new Fields("word"))
-                .each(new Fields("word"), new WordCountFunction(), new Fields("count"));
+        trident.newStream("kafka-spout", createTransactionalKafkaSpout()).name("kafka-spout").parallelismHint(1).shuffle()
+                .each(new Fields("sentence"), new SplitSentenceFunction(), new Fields("word")).name("split-sentence").parallelismHint(3)
+                .partitionBy(new Fields("word")).name("group-by-word")
+                /*.groupBy(new Fields("word")).name("group-by-word")*/
+                .each(new Fields("word"), new WordCountFunction(), new Fields("count")).toStream().name("word-count").parallelismHint(5);
         StormTopology topology = trident.build();
+
+        System.out.println(topology.toString());
 
         Config configuration = new Config();
         configuration.setDebug(false);

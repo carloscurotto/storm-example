@@ -12,21 +12,23 @@ import com.hazelcast.core.IMap;
 public class WordCountsRepository implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final String EQUAL_OPERATOR = "=";
     private static final String HZ_CONFIGURATION_FILE_NAME = "hazelcast.xml";
     private static final String HZ_INSTANCE_NAME = "word-count-hz-instance";
     private static final String HZ_MAP_NAME = "word-count-map";
 
-    public void start() {
+    public synchronized void start() {
         Config configuration = new ClasspathXmlConfig(HZ_CONFIGURATION_FILE_NAME);
         configuration.setInstanceName(HZ_INSTANCE_NAME);
-        Hazelcast.newHazelcastInstance(configuration);
+        Hazelcast.getOrCreateHazelcastInstance(configuration);
     }
 
-    public void stop() {
+    public synchronized void stop() {
         HazelcastInstance hz = Hazelcast.getHazelcastInstanceByName(HZ_INSTANCE_NAME);
-        hz.shutdown();
+        if (hz != null) {
+            hz.shutdown();
+        }
     }
 
     private HazelcastInstance getHazelcastInstance() {

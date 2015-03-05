@@ -17,12 +17,14 @@ public class HazelcastInstanceProvider implements Serializable {
     public static void start() {
         Config configuration = new ClasspathXmlConfig(HZ_CONFIGURATION_FILE_NAME);
         configuration.setInstanceName(HZ_INSTANCE_NAME);
-        Hazelcast.newHazelcastInstance(configuration);
+        Hazelcast.getOrCreateHazelcastInstance(configuration);
     }
 
     public static void stop() {
         HazelcastInstance hz = Hazelcast.getHazelcastInstanceByName(HZ_INSTANCE_NAME);
-        hz.shutdown();
+        if (hz != null) {
+            hz.shutdown();
+        }
     }
 
     public static HazelcastInstance getHazelcastInstance() {

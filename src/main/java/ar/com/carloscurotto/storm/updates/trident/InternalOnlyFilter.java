@@ -11,6 +11,7 @@ public class InternalOnlyFilter extends BaseFilter {
     public boolean isKeep(TridentTuple theTuple) {
         String update = theTuple.getString(0);
         if (!update.contains("gloss")) {
+            System.out.println("Internal only tuple detected by thread [" + Thread.currentThread().getName() + "]");
             return true;
         }
         return false;

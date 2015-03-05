@@ -12,9 +12,10 @@ public class SplitSentenceFunction extends BaseFunction {
     @Override
     public void execute(TridentTuple theTuple, TridentCollector theCollector) {
         String sentence = theTuple.getString(0);
+        System.out.println("Sentence tuple received [" + sentence + "] by thread ["
+                + Thread.currentThread().getName() + "]");
         for (String word : sentence.split(" ")) {
             theCollector.emit(new Values(word));
         }
     }
-
 }

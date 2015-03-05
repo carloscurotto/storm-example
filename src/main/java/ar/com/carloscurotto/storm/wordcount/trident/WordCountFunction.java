@@ -16,10 +16,10 @@ public class WordCountFunction extends BaseFunction {
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map configuration, TridentOperationContext context) {
-        System.out.println("initializing counts...");
+        System.out.println("Initializing counts...");
         counts = new WordCountsRepository();
         counts.start();
-        System.out.println("initialized counts.");
+        System.out.println("Initialized counts.");
     }
 
     @Override
@@ -41,6 +41,7 @@ public class WordCountFunction extends BaseFunction {
             count++;
         }
         counts.put(word, count);
-        System.out.println("Word tuple received [" + word + ", " + count + "]");
+        System.out.println("Word tuple received [" + word + ", " + count + "] by thread ["
+                + Thread.currentThread().getName() + "]");
     }
 }

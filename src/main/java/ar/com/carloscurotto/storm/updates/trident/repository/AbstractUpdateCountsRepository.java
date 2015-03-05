@@ -13,6 +13,14 @@ public abstract class AbstractUpdateCountsRepository implements Serializable {
 
     protected abstract String getMapName();
 
+    public void start() {
+        HazelcastInstanceProvider.start();
+    }
+
+    public void stop() {
+        HazelcastInstanceProvider.stop();
+    }
+
     public void put(String update, Integer count) {
         HazelcastInstanceProvider.getHazelcastInstance().getMap(getMapName()).put(update, count);
     }

@@ -6,10 +6,8 @@ import storm.kafka.trident.TransactionalTridentKafkaSpout;
 import storm.kafka.trident.TridentKafkaConfig;
 import storm.trident.Stream;
 import storm.trident.TridentTopology;
-import storm.trident.fluent.GroupedStream;
 import ar.com.carloscurotto.storm.updates.trident.repository.GlossUpdateCountsRepository;
 import ar.com.carloscurotto.storm.updates.trident.repository.HBaseUpdateCountsRepository;
-import ar.com.carloscurotto.storm.updates.trident.repository.HazelcastInstanceProvider;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
@@ -28,27 +26,30 @@ public class UpdateCountExample {
 
     public static void main(String[] args) throws Exception {
 
-        HazelcastInstanceProvider.start();
-
         GlossUpdateCountsRepository glossRepository = new GlossUpdateCountsRepository();
 
         HBaseUpdateCountsRepository hbaseRepository = new HBaseUpdateCountsRepository();
 
         TridentTopology trident = new TridentTopology();
-        Stream updatesStream = trident.newStream("spout", createTransactionalKafkaSpout()).parallelismHint(1);
+        Stream updatesStream =
+                trident.newStream("kafka-updates-spout", createTransactionalKafkaSpout()).name("kafka-updates-spout").
+                        parallelismHint(1).shuffle();
 
-        GroupedStream externalInternalStream =
-                updatesStream.each(new Fields("update"), new ExternalInternalFilter()).parallelismHint(5)
-                        .groupBy(new Fields("update"));
+        Stream externalInternalStream =
+                updatesStream.each(new Fields("update"), new ExternalInternalFilter()).parallelismHint(1)
+                        .partitionBy(new Fields("update"));
+        externalInternalStream = externalInternalStream
+                .each(new Fields("update"), new GlossFunction(glossRepository), new Fields("update-gloss"))
+                .parallelismHint(2).partitionBy(new Fields("update-gloss"));
         externalInternalStream
-                .each(new Fields("update"), new GlossFunction(glossRepository), new Fields("update-gloss")).toStream()
-                .groupBy(new Fields("update-gloss"))
-                .each(new Fields("update-gloss"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"));
+                .each(new Fields("update-gloss"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"))
+                .parallelismHint(2);
 
-        GroupedStream internalOnlyStream =
-                updatesStream.each(new Fields("update"), new InternalOnlyFilter()).parallelismHint(5)
-                        .groupBy(new Fields("update"));
-        internalOnlyStream.each(new Fields("update"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"));
+        Stream internalOnlyStream =
+                updatesStream.each(new Fields("update"), new InternalOnlyFilter()).parallelismHint(1)
+                        .partitionBy(new Fields("update"));
+        internalOnlyStream.each(new Fields("update"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"))
+                .parallelismHint(2);
 
         StormTopology topology = trident.build();
 
@@ -56,7 +57,7 @@ public class UpdateCountExample {
         configuration.setDebug(false);
 
         if (args != null && args.length > 0) {
-            configuration.setNumWorkers(3);
+            configuration.setNumWorkers(5);
             StormSubmitter.submitTopologyWithProgressBar("update-count", configuration, topology);
         } else {
             LocalCluster cluster = new LocalCluster();
@@ -65,14 +66,12 @@ public class UpdateCountExample {
             System.out.println("Press any key to stop processing...");
             System.in.read();
 
-            cluster.killTopology("update-count");
-
-            cluster.shutdown();
-
             System.out.println(glossRepository);
             System.out.println(hbaseRepository);
 
-            HazelcastInstanceProvider.stop();
+            cluster.killTopology("update-count");
+
+            cluster.shutdown();
         }
 
     }

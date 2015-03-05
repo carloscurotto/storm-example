@@ -11,6 +11,8 @@ public class ExternalInternalFilter extends BaseFilter {
     public boolean isKeep(TridentTuple theTuple) {
         String update = theTuple.getString(0);
         if (update.contains("gloss")) {
+            System.out
+                    .println("External internal tuple detected by thread [" + Thread.currentThread().getName() + "]");
             return true;
         }
         return false;
