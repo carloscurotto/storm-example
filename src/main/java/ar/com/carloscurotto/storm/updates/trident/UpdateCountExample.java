@@ -36,20 +36,18 @@ public class UpdateCountExample {
                         parallelismHint(1).shuffle();
 
         Stream externalInternalStream =
-                updatesStream.each(new Fields("update"), new ExternalInternalFilter()).parallelismHint(1)
-                        .partitionBy(new Fields("update"));
-        externalInternalStream = externalInternalStream
-                .each(new Fields("update"), new GlossFunction(glossRepository), new Fields("update-gloss"))
-                .parallelismHint(2).partitionBy(new Fields("update-gloss"));
-        externalInternalStream
-                .each(new Fields("update-gloss"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"))
-                .parallelismHint(2);
+                updatesStream.each(new Fields("update"), new ExternalInternalFilter())
+                        .each(new Fields("update"), new GlossFunction(glossRepository), new Fields("update-gloss"))
+                        .parallelismHint(2).partitionBy(new Fields("update-gloss"));
+        externalInternalStream.each(new Fields("update-gloss"), new HBaseFunction(hbaseRepository),
+                new Fields("update-hbase")).parallelismHint(2);
+        externalInternalStream.name("external-internal");
 
         Stream internalOnlyStream =
-                updatesStream.each(new Fields("update"), new InternalOnlyFilter()).parallelismHint(1)
-                        .partitionBy(new Fields("update"));
-        internalOnlyStream.each(new Fields("update"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"))
-                .parallelismHint(2);
+                updatesStream.each(new Fields("update"), new InternalOnlyFilter())
+                        .each(new Fields("update"), new HBaseFunction(hbaseRepository), new Fields("update-hbase"))
+                        .parallelismHint(2);
+        internalOnlyStream.name("internal-only");
 
         StormTopology topology = trident.build();
 
