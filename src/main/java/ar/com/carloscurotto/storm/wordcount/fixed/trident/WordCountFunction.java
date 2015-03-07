@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.wordcount.serialized;
+package ar.com.carloscurotto.storm.wordcount.fixed.trident;
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ public class WordCountFunction extends BaseFunction {
     private static final long serialVersionUID = 1L;
 
     private WordCountsRepository counts;
-
+    
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map configuration, TridentOperationContext context) {
@@ -33,7 +33,7 @@ public class WordCountFunction extends BaseFunction {
 
     @Override
     public void execute(TridentTuple tuple, TridentCollector collector) {
-        String word = tuple.getString(0);
+        String word = (String)tuple.getValue(0);
         Integer count = counts.get(word);
         if (count == null) {
             count = 1;
@@ -42,6 +42,6 @@ public class WordCountFunction extends BaseFunction {
         }
         counts.put(word, count);
         System.out.println("Word tuple received [" + word + ", " + count + "] by thread ["
-                + Thread.currentThread().getName() + "]");
+                + Thread.currentThread().getName() + "] on instance [" + this + "]");
     }
 }

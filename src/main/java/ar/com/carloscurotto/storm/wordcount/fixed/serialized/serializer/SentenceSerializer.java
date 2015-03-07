@@ -1,9 +1,10 @@
-package ar.com.carloscurotto.storm.wordcount.serialized.serializer;
+package ar.com.carloscurotto.storm.wordcount.fixed.serialized.serializer;
 
 import java.util.Collection;
 
-import ar.com.carloscurotto.storm.wordcount.serialized.domain.Sentence;
-import ar.com.carloscurotto.storm.wordcount.serialized.domain.Word;
+import ar.com.carloscurotto.storm.wordcount.fixed.serialized.domain.Sentence;
+import ar.com.carloscurotto.storm.wordcount.fixed.serialized.domain.Word;
+import backtype.storm.serialization.types.ArrayListSerializer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -16,7 +17,7 @@ public class SentenceSerializer extends Serializer<Sentence> {
     private CollectionSerializer collectionSerializer;
 
     public SentenceSerializer() {
-        collectionSerializer = new CollectionSerializer();
+        collectionSerializer = new ArrayListSerializer();
         collectionSerializer.setElementClass(Word.class, new WordSerializer());
     }
 

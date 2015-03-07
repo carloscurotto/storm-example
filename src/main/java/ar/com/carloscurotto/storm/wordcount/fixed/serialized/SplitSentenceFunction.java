@@ -1,9 +1,11 @@
-package ar.com.carloscurotto.storm.wordcount.serialized;
+package ar.com.carloscurotto.storm.wordcount.fixed.serialized;
 
-import backtype.storm.tuple.Values;
 import storm.trident.operation.BaseFunction;
 import storm.trident.operation.TridentCollector;
 import storm.trident.tuple.TridentTuple;
+import ar.com.carloscurotto.storm.wordcount.fixed.serialized.domain.Sentence;
+import ar.com.carloscurotto.storm.wordcount.fixed.serialized.domain.Word;
+import backtype.storm.tuple.Values;
 
 public class SplitSentenceFunction extends BaseFunction {
 
@@ -11,10 +13,10 @@ public class SplitSentenceFunction extends BaseFunction {
 
     @Override
     public void execute(TridentTuple theTuple, TridentCollector theCollector) {
-        String sentence = theTuple.getString(0);
+        Sentence sentence = (Sentence)theTuple.getValue(0);
         System.out.println("Sentence tuple received [" + sentence + "] by thread ["
                 + Thread.currentThread().getName() + "]");
-        for (String word : sentence.split(" ")) {
+        for (Word word : sentence.getWords()) {
             theCollector.emit(new Values(word));
         }
     }

@@ -1,8 +1,7 @@
-package ar.com.carloscurotto.storm.wordcount.serialized;
+package ar.com.carloscurotto.storm.wordcount.fixed.trident;
 
 import java.util.Map;
 
-import ar.com.carloscurotto.storm.wordcount.serialized.domain.Sentence;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -15,23 +14,22 @@ public class FixedSentencesSpout extends BaseRichSpout {
     private static final long serialVersionUID = 1L;
 
     private SpoutOutputCollector collector;
-    private Sentence[] sentences;
+    private String[] sentences;
     private int index;
-
-    public FixedSentencesSpout(Sentence[] theSentences) {
-        sentences = theSentences;
-    }
 
     @SuppressWarnings("rawtypes")
     @Override
     public void open(Map theConfiguration, TopologyContext theTopologyContext, SpoutOutputCollector theCollector) {
         collector = theCollector;
+        SentenceFactory sentenceFactory = new SentenceFactory();
+        sentences = sentenceFactory.createSentences();
     }
+  
 
     @Override
     public void nextTuple() {
         if (index < sentences.length) {
-            Sentence sentence = sentences[index];
+            String sentence = sentences[index];
             collector.emit(new Values(sentence));
             index++;
         }

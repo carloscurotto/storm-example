@@ -1,6 +1,6 @@
-package ar.com.carloscurotto.storm.wordcount.serialized.serializer;
+package ar.com.carloscurotto.storm.wordcount.fixed.serialized.serializer;
 
-import ar.com.carloscurotto.storm.wordcount.serialized.domain.Word;
+import ar.com.carloscurotto.storm.wordcount.fixed.serialized.domain.Word;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;

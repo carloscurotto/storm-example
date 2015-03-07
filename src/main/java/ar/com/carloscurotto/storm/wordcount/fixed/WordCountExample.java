@@ -22,7 +22,7 @@ public class WordCountExample {
         TopologyBuilder builder = new TopologyBuilder();
         builder.setSpout("spout", new FixedSentencesSpout(sentences), 1);
         builder.setBolt("split", new SplitSentenceBolt(), 1).shuffleGrouping("spout");
-        builder.setBolt("count", new WordCountBolt(repository), 1).fieldsGrouping("split", new Fields("word"));
+        builder.setBolt("count", new WordCountBolt(repository), 2).fieldsGrouping("split", new Fields("word"));
         
         Config configuration = new Config();
         configuration.setDebug(true);

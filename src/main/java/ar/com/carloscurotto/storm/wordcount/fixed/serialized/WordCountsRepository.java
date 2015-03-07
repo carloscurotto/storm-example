@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.wordcount.serialized;
+package ar.com.carloscurotto.storm.wordcount.fixed.serialized;
 
 import java.io.Serializable;
 import java.util.Set;
