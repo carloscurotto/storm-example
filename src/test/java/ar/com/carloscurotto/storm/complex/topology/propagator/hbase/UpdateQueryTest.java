@@ -54,10 +54,10 @@ public class UpdateQueryTest {
 	private UpdatePropagatorContext getUpdateWithColumnsAndParameters() {
 
 		HashMap<String, Object> theParameters = new HashMap<String, Object>();
-    Map<String, Object> keyColumns = theParameters;
+    Map<String, Object> keyColumns = new HashMap<String, Object>();
 		keyColumns.put("condition1", "conditionValue1");
 		keyColumns.put("condition2", "conditionValue2");
-		Map<String, Object> updateColumns = theParameters;
+		Map<String, Object> updateColumns = new HashMap<String, Object>();
 		updateColumns.put("column1", "value1");
 		updateColumns.put("column2", "value2");
 

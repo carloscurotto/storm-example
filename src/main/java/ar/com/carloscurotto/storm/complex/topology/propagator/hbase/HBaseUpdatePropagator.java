@@ -13,6 +13,8 @@ import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
+import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
+import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 
@@ -57,15 +59,23 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
   protected ResultRow doExecute(UpdatePropagatorContext theContext) {
     Validate.notNull(theContext, "The Update object cannot be null.");
     String upsertQuery = createUpsertQuery(theContext);
-    executeUpsertQuery(upsertQuery);
-    return null;
+    return generateResulRowForExecution(theContext.getRow(), upsertQuery);
 }
 
 private String createUpsertQuery(final UpdatePropagatorContext theUpdate) {
     return queryBuilder.build(theUpdate);
 }
 
-private void executeUpsertQuery(final String upsertQuery) {
+private ResultRow generateResulRowForExecution(UpdateRow theRow, String upsertQuery) {
+  try {
+    executeUpsertQuery(theRow.getId(), upsertQuery);
+  } catch (Exception e) {
+    // TODO Auto-generated catch block
+    e.printStackTrace();
+  }
+}
+
+private ResultRow executeUpsertQuery(String theRowId, final String upsertQuery) {
     Connection connection = null;
     try {
         connection = dataSource.getConnection();
@@ -79,10 +89,11 @@ private void executeUpsertQuery(final String upsertQuery) {
         }
         connection.commit();
     } catch (SQLException e) {
-        throw new RuntimeException("Something went wrong while executing the query", e);
+      return new ResultRow(theRowId, ResultRowStatus.FAILURE, "Something went wrong while executing the query");
     } finally {
         DbUtils.closeQuietly(connection);
     }
+    return new ResultRow(theRowId, ResultRowStatus.SUCCESS, ""); 
 }
 
   /* (non-Javadoc)

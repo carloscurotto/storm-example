@@ -33,9 +33,8 @@ public class QueryBuilder {
 	 */
 	public String build(final UpdatePropagatorContext theUpdate) {
 		Validate.notNull(theUpdate, "The update can not be null");
-		List<String> queries = new ArrayList<String>();
-		queries.add(generateUpsertQuery(theUpdate.getTableName(), theUpdate.getRow()));
-		return collectionToDelimitedString(queries, "; ");
+		String query = generateUpsertQuery(theUpdate.getTableName(), theUpdate.getRow());
+		return query;
 	}
 
 	private String generateUpsertQuery(final String theTableName, final UpdateRow theUpdateRow) {
