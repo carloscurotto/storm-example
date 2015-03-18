@@ -14,7 +14,6 @@ import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
-import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 
@@ -57,44 +56,45 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
    */
   @Override
   protected ResultRow doExecute(UpdatePropagatorContext theContext) {
-    Validate.notNull(theContext, "The Update object cannot be null.");
-    String upsertQuery = createUpsertQuery(theContext);
-    return generateResulRowForExecution(theContext.getRow(), upsertQuery);
+    return generateResultRowForExecution(theContext);
 }
 
-private String createUpsertQuery(final UpdatePropagatorContext theUpdate) {
-    return queryBuilder.build(theUpdate);
-}
-
-private ResultRow generateResulRowForExecution(UpdateRow theRow, String upsertQuery) {
-  try {
-    executeUpsertQuery(theRow.getId(), upsertQuery);
-  } catch (Exception e) {
-    // TODO Auto-generated catch block
-    e.printStackTrace();
+  private ResultRow generateResultRowForExecution(UpdatePropagatorContext theContext) {
+    String theRowId = "EmptyRowID";
+    try {
+      Validate.notNull(theContext, "The Update object cannot be null.");
+      theRowId = theContext.getRow().getId();
+      String upsertQuery = createUpsertQuery(theContext);
+      executeUpsertQuery(upsertQuery);
+    } catch (Exception e) {
+      return new ResultRow(theRowId, ResultRowStatus.FAILURE, e.getMessage());
+    }
+    return new ResultRow(theRowId, ResultRowStatus.SUCCESS, "Row succefully updated.");
   }
-}
+  
+  private String createUpsertQuery(final UpdatePropagatorContext theUpdate) {
+    return queryBuilder.build(theUpdate);
+  }
 
-private ResultRow executeUpsertQuery(String theRowId, final String upsertQuery) {
+  private void executeUpsertQuery(final String upsertQuery) {
     Connection connection = null;
     try {
-        connection = dataSource.getConnection();
-        Statement statement = connection.createStatement();
-        statement.execute(upsertQuery);
-        int updateCount = statement.getUpdateCount();
-        if (updateCount != 1) {
-            connection.rollback();
-            throw new RuntimeException("Rolling back query [" + upsertQuery
-                    + "], it matched more than one result.");
-        }
-        connection.commit();
+      connection = dataSource.getConnection();
+      Statement statement = connection.createStatement();
+      statement.execute(upsertQuery);
+      int updateCount = statement.getUpdateCount();
+      if (updateCount != 1) {
+        connection.rollback();
+        throw new RuntimeException("Rolling back query [" + upsertQuery
+            + "], it matched more than one result.");
+      }
+      connection.commit();
     } catch (SQLException e) {
-      return new ResultRow(theRowId, ResultRowStatus.FAILURE, "Something went wrong while executing the query");
+      throw new RuntimeException("Something went wrong while executing the query");
     } finally {
-        DbUtils.closeQuietly(connection);
+      DbUtils.closeQuietly(connection);
     }
-    return new ResultRow(theRowId, ResultRowStatus.SUCCESS, ""); 
-}
+  }
 
   /* (non-Javadoc)
    * @see ar.com.carloscurotto.storm.complex.service.OpenAwareService#doOpen()
