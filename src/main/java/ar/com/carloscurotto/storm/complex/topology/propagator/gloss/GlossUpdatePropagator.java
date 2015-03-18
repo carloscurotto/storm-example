@@ -9,7 +9,6 @@ import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.exception.GlossException;
 
 /**
  * Propagates and update to the GLOSS external system.
