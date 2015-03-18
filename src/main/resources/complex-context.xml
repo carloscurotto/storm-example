@@ -50,5 +50,20 @@
       </map>
     </constructor-arg>
   </bean>
-
+  
+  <!-- GLOSS SUBMODULE CONFIGURATION -->
+  
+  <bean id="GlossUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.GlossUpdatePropagator">
+    <constructor-arg ref="messageSender"/>
+    <constructor-arg ref="messageBuilder"/>
+  </bean>
+  
+  <bean id="messageSender" class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.MessageSender">
+    <property name="destination" ref="glossDestination"/>
+  </bean>
+  
+  <bean id="messageBuilder" class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.MessageBuilder" />
+  
+  <bean id="glossDestination" class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.destination.ConsoleDestination" />
+  
 </beans>
