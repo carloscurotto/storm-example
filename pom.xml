@@ -25,7 +25,7 @@
 			<groupId>org.apache.storm</groupId>
 			<artifactId>storm-core</artifactId>
 			<version>0.9.3</version>
-            <scope>provided</scope>
+			<scope>provided</scope>
 		</dependency>
 
 		<!-- Kafka -->
@@ -73,6 +73,18 @@
 			<version>18.0</version>
 		</dependency>
 
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>4.1.4.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>4.1.4.RELEASE</version>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
