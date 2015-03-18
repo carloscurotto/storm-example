@@ -33,19 +33,19 @@ public class FixedUpdatesSpout extends BaseRichSpout {
     private Update createUpdateFor(final String theSystemId, final String theRowId) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("parameter-key1", "parameter-value1");
-        
+
         Collection<UpdateRow> rows = new ArrayList<UpdateRow>();
         Map<String, Object> keyColumns = new HashMap<String, Object>();
-        
+
         keyColumns.put("key-column1", "key-value1");
         Map<String, Object> updateColumns = new HashMap<String, Object>();
-        
+
         updateColumns.put("update-column1", "update-value1");
-        
+
         UpdateRow row = new UpdateRow(theRowId, keyColumns, updateColumns);
         rows.add(row);
-        
-        return new Update(theSystemId, parameters, rows);
+
+        return new Update(theSystemId, "table", parameters, rows);
     }
 
     @Override

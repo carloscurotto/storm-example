@@ -23,24 +23,24 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePro
 public class InternalUpdatePropagatorExecutor extends BaseFunction {
 
     private static final long serialVersionUID = 1L;
-    
+
     private UpdatePropagatorProvider propagatorProvider;
 
     public InternalUpdatePropagatorExecutor(final UpdatePropagatorProvider thePropagatorProvider) {
         Validate.notNull(thePropagatorProvider, "The propagator provider can not be null.");
         propagatorProvider = thePropagatorProvider;
     }
-    
+
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map theConfiguration, TridentOperationContext theContext) {
         propagatorProvider.open();
     }
-    
+
     @Override
     public void cleanup() {
         propagatorProvider.close();
-    }    
+    }
 
     @Override
     public void execute(TridentTuple theTuple, TridentCollector theCollector) {
@@ -53,7 +53,7 @@ public class InternalUpdatePropagatorExecutor extends BaseFunction {
             if (externalResultRow.isSuccessful() || externalResultRow.isSkipped()) {
                 OpenAwareService<UpdatePropagatorContext, ResultRow> propagator =
                         propagatorProvider.getPropagator(update.getSystemId());
-                internalResultRows.add(propagator.execute(new UpdatePropagatorContext(updateRow, update
+                internalResultRows.add(propagator.execute(new UpdatePropagatorContext(update.getTableName(), updateRow, update
                         .getParameters())));
             } else {
                 internalResultRows
@@ -62,5 +62,5 @@ public class InternalUpdatePropagatorExecutor extends BaseFunction {
         }
         theCollector.emit(new Values(new Result(internalResultRows)));
     }
-    
+
 }

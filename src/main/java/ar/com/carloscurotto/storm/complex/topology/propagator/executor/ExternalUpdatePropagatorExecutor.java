@@ -58,7 +58,7 @@ public class ExternalUpdatePropagatorExecutor extends BaseFunction {
             if (shouldProcess) {
                 OpenAwareService<UpdatePropagatorContext, ResultRow> propagator =
                         propagatorpProvider.getPropagator(update.getSystemId());
-                resultRows.add(propagator.execute(new UpdatePropagatorContext(updateRow, update.getParameters())));
+                resultRows.add(propagator.execute(new UpdatePropagatorContext(update.getTableName(), updateRow, update.getParameters())));
             } else {
                 resultRows.add(new ResultRow(updateRow.getId(), ResultRowStatus.SKIPPED, "Update row skipped."));
             }
