@@ -6,19 +6,19 @@ import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 
-import backtype.storm.tuple.Values;
 import storm.trident.operation.BaseFunction;
 import storm.trident.operation.TridentCollector;
 import storm.trident.operation.TridentOperationContext;
 import storm.trident.tuple.TridentTuple;
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
-import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 import ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider;
+import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
+import backtype.storm.tuple.Values;
 
 public class InternalUpdatePropagatorExecutor extends BaseFunction {
 
@@ -51,13 +51,14 @@ public class InternalUpdatePropagatorExecutor extends BaseFunction {
         for (UpdateRow updateRow : updateRows) {
             ResultRow externalResultRow = externalResult.getRow(updateRow.getId());
             if (externalResultRow.isSuccessful() || externalResultRow.isSkipped()) {
-                OpenAwareService<UpdatePropagatorContext, ResultRow> propagator =
-                        propagatorProvider.getPropagator(update.getSystemId());
-                internalResultRows.add(propagator.execute(new UpdatePropagatorContext(update.getTableName(), updateRow, update
-                        .getParameters())));
+                OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult> propagator = propagatorProvider
+                        .getPropagator(update.getSystemId());
+                UpdatePropagatorResult updatePropagatorResult = propagator
+                        .execute(new UpdatePropagatorContext(update.getTableName(), updateRow,
+                                update.getParameters()));
+                internalResultRows.add(ResultRow.from(updateRow.getId(), updatePropagatorResult));
             } else {
-                internalResultRows
-                        .add(new ResultRow(updateRow.getId(), ResultRowStatus.SKIPPED, "Update row skipped."));
+                internalResultRows.add(ResultRow.skip(updateRow.getId()));
             }
         }
         theCollector.emit(new Values(new Result(internalResultRows)));

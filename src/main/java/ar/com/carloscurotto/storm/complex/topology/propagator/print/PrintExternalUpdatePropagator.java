@@ -1,9 +1,8 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.print;
 
-import ar.com.carloscurotto.storm.complex.model.ResultRow;
-import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
 import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
+import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 public class PrintExternalUpdatePropagator extends AbstractUpdatePropagator {
 
@@ -18,8 +17,9 @@ public class PrintExternalUpdatePropagator extends AbstractUpdatePropagator {
     }
 
     @Override
-    protected ResultRow doExecute(UpdatePropagatorContext theContext) {
+    protected UpdatePropagatorResult doExecute(UpdatePropagatorContext theContext) {
         System.out.println("Update row received [" + theContext.getRow() + "] on external update propagator.");
-        return new ResultRow(theContext.getRow().getId(), ResultRowStatus.SUCCESS, "Row updated sucessfully.");
+        return UpdatePropagatorResult.createSuccess("Row updated sucessfully.");
     }
+
 }

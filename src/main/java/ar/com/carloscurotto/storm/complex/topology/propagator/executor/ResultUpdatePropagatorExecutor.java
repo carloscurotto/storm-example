@@ -8,7 +8,6 @@ import storm.trident.operation.TridentCollector;
 import storm.trident.tuple.TridentTuple;
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
-import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 
@@ -21,27 +20,30 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
         Update update = (Update) theTuple.getValueByField("update");
         Result externalResult = (Result) theTuple.getValueByField("external-result");
         Result internalResult = (Result) theTuple.getValueByField("internal-result");
-        Collection<UpdateRow> updateRows = update.getRows();
+
         Collection<ResultRow> finalResultRows = new ArrayList<ResultRow>();
-        for (UpdateRow updateRow : updateRows) {
+        for (UpdateRow updateRow : update.getRows()) {
             ResultRow externalResultRow = externalResult.getRow(updateRow.getId());
             ResultRow internalResultRow = internalResult.getRow(updateRow.getId());
-            //TODO see if we can refactor this conditional logic
+            // TODO see if we can refactor this conditional logic
             if (externalResultRow.isSuccessful() && internalResultRow.isSuccessful()) {
-                finalResultRows.add(new ResultRow(updateRow.getId(), ResultRowStatus.SUCCESS, "External and internal update sucessful."));
+                finalResultRows.add(ResultRow.success(updateRow.getId(),
+                        "External and internal update sucessful."));
             } else if (externalResultRow.isSkipped() && internalResultRow.isSuccessful()) {
-                finalResultRows.add(new ResultRow(updateRow.getId(), ResultRowStatus.SUCCESS, "External update skipped and internal update sucessful."));
+                finalResultRows.add(ResultRow.success(updateRow.getId(),
+                        "External update skipped and internal update sucessful."));
             } else if (externalResultRow.isSuccessful() && internalResultRow.isFailure()) {
-                finalResultRows.add(new ResultRow(updateRow.getId(), ResultRowStatus.SUCCESS, "External update successful and internal update failed."));
+                finalResultRows.add(ResultRow.success(updateRow.getId(),
+                        "External update successful and internal update failed."));
             } else if (externalResultRow.isFailure()) {
-                finalResultRows.add(new ResultRow(updateRow.getId(), ResultRowStatus.FAILURE, "External update failed."));
+                finalResultRows
+                        .add(ResultRow.failure(updateRow.getId(), "External update failed."));
             } else {
                 throw new RuntimeException("Update results not supported [external="
-                        + externalResultRow.getStatus().name() + ", internal= " + internalResultRow.getStatus().name()
-                        + "]");
+                        + externalResultRow + ", internal= " + internalResultRow + "]");
             }
         }
-        //TODO send the final result through the transport layer
+        // TODO send the final result through the transport layer
     }
-    
+
 }
