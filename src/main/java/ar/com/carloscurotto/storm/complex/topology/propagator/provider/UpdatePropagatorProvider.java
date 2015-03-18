@@ -23,13 +23,15 @@ import com.google.common.base.Preconditions;
 public class UpdatePropagatorProvider implements Openable, Closeable, Serializable {
 
     private static final long serialVersionUID = 1L;
+
     private Map<String, OpenAwareService<UpdatePropagatorContext, ResultRow>> propagators;
     private boolean isOpen;
 
     public UpdatePropagatorProvider(
             final Map<String, OpenAwareService<UpdatePropagatorContext, ResultRow>> thePropagators) {
         Validate.notNull(thePropagators, "The propagators can not be null.");
-        propagators = new HashMap<String, OpenAwareService<UpdatePropagatorContext, ResultRow>>(thePropagators);
+        propagators = new HashMap<String, OpenAwareService<UpdatePropagatorContext, ResultRow>>(
+                thePropagators);
     }
 
     @Override
@@ -58,8 +60,9 @@ public class UpdatePropagatorProvider implements Openable, Closeable, Serializab
         Preconditions.checkArgument(StringUtils.isNotBlank(theId), "The id can not be blank.");
         Preconditions.checkState(isOpen(), "The provider is not open. Please, open it first.");
         OpenAwareService<UpdatePropagatorContext, ResultRow> propagator = propagators.get(theId);
-        Preconditions.checkState(propagator != null, "Can not find a propagator for the update id [" + theId
-                + "]. Please, configure the propagator properly.");
+        Preconditions.checkState(propagator != null,
+                "Can not find a propagator for the update id [" + theId
+                        + "]. Please, configure the propagator properly.");
         return propagator;
     }
 }

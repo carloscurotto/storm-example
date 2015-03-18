@@ -1,13 +1,11 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.print;
 
-import java.io.Serializable;
-
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
-import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
+import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 
-public class PrintInternalUpdatePropagator extends OpenAwareService<UpdatePropagatorContext, ResultRow> implements Serializable {
+public class PrintInternalUpdatePropagator extends AbstractUpdatePropagator {
 
     private static final long serialVersionUID = 1L;
 

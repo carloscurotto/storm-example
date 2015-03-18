@@ -15,12 +15,12 @@ public class KafkaUpdatesScheme implements Scheme {
 
     @Override
     public List<Object> deserialize(byte[] bytes) {
-        return new Values((Update)SerializationUtils.deserialize(bytes));
+        return new Values((Update) SerializationUtils.deserialize(bytes));
     }
 
     @Override
     public Fields getOutputFields() {
-	return new Fields("update");
+        return new Fields("update");
     }
 
 }

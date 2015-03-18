@@ -32,14 +32,18 @@ public class KafkaUpdatesSpoutFactory implements UpdatesSpoutFactory {
     /**
      * Creates a {@link KafkaUpdatesSpoutFactory}.
      *
-     * @param theHosts the hosts to connect this spout to.
-     * @param theTopic the topic to connect this spout to.
+     * @param theHosts
+     *            the hosts to connect this spout to.
+     * @param theTopic
+     *            the topic to connect this spout to.
      */
     public KafkaUpdatesSpoutFactory(final String theHosts, final String theTopic) {
-	Preconditions.checkArgument(StringUtils.isNotBlank(theHosts), "The hosts can not be blank.");
-	Preconditions.checkArgument(StringUtils.isNotBlank(theTopic), "The topic can not be blank.");
-	hosts = theHosts;
-	topic = theTopic;
+        Preconditions
+                .checkArgument(StringUtils.isNotBlank(theHosts), "The hosts can not be blank.");
+        Preconditions
+                .checkArgument(StringUtils.isNotBlank(theTopic), "The topic can not be blank.");
+        hosts = theHosts;
+        topic = theTopic;
     }
 
     /**
@@ -48,9 +52,9 @@ public class KafkaUpdatesSpoutFactory implements UpdatesSpoutFactory {
      * @return the created spout.
      */
     public IRichSpout create() {
-	TridentKafkaConfig spoutConfig = new TridentKafkaConfig(new ZkHosts(hosts), topic);
-	spoutConfig.scheme = new SchemeAsMultiScheme(new KafkaUpdatesScheme());
-	return (IRichSpout) new TransactionalTridentKafkaSpout(spoutConfig);
+        TridentKafkaConfig spoutConfig = new TridentKafkaConfig(new ZkHosts(hosts), topic);
+        spoutConfig.scheme = new SchemeAsMultiScheme(new KafkaUpdatesScheme());
+        return (IRichSpout) new TransactionalTridentKafkaSpout(spoutConfig);
     }
 
 }

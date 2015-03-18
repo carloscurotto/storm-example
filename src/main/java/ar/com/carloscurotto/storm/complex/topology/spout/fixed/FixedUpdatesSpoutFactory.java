@@ -13,7 +13,7 @@ public class FixedUpdatesSpoutFactory implements UpdatesSpoutFactory {
 
     @Override
     public IRichSpout create() {
-	return new FixedUpdatesSpout();
+        return new FixedUpdatesSpout();
     }
 
 }

@@ -25,9 +25,9 @@ import backtype.storm.tuple.Values;
 public class ExternalUpdatePropagatorExecutor extends BaseFunction {
 
     private static final long serialVersionUID = 1L;
-    
+
     private UpdatePropagatorProvider propagatorpProvider;
-    
+
     private UpdateRouteProvider routeProvider;
 
     public ExternalUpdatePropagatorExecutor(final UpdatePropagatorProvider thePropagatorProvider,
@@ -37,13 +37,13 @@ public class ExternalUpdatePropagatorExecutor extends BaseFunction {
         propagatorpProvider = thePropagatorProvider;
         routeProvider = theRouteProvider;
     }
-    
+
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map theConfiguration, TridentOperationContext theContext) {
         propagatorpProvider.open();
     }
-    
+
     @Override
     public void cleanup() {
         propagatorpProvider.close();
@@ -53,9 +53,8 @@ public class ExternalUpdatePropagatorExecutor extends BaseFunction {
     public void execute(TridentTuple theTuple, TridentCollector theCollector) {
         Update update = (Update) theTuple.getValueByField("update");
         final boolean shouldProcess = shouldProcess(update);
-        Collection<UpdateRow> updateRows = update.getRows();
         Collection<ResultRow> resultRows = new ArrayList<ResultRow>();
-        for (UpdateRow updateRow : updateRows) {
+        for (UpdateRow updateRow : update.getRows()) {
             if (shouldProcess) {
                 OpenAwareService<UpdatePropagatorContext, ResultRow> propagator =
                         propagatorpProvider.getPropagator(update.getSystemId());
@@ -70,5 +69,5 @@ public class ExternalUpdatePropagatorExecutor extends BaseFunction {
     private boolean shouldProcess(Update update) {
         return routeProvider.getRoute(update.getSystemId()) == UpdateRoute.EXTERNAL_INTERNAL;
     }
-    
+
 }
