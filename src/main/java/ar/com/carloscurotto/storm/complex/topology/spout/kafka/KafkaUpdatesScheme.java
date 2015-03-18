@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.SerializationUtils;
 
-import ar.com.carloscurotto.storm.complex.Update;
+import ar.com.carloscurotto.storm.complex.model.Update;
 import backtype.storm.spout.Scheme;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;

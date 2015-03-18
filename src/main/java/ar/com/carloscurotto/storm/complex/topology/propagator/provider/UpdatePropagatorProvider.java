@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.ResultRow;
+import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.service.Closeable;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
 import ar.com.carloscurotto.storm.complex.service.Openable;

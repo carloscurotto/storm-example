@@ -6,11 +6,11 @@ import java.util.Collection;
 import storm.trident.operation.BaseFunction;
 import storm.trident.operation.TridentCollector;
 import storm.trident.tuple.TridentTuple;
-import ar.com.carloscurotto.storm.complex.Result;
-import ar.com.carloscurotto.storm.complex.ResultRow;
-import ar.com.carloscurotto.storm.complex.ResultRowStatus;
-import ar.com.carloscurotto.storm.complex.Update;
-import ar.com.carloscurotto.storm.complex.UpdateRow;
+import ar.com.carloscurotto.storm.complex.model.Result;
+import ar.com.carloscurotto.storm.complex.model.ResultRow;
+import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
+import ar.com.carloscurotto.storm.complex.model.Update;
+import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 
 public class ResultUpdatePropagatorExecutor extends BaseFunction {
 

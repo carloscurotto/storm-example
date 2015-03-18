@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import ar.com.carloscurotto.storm.complex.Update;
-import ar.com.carloscurotto.storm.complex.UpdateRow;
+import ar.com.carloscurotto.storm.complex.model.Update;
+import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;

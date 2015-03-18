@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.UpdateRow;
+import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 
 public class UpdatePropagatorContext {
     

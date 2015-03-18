@@ -1,4 +1,4 @@
-package ar.com.carloscurotto.storm.complex;
+package ar.com.carloscurotto.storm.complex.model;
 
 import org.apache.commons.lang3.Validate;
 

@@ -1,7 +1,7 @@
 package ar.com.carloscurotto.storm.complex.service;
 
-import ar.com.carloscurotto.storm.complex.Result;
-import ar.com.carloscurotto.storm.complex.Update;
+import ar.com.carloscurotto.storm.complex.model.Result;
+import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.transport.Submitter;
 
 import com.google.common.base.Preconditions;

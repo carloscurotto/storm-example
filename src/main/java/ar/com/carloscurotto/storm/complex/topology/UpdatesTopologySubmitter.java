@@ -21,7 +21,7 @@ import backtype.storm.tuple.Fields;
  * @author O605461
  */
 public class UpdatesTopologySubmitter {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdatesTopologySubmitter.class);
 
     /**
@@ -32,21 +32,21 @@ public class UpdatesTopologySubmitter {
      */
     public static void main(String[] args) throws Exception {
 
-	LOGGER.debug("Loading configuration...");
+    	LOGGER.debug("Loading configuration...");
 
-	UpdatesTopologyConfiguration configuration = new UpdatesTopologyConfiguration();
+    	UpdatesTopologyConfiguration configuration = new UpdatesTopologyConfiguration();
 
-	LOGGER.debug("Getting beans...");
+    	LOGGER.debug("Getting beans...");
 
-	UpdatesSpoutFactory spoutFactory = configuration.getUpdatesSpoutFactory();
-	ExternalUpdatePropagatorExecutor externalPropagator = configuration.getExternalUpdatePropagatorExecutor();
-	InternalUpdatePropagatorExecutor internalPropagator = configuration.getInternalUpdatePropagatorExecutor();
-	ResultUpdatePropagatorExecutor resultPropagator = configuration.getResultUpdatePropagatorExecutor();
+    	UpdatesSpoutFactory spoutFactory = configuration.getUpdatesSpoutFactory();
+    	ExternalUpdatePropagatorExecutor externalPropagator = configuration.getExternalUpdatePropagatorExecutor();
+    	InternalUpdatePropagatorExecutor internalPropagator = configuration.getInternalUpdatePropagatorExecutor();
+    	ResultUpdatePropagatorExecutor resultPropagator = configuration.getResultUpdatePropagatorExecutor();
 
-	LOGGER.debug("Creating topology...");
+    	LOGGER.debug("Creating topology...");
 
         TridentTopology trident = new TridentTopology();
-        
+
         Stream updatesStream = trident.newStream("updates-spout", spoutFactory.create()).parallelismHint(1).shuffle();
         updatesStream =
                 updatesStream.each(new Fields("update"), externalPropagator, new Fields("external-result"))
@@ -59,7 +59,7 @@ public class UpdatesTopologySubmitter {
         updatesStream.each(new Fields("update", "external-result", "internal-result"), resultPropagator,
                 new Fields("final-result")).parallelismHint(1);
         updatesStream.name("external-internal-updates");
-        
+
         LOGGER.debug("Building topology...");
 
         StormTopology topology = trident.build();

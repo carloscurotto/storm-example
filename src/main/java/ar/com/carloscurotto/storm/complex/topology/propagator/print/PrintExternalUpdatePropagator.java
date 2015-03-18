@@ -2,8 +2,8 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.print;
 
 import java.io.Serializable;
 
-import ar.com.carloscurotto.storm.complex.ResultRow;
-import ar.com.carloscurotto.storm.complex.ResultRowStatus;
+import ar.com.carloscurotto.storm.complex.model.ResultRow;
+import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 
