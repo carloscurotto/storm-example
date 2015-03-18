@@ -24,7 +24,7 @@ public class Result {
     public Result(final Collection<ResultRow> theRows) {
         Preconditions.checkArgument(theRows != null, "The rows can not be null.");
         for (ResultRow theRow : theRows) {
-            rows.put(theRow.getId(), theRow);
+            rows.put(theRow.getRowId(), theRow);
         }
     }
     

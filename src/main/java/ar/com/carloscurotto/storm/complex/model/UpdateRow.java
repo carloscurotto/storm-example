@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
 
@@ -20,17 +22,17 @@ import com.google.common.base.Objects;
 public class UpdateRow implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     /**
      * The row id.
      */
     private String id;
-    
+
     /**
      * The column pairs (name, value) that are part of the primary key of the table this update applies to.
      */
     private Map<String, Object> keyColumns;
-    
+
     /**
      * The column pairs (name, value) that needs to be updated for this particular row.
      */
@@ -66,11 +68,20 @@ public class UpdateRow implements Serializable {
 
     /**
      * Gets the row id.
-     * 
+     *
      * @return the row id. It can not be blank.
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Gets the pairs (name, value) for the key columns.
+     *
+     * @return the pairs (name, value) for the key columns.
+     */
+    public Set<Entry<String, Object>> getKeyColumnEntries() {
+        return Collections.unmodifiableSet(keyColumns.entrySet());
     }
 
     /**
@@ -92,6 +103,15 @@ public class UpdateRow implements Serializable {
     public Object getKeyColumnValue(final String theKeyColumnName) {
         Validate.notBlank(theKeyColumnName, "The key column name cannot be blank.");
         return keyColumns.get(theKeyColumnName);
+    }
+
+    /**
+     * Gets the pairs (name, value) for the update columns.
+     *
+     * @return the pairs (name, value) for the update columns.
+     */
+    public Set<Entry<String, Object>> getUpdateColumnEntries() {
+        return Collections.unmodifiableSet(updateColumns.entrySet());
     }
 
     /**
@@ -135,5 +155,5 @@ public class UpdateRow implements Serializable {
         return MoreObjects.toStringHelper(this).add("id", id).add("keyColumns", keyColumns)
                 .add("updateColumns", updateColumns).toString();
     }
-    
+
 }

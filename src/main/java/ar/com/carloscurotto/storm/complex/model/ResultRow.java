@@ -7,8 +7,10 @@ import com.google.common.base.Objects;
 
 public class ResultRow {
 
-    private String id;
+    private String rowId;
+
     private ResultRowStatus status;
+
     private String message;
 
     /**
@@ -18,17 +20,17 @@ public class ResultRow {
     public ResultRow() {
     }
 
-    public ResultRow(final String theId, final ResultRowStatus theStatus, final String theMessage) {
-        Validate.notBlank(theId, "The id can not be blank.");
+    public ResultRow(final String theRowId, final ResultRowStatus theStatus, final String theMessage) {
+        Validate.notBlank(theRowId, "The row id can not be blank.");
         Validate.notNull(theStatus, "The status can not be null");
         Validate.notBlank(theMessage, "The message can not be blank");
-        id = theId;
+        rowId = theRowId;
         status = theStatus;
         message = theMessage;
     }
 
-    public String getId() {
-        return id;
+    public String getRowId() {
+        return rowId;
     }
 
     public boolean isSuccessful() {
@@ -55,7 +57,7 @@ public class ResultRow {
     public boolean equals(final Object object) {
         if (object instanceof ResultRow) {
             final ResultRow other = (ResultRow) object;
-            return Objects.equal(id, other.id) && Objects.equal(status, other.status)
+            return Objects.equal(rowId, other.rowId) && Objects.equal(status, other.status)
                     && Objects.equal(message, other.message);
         }
         return false;
@@ -63,12 +65,12 @@ public class ResultRow {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id, status, message);
+        return Objects.hashCode(rowId, status, message);
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", id).add("status", status).add("message", message).toString();
+        return MoreObjects.toStringHelper(this).add("id", rowId).add("status", status).add("message", message).toString();
     }
-    
+
 }
