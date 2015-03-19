@@ -23,8 +23,6 @@ import org.apache.phoenix.schema.ConstraintViolationException;
 import org.apache.phoenix.schema.TypeMismatchException;
 import org.apache.phoenix.util.QueryUtil;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
