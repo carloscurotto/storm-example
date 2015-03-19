@@ -163,9 +163,6 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 //                System.out.println(count);
 //                System.out.println(QueryUtil.getExplainPlan(rset));
                 
-
-
-
         showTradeTable(con);
 
         con.close();
