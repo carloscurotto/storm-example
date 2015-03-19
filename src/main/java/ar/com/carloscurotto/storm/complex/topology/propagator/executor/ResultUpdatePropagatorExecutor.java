@@ -25,25 +25,25 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
         for (UpdateRow updateRow : update.getRows()) {
             ResultRow externalResultRow = externalResult.getRow(updateRow.getId());
             ResultRow internalResultRow = internalResult.getRow(updateRow.getId());
-            // TODO see if we can refactor this conditional logic
-            if (externalResultRow.isSuccessful() && internalResultRow.isSuccessful()) {
-                finalResultRows.add(ResultRow.success(updateRow.getId(),
-                        "External and internal update sucessful."));
-            } else if (externalResultRow.isSkipped() && internalResultRow.isSuccessful()) {
-                finalResultRows.add(ResultRow.success(updateRow.getId(),
-                        "External update skipped and internal update sucessful."));
-            } else if (externalResultRow.isSuccessful() && internalResultRow.isFailure()) {
-                finalResultRows.add(ResultRow.success(updateRow.getId(),
-                        "External update successful and internal update failed."));
-            } else if (externalResultRow.isFailure()) {
-                finalResultRows
-                        .add(ResultRow.failure(updateRow.getId(), "External update failed."));
-            } else {
-                throw new RuntimeException("Update results not supported [external="
-                        + externalResultRow + ", internal= " + internalResultRow + "]");
-            }
+            finalResultRows.add(createFinalResultRow(externalResultRow, internalResultRow));
         }
         // TODO send the final result through the transport layer
     }
 
+    private ResultRow createFinalResultRow(final ResultRow externalResultRow, final ResultRow internalResultRow) {
+        if (externalResultRow.isSuccessful() && internalResultRow.isSuccessful()) {
+            return ResultRow.success(externalResultRow.getId(), "External and internal update sucessful.");
+        } else if (externalResultRow.isSkipped() && internalResultRow.isSuccessful()) {
+            return ResultRow.success(externalResultRow.getId(),
+                    "External update skipped and internal update sucessful.");
+        } else if (externalResultRow.isSuccessful() && internalResultRow.isFailure()) {
+            return ResultRow.success(externalResultRow.getId(),
+                    "External update successful and internal update failed.");
+        } else if (externalResultRow.isFailure()) {
+            return ResultRow.failure(externalResultRow.getId(), "External update failed.");
+        } else {
+            throw new RuntimeException("Update results not supported [external=" + externalResultRow + ", internal= "
+                    + internalResultRow + "]");
+        }
+    }
 }

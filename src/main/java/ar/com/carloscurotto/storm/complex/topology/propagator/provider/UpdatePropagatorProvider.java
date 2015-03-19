@@ -4,14 +4,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.service.Closeable;
-import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
 import ar.com.carloscurotto.storm.complex.service.Openable;
-import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
-import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
+import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 
 import com.google.common.base.Preconditions;
 
@@ -23,23 +20,20 @@ import com.google.common.base.Preconditions;
 public class UpdatePropagatorProvider implements Openable, Closeable, Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    private Map<String, OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult>> propagators;
-
+    
+    private Map<String, AbstractUpdatePropagator> propagators;
+    
     private boolean isOpen;
 
-    public UpdatePropagatorProvider(
-            final Map<String, OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult>> thePropagators) {
+    public UpdatePropagatorProvider(final Map<String, AbstractUpdatePropagator> thePropagators) {
         Validate.notNull(thePropagators, "The propagators can not be null.");
-        propagators = new HashMap<String, OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult>>(
-                thePropagators);
+        propagators = new HashMap<String, AbstractUpdatePropagator>(thePropagators);
     }
 
     @Override
     public void open() {
         Preconditions.checkState(!isOpen(), "The service is already opened.");
-        for (OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult> propagator : propagators
-                .values()) {
+        for (AbstractUpdatePropagator propagator : propagators.values()) {
             propagator.open();
         }
         isOpen = true;
@@ -52,24 +46,19 @@ public class UpdatePropagatorProvider implements Openable, Closeable, Serializab
 
     @Override
     public void close() {
-        for (OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult> propagator : propagators
-                .values()) {
+        for (AbstractUpdatePropagator propagator : propagators.values()) {
             propagator.close();
         }
         isOpen = false;
     }
 
-    public OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult> getPropagator(
-            final String theSystemId) {
-        Preconditions.checkArgument(StringUtils.isNotBlank(theSystemId),
-                "The system id can not be blank.");
+    public AbstractUpdatePropagator getPropagator(final String theSystemId) {
+        Validate.notBlank(theSystemId, "The system id can not be blank.");
         Preconditions.checkState(isOpen(), "The provider is not open. Please, open it first.");
-        OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult> propagator = propagators
-                .get(theSystemId);
-        Preconditions.checkState(propagator != null,
-                "Can not find a propagator for the system id [" + theSystemId
-                        + "]. Please, configure the propagator properly.");
+        AbstractUpdatePropagator propagator = propagators.get(theSystemId);
+        Preconditions.checkState(propagator != null, "Can not find a propagator for the system id [" + theSystemId
+                + "]. Please, configure the propagator properly.");
         return propagator;
     }
-
+    
 }

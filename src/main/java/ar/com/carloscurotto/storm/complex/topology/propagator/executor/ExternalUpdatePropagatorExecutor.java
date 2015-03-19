@@ -15,7 +15,7 @@ import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
-import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
+import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 import ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider;
 import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
@@ -63,24 +63,20 @@ public class ExternalUpdatePropagatorExecutor extends BaseFunction {
     }
 
     private Collection<ResultRow> executePropagator(final Update theUpdate) {
-        Collection<UpdateRow> updateRows = theUpdate.getRows();
-        Collection<ResultRow> resultRows = new ArrayList<ResultRow>(updateRows.size());
-        for (UpdateRow updateRow : updateRows) {
-            OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult> propagator = propagatorProvider
-                    .getPropagator(theUpdate.getSystemId());
-            UpdatePropagatorResult updatePropagatorResult = propagator
-                    .execute(new UpdatePropagatorContext(theUpdate.getTableName(), updateRow,
-                            theUpdate.getParameters()));
+        Collection<ResultRow> resultRows = new ArrayList<ResultRow>(theUpdate.getRows().size());
+        for (UpdateRow updateRow : theUpdate.getRows()) {
+            AbstractUpdatePropagator propagator = propagatorProvider.getPropagator(theUpdate.getSystemId());
+            UpdatePropagatorResult updatePropagatorResult =
+                    propagator.execute(new UpdatePropagatorContext(theUpdate.getTableName(), updateRow, theUpdate
+                            .getParameters()));
             resultRows.add(ResultRow.from(updateRow.getId(), updatePropagatorResult));
         }
         return resultRows;
-
     }
 
     private Collection<ResultRow> createSkipResultRows(final Update theUpdate) {
-        Collection<UpdateRow> updateRows = theUpdate.getRows();
-        Collection<ResultRow> resultRows = new ArrayList<ResultRow>(updateRows.size());
-        for (UpdateRow updateRow : updateRows) {
+        Collection<ResultRow> resultRows = new ArrayList<ResultRow>(theUpdate.getRows().size());
+        for (UpdateRow updateRow : theUpdate.getRows()) {
             resultRows.add(ResultRow.skip(updateRow.getId()));
         }
         return resultRows;

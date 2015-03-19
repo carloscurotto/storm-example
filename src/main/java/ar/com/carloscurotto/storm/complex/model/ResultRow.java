@@ -9,7 +9,7 @@ import com.google.common.base.Objects;
 
 public class ResultRow {
 
-    private String rowId;
+    private String id;
 
     private String message;
 
@@ -22,41 +22,41 @@ public class ResultRow {
     public ResultRow() {
     }
 
-    private ResultRow(final String theRowId, final ResultStatus theStatus, final String theMessage) {
-        Validate.notBlank(theRowId, "The row id can not be null.");
+    private ResultRow(final String theId, final ResultStatus theStatus, final String theMessage) {
+        Validate.notBlank(theId, "The id can not be null.");
         Validate.notNull(theStatus, "The status can not be null.");
-        rowId = theRowId;
+        id = theId;
         message = theMessage;
         status = theStatus;
     }
 
-    public static ResultRow from(final String theRowId,
+    public static ResultRow from(final String theId,
             final UpdatePropagatorResult theUpdatePropagatorResult) {
-        Validate.notBlank(theRowId, "The row id can not be blank.");
+        Validate.notBlank(theId, "The id can not be blank.");
         Validate.notNull(theUpdatePropagatorResult, "The update propagator result.");
-        return new ResultRow(theRowId, theUpdatePropagatorResult.getStatus(),
+        return new ResultRow(theId, theUpdatePropagatorResult.getStatus(),
                 theUpdatePropagatorResult.getMessage());
     }
 
-    public static ResultRow skip(final String theRowId) {
-        Validate.notBlank(theRowId, "The row id can not be blank.");
-        return new ResultRow(theRowId, ResultStatus.SKIPPED, null);
+    public static ResultRow skip(final String theId) {
+        Validate.notBlank(theId, "The id can not be blank.");
+        return new ResultRow(theId, ResultStatus.SKIPPED, null);
     }
 
-    public static ResultRow success(final String theRowId, final String theMessage) {
-        Validate.notBlank(theRowId, "The row id can not be blank.");
-        Validate.notBlank(theRowId, "The message can not be blank.");
-        return new ResultRow(theRowId, ResultStatus.SUCCESS, theMessage);
+    public static ResultRow success(final String theId, final String theMessage) {
+        Validate.notBlank(theId, "The id can not be blank.");
+        Validate.notBlank(theId, "The message can not be blank.");
+        return new ResultRow(theId, ResultStatus.SUCCESS, theMessage);
     }
 
-    public static ResultRow failure(final String theRowId, final String theMessage) {
-        Validate.notBlank(theRowId, "The row id can not be blank.");
-        Validate.notBlank(theRowId, "The message can not be blank.");
-        return new ResultRow(theRowId, ResultStatus.FAILURE, theMessage);
+    public static ResultRow failure(final String theId, final String theMessage) {
+        Validate.notBlank(theId, "The id can not be blank.");
+        Validate.notBlank(theId, "The message can not be blank.");
+        return new ResultRow(theId, ResultStatus.FAILURE, theMessage);
     }
 
-    public String getRowId() {
-        return rowId;
+    public String getId() {
+        return id;
     }
 
     public String getMessage() {
@@ -79,7 +79,7 @@ public class ResultRow {
     public boolean equals(final Object object) {
         if (object instanceof ResultRow) {
             final ResultRow other = (ResultRow) object;
-            return Objects.equal(rowId, other.rowId) && Objects.equal(message, other.message)
+            return Objects.equal(id, other.id) && Objects.equal(message, other.message)
                     && Objects.equal(status, other.status);
         }
         return false;
@@ -87,12 +87,12 @@ public class ResultRow {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(rowId, message, status);
+        return Objects.hashCode(id, message, status);
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("id", rowId).add("message", message)
+        return MoreObjects.toStringHelper(this).add("id", id).add("message", message)
                 .add("status", status).toString();
     }
 

@@ -14,7 +14,7 @@ import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
-import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
+import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 import ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider;
 import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
@@ -46,22 +46,20 @@ public class InternalUpdatePropagatorExecutor extends BaseFunction {
     public void execute(TridentTuple theTuple, TridentCollector theCollector) {
         Update update = (Update) theTuple.getValueByField("update");
         Result externalResult = (Result) theTuple.getValueByField("external-result");
-        Collection<UpdateRow> updateRows = update.getRows();
-        Collection<ResultRow> internalResultRows = new ArrayList<ResultRow>();
-        for (UpdateRow updateRow : updateRows) {
+        Collection<ResultRow> resultRows = new ArrayList<ResultRow>();
+        for (UpdateRow updateRow : update.getRows()) {
             ResultRow externalResultRow = externalResult.getRow(updateRow.getId());
             if (externalResultRow.isSuccessful() || externalResultRow.isSkipped()) {
-                OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult> propagator = propagatorProvider
-                        .getPropagator(update.getSystemId());
-                UpdatePropagatorResult updatePropagatorResult = propagator
-                        .execute(new UpdatePropagatorContext(update.getTableName(), updateRow,
-                                update.getParameters()));
-                internalResultRows.add(ResultRow.from(updateRow.getId(), updatePropagatorResult));
+                AbstractUpdatePropagator propagator = propagatorProvider.getPropagator(update.getSystemId());
+                UpdatePropagatorResult updatePropagatorResult =
+                        propagator.execute(new UpdatePropagatorContext(update.getTableName(), updateRow, update
+                                .getParameters()));
+                resultRows.add(ResultRow.from(updateRow.getId(), updatePropagatorResult));
             } else {
-                internalResultRows.add(ResultRow.skip(updateRow.getId()));
+                resultRows.add(ResultRow.skip(updateRow.getId()));
             }
         }
-        theCollector.emit(new Values(new Result(internalResultRows)));
+        theCollector.emit(new Values(new Result(resultRows)));
     }
 
 }
