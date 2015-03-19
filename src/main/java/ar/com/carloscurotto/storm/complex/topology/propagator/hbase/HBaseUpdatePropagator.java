@@ -9,10 +9,9 @@ import javax.sql.DataSource;
 import org.apache.commons.dbutils.DbUtils;
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.model.ResultRow;
-import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
 import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
+import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
  * @author N619614
@@ -47,29 +46,16 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
         dataSource = theDataSource;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator#doExecute(ar.com.carloscurotto
-     * .storm.complex.topology.propagator.context.UpdatePropagatorContext)
-     */
     @Override
-    protected ResultRow doExecute(UpdatePropagatorContext theContext) {
-        return generateResultRowForExecution(theContext);
-    }
-
-    private ResultRow generateResultRowForExecution(UpdatePropagatorContext theContext) {
-        String theRowId = "EmptyRowID";
+    protected UpdatePropagatorResult doExecute(UpdatePropagatorContext theContext) {
+        Validate.notNull(theContext, "The Context cannot be null.");
         try {
-            Validate.notNull(theContext, "The Context cannot be null.");
-            theRowId = theContext.getRow().getId();
             String upsertQuery = createUpsertQuery(theContext);
             executeUpsertQuery(upsertQuery);
+            return UpdatePropagatorResult.createSuccess("Row succefully updated.");
         } catch (Exception e) {
-            return new ResultRow(theRowId, ResultRowStatus.FAILURE, e.getMessage());
+            return UpdatePropagatorResult.createFailure(e.getMessage());
         }
-        return new ResultRow(theRowId, ResultRowStatus.SUCCESS, "Row succefully updated.");
     }
 
     private String createUpsertQuery(final UpdatePropagatorContext theUpdate) {
@@ -94,28 +80,6 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
         } finally {
             DbUtils.closeQuietly(connection);
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ar.com.carloscurotto.storm.complex.service.OpenAwareService#doOpen()
-     */
-    @Override
-    protected void doOpen() {
-        // TODO Auto-generated method stub
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see ar.com.carloscurotto.storm.complex.service.OpenAwareService#doClose()
-     */
-    @Override
-    protected void doClose() {
-        // TODO Auto-generated method stub
-
     }
 
 }
