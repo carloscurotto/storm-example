@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import storm.trident.operation.BaseFunction;
 import storm.trident.operation.TridentCollector;
@@ -24,6 +26,8 @@ import backtype.storm.tuple.Values;
 public class ExternalUpdatePropagatorExecutor extends BaseFunction {
 
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExternalUpdatePropagatorExecutor.class);
 
     private UpdatePropagatorProvider propagatorProvider;
 
@@ -41,11 +45,13 @@ public class ExternalUpdatePropagatorExecutor extends BaseFunction {
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map theConfiguration, TridentOperationContext theContext) {
+        LOGGER.debug("Opening external update propagator executor");
         propagatorProvider.open();
     }
 
     @Override
     public void cleanup() {
+        LOGGER.debug("Closing external update propagator executor");
         propagatorProvider.close();
     }
 
@@ -66,6 +72,8 @@ public class ExternalUpdatePropagatorExecutor extends BaseFunction {
         Collection<ResultRow> resultRows = new ArrayList<ResultRow>(theUpdate.getRows().size());
         for (UpdateRow updateRow : theUpdate.getRows()) {
             AbstractUpdatePropagator propagator = propagatorProvider.getPropagator(theUpdate.getSystemId());
+            LOGGER.debug("Executing external update propagator for row [" + updateRow + "] on thread ["
+                    + Thread.currentThread().getName() + "].");
             UpdatePropagatorResult updatePropagatorResult =
                     propagator.execute(new UpdatePropagatorContext(theUpdate.getTableName(), updateRow, theUpdate
                             .getParameters()));
@@ -77,6 +85,8 @@ public class ExternalUpdatePropagatorExecutor extends BaseFunction {
     private Collection<ResultRow> createSkipResultRows(final Update theUpdate) {
         Collection<ResultRow> resultRows = new ArrayList<ResultRow>(theUpdate.getRows().size());
         for (UpdateRow updateRow : theUpdate.getRows()) {
+            LOGGER.debug("Skipping external update propagator for row [" + theUpdate + "] on thread ["
+                    + Thread.currentThread().getName() + "].");            
             resultRows.add(ResultRow.skip(updateRow.getId()));
         }
         return resultRows;

@@ -38,7 +38,11 @@
     </constructor-arg>
   </bean>
 
-  <bean id="ResultUpdatePropagatorExecutor" class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.ResultUpdatePropagatorExecutor" />
+  <bean id="ResultUpdatePropagatorExecutor" class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.ResultUpdatePropagatorExecutor">
+  	<constructor-arg>
+      <bean id="PrintResultRowProducer" class="ar.com.carloscurotto.storm.complex.transport.print.PrintResultRowProducer" />
+  	</constructor-arg>
+  </bean>
 
   <bean id="NullUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
 
