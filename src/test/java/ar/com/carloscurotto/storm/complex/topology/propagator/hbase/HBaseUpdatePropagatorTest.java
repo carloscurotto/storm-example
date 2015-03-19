@@ -10,7 +10,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.sql.DataSource;
 
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
@@ -49,9 +53,19 @@ public class HBaseUpdatePropagatorTest {
     @Mock
     private UpdatePropagatorContext context;
 
+    @Mock
+    private DataSource dataSourceMock;
+
+    @Mock
+    private Connection connectionMock;
+
+    @Mock
+    private Statement statementMock;
+
     @Before
     public void setUp() {
-        hbaseInternalUpdatePropagator = new HBaseUpdatePropagator(queryBuilderMock, queryExecutorMock);
+        hbaseInternalUpdatePropagator = new HBaseUpdatePropagator(queryBuilderMock,
+                queryExecutorMock);
     }
 
     @Test(expected = NullPointerException.class)
@@ -65,7 +79,35 @@ public class HBaseUpdatePropagatorTest {
     }
 
     @Test
-    public void propagateNullUpdatePropagatorContext() {
+    public void executeWithNonNullUpdateAndUpdatePropagatorResultIsSuccess() throws SQLException {
+        ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
+        expect(queryBuilderMock.build(updatePropagatorContextMock)).andReturn("upsertQuery");
+        queryExecutorMock.execute("upsertQuery");
+        expectLastCall();
+        replay(updatePropagatorContextMock, queryBuilderMock, queryExecutorMock);
+        UpdatePropagatorResult updatePropagatorResult = hbaseInternalUpdatePropagator
+                .propagate(updatePropagatorContextMock);
+        assertThat(updatePropagatorResult.getStatus(), equalTo(ResultStatus.SUCCESS));
+        assertThat(updatePropagatorResult.getMessage(), equalTo("Row succefully updated."));
+        verify(updatePropagatorContextMock, queryBuilderMock, queryExecutorMock);
+    }
+
+    @Test
+    public void executeWithNonNullUpdateAndUpdatePropagatorResultIsNotSuccess() throws SQLException {
+        ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
+        expect(queryBuilderMock.build(updatePropagatorContextMock)).andReturn("upsertQuery");
+        queryExecutorMock.execute("upsertQuery");
+        expectLastCall().andThrow(new RuntimeException("An error occurred"));
+        replay(updatePropagatorContextMock, queryBuilderMock, queryExecutorMock);
+        UpdatePropagatorResult updatePropagatorResult = hbaseInternalUpdatePropagator
+                .propagate(updatePropagatorContextMock);
+        assertThat(updatePropagatorResult.getStatus(), equalTo(ResultStatus.FAILURE));
+        assertThat(updatePropagatorResult.getMessage(), equalTo("An error occurred"));
+        verify(updatePropagatorContextMock, queryBuilderMock, queryExecutorMock);
+    }
+
+    @Test
+    public void doExecuteNullUpdatePropagatorContext() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage(equalTo("The Context cannot be null."));
         hbaseInternalUpdatePropagator.open();
@@ -103,7 +145,8 @@ public class HBaseUpdatePropagatorTest {
     public void open() throws SQLException {
         ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", false);
         hbaseInternalUpdatePropagator.open();
-        boolean isOpen = (Boolean) ReflectionTestUtils.getField(hbaseInternalUpdatePropagator, "isOpen");
+        boolean isOpen = (Boolean) ReflectionTestUtils.getField(hbaseInternalUpdatePropagator,
+                "isOpen");
         assertTrue(isOpen);
     }
 
