@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 
@@ -25,18 +24,19 @@ public class QueryBuilder implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Builds the query from the {@link Update}.
+     * Builds the query from the {@link UpdatePropagatorContext}.
      *
-     * @param theUpdate
-     *            the update where this builder will build the query from. It can not be null.
+     * @param theUpdatePropagatorContext
+     *            the UpdatePropagatorContext where this builder will build the query from. It can not be null.
      * @return the query as a String. It is never null nor empty.
      */
-    public String build(final UpdatePropagatorContext theUpdate) {
-        Validate.notNull(theUpdate, "The update can not be null");
-        String query = generateUpsertQuery(theUpdate.getTableName(), theUpdate.getRow());
+    public String build(final UpdatePropagatorContext theUpdatePropagatorContext) {
+        Validate.notNull(theUpdatePropagatorContext, "The update can not be null");
+        String query = generateUpsertQuery(theUpdatePropagatorContext.getTableName(), theUpdatePropagatorContext.getRow());
         return query;
     }
 
+    //TODO Change the where part and use the primary key to check if a row already exists
     private String generateUpsertQuery(final String theTableName, final UpdateRow theUpdateRow) {
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theUpdateRow, "The update row can not be null.");
@@ -56,15 +56,17 @@ public class QueryBuilder implements Serializable {
 
     private String createUpsertClause(UpdateRow updateRow) {
         List<String> columnNames = new ArrayList<String>();
-        List<String> columnValues = new ArrayList<String>();
+        List<Object> columnValues = new ArrayList<Object>();
         for (Entry<String, Object> updateColumnEntry : updateRow.getUpdateColumnEntries()) {
             columnNames.add(updateColumnEntry.getKey());
-            columnValues.add(updateColumnEntry.getValue().toString());
+            Object value = updateColumnEntry.getValue();
+            //TODO the condition below doesnt work
+            columnValues.add((value instanceof Number || value instanceof Boolean)?value:"'" + value.toString() + "'");
         }
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
-        builder.append(" VALUES ").append("(").append(collectionToDelimitedString(columnValues, ", ", "'", "'"))
-                .append(")");
+        builder.append(" VALUES ").append("(")
+                .append(collectionToDelimitedString(columnValues, ", ")).append(")");
         return builder.toString();
     }
 }
