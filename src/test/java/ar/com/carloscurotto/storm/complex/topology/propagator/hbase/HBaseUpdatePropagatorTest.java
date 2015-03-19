@@ -4,7 +4,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,12 +23,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.test.AssertThrows;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
-import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
+import ar.com.carloscurotto.storm.complex.model.ResultStatus;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
+import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
  * @author N619614
@@ -85,8 +89,6 @@ public class HBaseUpdatePropagatorTest {
     @Test
     public void executeWithNonNullUpdateAndQueryResultIsExactlyOne() throws SQLException {
         ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
-        expect(updatePropagatorContextMock.getRow()).andReturn(updateRowMock);
-        expect(updateRowMock.getId()).andReturn("MockRowID");
         expect(queryBuilderMock.build(updatePropagatorContextMock)).andReturn("upsertQuery");
         expect(dataSourceMock.getConnection()).andReturn(connectionMock);
         expect(connectionMock.createStatement()).andReturn(statementMock);
@@ -97,10 +99,9 @@ public class HBaseUpdatePropagatorTest {
         expectLastCall();
         replay(statementMock, updatePropagatorContextMock, queryBuilderMock, connectionMock,
                 dataSourceMock, updateRowMock);
-        ResultRow resultRow = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
-        assertEquals(resultRow.getRowId(), "MockRowID");
-        assertEquals(resultRow.getStatus(), ResultRowStatus.SUCCESS);
-        assertEquals(resultRow.getMessage(), "Row succefully updated.");
+        UpdatePropagatorResult updatePropagatorResult = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
+        assertEquals(updatePropagatorResult.getStatus(), ResultStatus.SUCCESS);
+        assertEquals(updatePropagatorResult.getMessage(), "Row succefully updated.");
         verify(statementMock, updatePropagatorContextMock, queryBuilderMock, connectionMock,
                 dataSourceMock, updateRowMock);
     }
@@ -108,8 +109,6 @@ public class HBaseUpdatePropagatorTest {
     @Test
     public void executeWithNonNullUpdateAndQueryResultIsZero() throws SQLException {
         ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
-        expect(updatePropagatorContextMock.getRow()).andReturn(updateRowMock);
-        expect(updateRowMock.getId()).andReturn("MockRowID");
         expect(queryBuilderMock.build(updatePropagatorContextMock)).andReturn("upsertQuery");
         expect(dataSourceMock.getConnection()).andReturn(connectionMock);
         expect(connectionMock.createStatement()).andReturn(statementMock);
@@ -121,10 +120,9 @@ public class HBaseUpdatePropagatorTest {
         expectLastCall();
         replay(statementMock, updatePropagatorContextMock, queryBuilderMock, connectionMock,
                 dataSourceMock, updateRowMock);
-        ResultRow resultRow = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
-        assertEquals(resultRow.getRowId(), "MockRowID");
-        assertEquals(resultRow.getStatus(), ResultRowStatus.FAILURE);
-        assertTrue(resultRow.getMessage().startsWith("Rolling back query ["));
+        UpdatePropagatorResult updatePropagatorResult = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
+        assertEquals(updatePropagatorResult.getStatus(), ResultStatus.FAILURE);
+        assertTrue(updatePropagatorResult.getMessage().startsWith("Rolling back query ["));
         verify(statementMock, updatePropagatorContextMock, queryBuilderMock, connectionMock,
                 dataSourceMock, updateRowMock);
     }
@@ -132,8 +130,6 @@ public class HBaseUpdatePropagatorTest {
     @Test
     public void executeWithNonNullUpdateAndQueryResultIsMoreThanOne() throws SQLException {
         ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
-        expect(updatePropagatorContextMock.getRow()).andReturn(updateRowMock);
-        expect(updateRowMock.getId()).andReturn("MockRowID");
         expect(queryBuilderMock.build(updatePropagatorContextMock)).andReturn("upsertQuery");
         expect(dataSourceMock.getConnection()).andReturn(connectionMock);
         expect(connectionMock.createStatement()).andReturn(statementMock);
@@ -144,10 +140,9 @@ public class HBaseUpdatePropagatorTest {
         expectLastCall();
         replay(statementMock, updatePropagatorContextMock, queryBuilderMock, connectionMock,
                 dataSourceMock, updateRowMock);
-        ResultRow resultRow = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
-        assertEquals(resultRow.getRowId(), "MockRowID");
-        assertEquals(resultRow.getStatus(), ResultRowStatus.FAILURE);
-        assertTrue(resultRow.getMessage().startsWith("Rolling back query ["));
+        UpdatePropagatorResult updatePropagatorResult = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
+        assertEquals(updatePropagatorResult.getStatus(), ResultStatus.FAILURE);
+        assertTrue(updatePropagatorResult.getMessage().startsWith("Rolling back query ["));
         verify(statementMock, updatePropagatorContextMock, queryBuilderMock, connectionMock,
                 dataSourceMock, updateRowMock);
     }
@@ -155,23 +150,18 @@ public class HBaseUpdatePropagatorTest {
     @Test
     public void executeOpenWithNonNullUpdateThrowsSqlExceptionAtConnection() throws SQLException {
         ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
-        expect(updatePropagatorContextMock.getRow()).andReturn(updateRowMock);
-        expect(updateRowMock.getId()).andReturn("MockRowID");
         expect(queryBuilderMock.build(updatePropagatorContextMock)).andReturn("upsertQuery");
         expect(dataSourceMock.getConnection()).andThrow(new SQLException());
         replay(updatePropagatorContextMock, queryBuilderMock, dataSourceMock, updateRowMock);
-        ResultRow resultRow = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
-        assertEquals(resultRow.getRowId(), "MockRowID");
-        assertEquals(resultRow.getStatus(), ResultRowStatus.FAILURE);
-        assertTrue(resultRow.getMessage().startsWith("Something went wrong while executing the query"));
+        UpdatePropagatorResult updatePropagatorResult = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
+        assertEquals(updatePropagatorResult.getStatus(), ResultStatus.FAILURE);
+        assertTrue(updatePropagatorResult.getMessage().startsWith("Something went wrong while executing the query"));
         verify(updatePropagatorContextMock, queryBuilderMock, dataSourceMock, updateRowMock);
     }
 
     @Test
     public void executeOpenWithNonNullUpdateThrowsSqlExceptionAtExecute() throws SQLException {
         ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
-        expect(updatePropagatorContextMock.getRow()).andReturn(updateRowMock);
-        expect(updateRowMock.getId()).andReturn("MockRowID");
         expect(queryBuilderMock.build(updatePropagatorContextMock)).andReturn("upsertQuery");
         expect(dataSourceMock.getConnection()).andReturn(connectionMock);
         expect(connectionMock.createStatement()).andReturn(statementMock);
@@ -180,10 +170,9 @@ public class HBaseUpdatePropagatorTest {
         expectLastCall();
         replay(statementMock, updatePropagatorContextMock, queryBuilderMock, connectionMock,
                 dataSourceMock, updateRowMock);
-        ResultRow resultRow = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
-        assertEquals(resultRow.getRowId(), "MockRowID");
-        assertEquals(resultRow.getStatus(), ResultRowStatus.FAILURE);
-        assertTrue(resultRow.getMessage().startsWith("Something went wrong while executing the query"));
+        UpdatePropagatorResult updatePropagatorResult = hbaseInternalUpdatePropagator.execute(updatePropagatorContextMock);
+        assertEquals(updatePropagatorResult.getStatus(), ResultStatus.FAILURE);
+        assertTrue(updatePropagatorResult.getMessage().startsWith("Something went wrong while executing the query"));
         verify(statementMock, updatePropagatorContextMock, queryBuilderMock, connectionMock,
                 dataSourceMock, updateRowMock);
     }
@@ -221,5 +210,17 @@ public class HBaseUpdatePropagatorTest {
         assertFalse(isOpen);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void openOpened() {
+        ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
+        hbaseInternalUpdatePropagator.open();
+    }
+
+    @Test
+    public void openClosed() {
+        ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", false);
+        hbaseInternalUpdatePropagator.open();
+        assertTrue(hbaseInternalUpdatePropagator.isOpen());
+    }
     
 }
