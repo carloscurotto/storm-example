@@ -5,10 +5,10 @@ import java.util.Map;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
-import ar.com.carloscurotto.storm.complex.model.ResultRowStatus;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
+import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
  * Propagates and update to the GLOSS external system.
@@ -70,15 +70,15 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
      * @param theUpdate the Update to propagate. It cannot be null.
      */
     @Override
-    protected ResultRow doExecute(UpdatePropagatorContext theContext) {
+    protected UpdatePropagatorResult doExecute(UpdatePropagatorContext theContext) {
         Validate.notNull(theContext, "The update cannot be null.");
         try {
             propagateRow(theContext.getParameters(), theContext.getRow());
         } catch( Throwable t) {
-            return new ResultRow(theContext.getRow().getId(),ResultRowStatus.FAILURE, t.getMessage());
+            return UpdatePropagatorResult.createFailure(t.getMessage());
         }
         
-        return new ResultRow(theContext.getRow().getId(),ResultRowStatus.SUCCESS, ResultRowStatus.SUCCESS.toString());
+        return UpdatePropagatorResult.createSuccess("SUCCESS");
     }
 
     /**

@@ -5,6 +5,7 @@
 
 # Target folder #
 target/
+bin/
 
 # Package files #
 *.jar

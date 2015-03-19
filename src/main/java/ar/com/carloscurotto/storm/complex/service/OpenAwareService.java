@@ -18,6 +18,8 @@ public abstract class OpenAwareService<T, R> implements Service<T, R> {
 
     @Override
     public void open() {
+        Preconditions.checkState(!isOpen(),
+                "The service is already opened. Can not open more than once.");
         doOpen();
         isOpen = true;
     }
@@ -39,8 +41,10 @@ public abstract class OpenAwareService<T, R> implements Service<T, R> {
      */
     @Override
     public void close() {
-        doClose();
-        isOpen = false;
+        if (isOpen()) {
+            doClose();
+            isOpen = false;
+        }
     }
 
     protected abstract void doClose();
