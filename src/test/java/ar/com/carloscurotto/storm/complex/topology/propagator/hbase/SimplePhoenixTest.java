@@ -133,7 +133,7 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
         UpdatePropagatorContext theContext = getUpdatePropagatorContext();
 
-        UpdatePropagatorResult updatePropagatorResult = hBaseUpdatePropagator.propagator(theContext);
+        UpdatePropagatorResult updatePropagatorResult = hBaseUpdatePropagator.propagate(theContext);
         
         System.out.println("Result: Status " + updatePropagatorResult.getStatus() + " Message " + updatePropagatorResult.getMessage());
 
