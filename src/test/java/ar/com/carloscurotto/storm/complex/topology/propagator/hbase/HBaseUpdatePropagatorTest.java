@@ -18,15 +18,12 @@ import org.apache.commons.dbutils.DbUtils;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.springframework.test.AssertThrows;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.ResultStatus;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
@@ -72,18 +69,9 @@ public class HBaseUpdatePropagatorTest {
         new HBaseUpdatePropagator(null, dataSourceMock);
     }
 
-    // TODO
-    @Ignore
     @Test(expected = NullPointerException.class)
-    public void newInstanceNullDataSpurce() {
+    public void newInstanceNullDataSource() {
         new HBaseUpdatePropagator(queryBuilderMock, null);
-    }
-
-    // TODO
-    @Ignore
-    @Test
-    public void newInstanceWithUpsertQuery() {
-        new HBaseUpdatePropagator(queryBuilderMock, dataSourceMock);
     }
 
     @Test
@@ -184,14 +172,6 @@ public class HBaseUpdatePropagatorTest {
         boolean isOpen = (Boolean) ReflectionTestUtils.getField(hbaseInternalUpdatePropagator,
                 "isOpen");
         assertTrue(isOpen);
-    }
-
-    // TODO
-    @Ignore
-    @Test(expected = RuntimeException.class)
-    public void openDataSourceThrowsRuntimeException() {
-        ReflectionTestUtils.setField(hbaseInternalUpdatePropagator, "isOpen", true);
-        hbaseInternalUpdatePropagator.open();
     }
 
     @Test
