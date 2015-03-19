@@ -13,7 +13,7 @@
       <bean id="ExternalUpdatePropagatorProvider" class="ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider">
         <constructor-arg>
           <map>
-            <entry key="SEMS" value-ref="PrintExternalUpdatePropagator"></entry>
+            <entry key="SEMS" value-ref="NullUpdatePropagator"></entry>
           </map>
         </constructor-arg>
       </bean>
@@ -30,8 +30,8 @@
       <bean id="InternalUpdatePropagatorProvider" class="ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider">
         <constructor-arg>
           <map>
-            <entry key="SEMS" value-ref="PrintInternalUpdatePropagator"></entry>
-            <entry key="ANOTHER" value-ref="PrintInternalUpdatePropagator"></entry>
+            <entry key="SEMS" value-ref="NullUpdatePropagator"></entry>
+            <entry key="ANOTHER" value-ref="NullUpdatePropagator"></entry>
           </map>
         </constructor-arg>
       </bean>
@@ -40,8 +40,6 @@
 
   <bean id="ResultUpdatePropagatorExecutor" class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.ResultUpdatePropagatorExecutor" />
 
-  <bean id="PrintExternalUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.print.PrintExternalUpdatePropagator" />
-
-  <bean id="PrintInternalUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.print.PrintInternalUpdatePropagator" />
+  <bean id="NullUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
 
 </beans>

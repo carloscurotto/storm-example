@@ -10,6 +10,14 @@ public abstract class AbstractUpdatePropagator extends
         OpenAwareService<UpdatePropagatorContext, UpdatePropagatorResult> implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
+    @Override
+    protected void doOpen() {
+    }
+
+    @Override
+    protected void doClose() {
+    }    
 
     @Override
     protected abstract UpdatePropagatorResult doExecute(final UpdatePropagatorContext theContext);
