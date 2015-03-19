@@ -1,6 +1,8 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
@@ -13,6 +15,8 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropa
  * @author N619614
  */
 public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
+    
+    static Logger logger = LoggerFactory.getLogger("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.HBaseUpdatePropagator");
 
     private static final long serialVersionUID = 1L;
 
@@ -45,9 +49,11 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
     protected UpdatePropagatorResult doExecute(UpdatePropagatorContext theContext) {
         Validate.notNull(theContext, "The Context cannot be null.");
         try {
-            queryExecutor.execute(queryBuilder.build(theContext));
+            String upsertQuery = queryBuilder.build(theContext);
+            logger.debug("Executing queyr: " + upsertQuery);
+            queryExecutor.execute(upsertQuery);
             return UpdatePropagatorResult.createSuccess("Row succefully updated.");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return UpdatePropagatorResult.createFailure(e.getMessage());
         }
     }
