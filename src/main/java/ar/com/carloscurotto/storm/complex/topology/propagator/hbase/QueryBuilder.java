@@ -1,6 +1,3 @@
-/**
- *
- */
 package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
 import static org.springframework.util.StringUtils.collectionToDelimitedString;
@@ -24,47 +21,49 @@ import ar.com.carloscurotto.storm.complex.model.UpdateRow;
  */
 public class QueryBuilder {
 
-	/**
-	 * Builds the query from the {@link Update}.
-	 *
-	 * @param theUpdate
-	 *            the update where this builder will build the query from. It can not be null.
-	 * @return the query as a String. It is never null nor empty.
-	 */
-	public String build(final UpdatePropagatorContext theUpdate) {
-		Validate.notNull(theUpdate, "The update can not be null");
-		String query = generateUpsertQuery(theUpdate.getTableName(), theUpdate.getRow());
-		return query;
-	}
+    /**
+     * Builds the query from the {@link Update}.
+     *
+     * @param theUpdate
+     *            the update where this builder will build the query from. It can not be null.
+     * @return the query as a String. It is never null nor empty.
+     */
+    public String build(final UpdatePropagatorContext theUpdate) {
+        Validate.notNull(theUpdate, "The update can not be null");
+        String query = generateUpsertQuery(theUpdate.getTableName(), theUpdate.getRow());
+        return query;
+    }
 
-	private String generateUpsertQuery(final String theTableName, final UpdateRow theUpdateRow) {
-		Validate.notBlank(theTableName, "The table name can not be blank.");
-		Validate.notNull(theUpdateRow, "The update row can not be null.");
-		StringBuilder upsertQuery = new StringBuilder();
-		upsertQuery.append("UPSERT INTO ").append(theTableName).append(" ").append(createUpsertClause(theUpdateRow));
-		upsertQuery.append(" WHERE ").append(createWhereClause(theUpdateRow));
-		return upsertQuery.toString();
-	}
+    private String generateUpsertQuery(final String theTableName, final UpdateRow theUpdateRow) {
+        Validate.notBlank(theTableName, "The table name can not be blank.");
+        Validate.notNull(theUpdateRow, "The update row can not be null.");
+        StringBuilder upsertQuery = new StringBuilder();
+        upsertQuery.append("UPSERT INTO ").append(theTableName).append(" ")
+                .append(createUpsertClause(theUpdateRow));
+        upsertQuery.append(" WHERE ").append(createWhereClause(theUpdateRow));
+        return upsertQuery.toString();
+    }
 
-	private String createWhereClause(UpdateRow updateRow) {
-		List<String> keyValueConditions = new ArrayList<String>();
-		for (Entry<String, Object> keyColumnEntry : updateRow.getKeyColumnEntries()) {
-			keyValueConditions.add(keyColumnEntry.getKey() + " = '" + keyColumnEntry.getValue() + "'");
-		}
-		return collectionToDelimitedString(keyValueConditions, " AND ");
-	}
+    private String createWhereClause(UpdateRow updateRow) {
+        List<String> keyValueConditions = new ArrayList<String>();
+        for (Entry<String, Object> keyColumnEntry : updateRow.getKeyColumnEntries()) {
+            keyValueConditions.add(keyColumnEntry.getKey() + " = '" + keyColumnEntry.getValue()
+                    + "'");
+        }
+        return collectionToDelimitedString(keyValueConditions, " AND ");
+    }
 
-	private String createUpsertClause(UpdateRow updateRow) {
-		List<String> columnNames = new ArrayList<String>();
-		List<String> columnValues = new ArrayList<String>();
-		for (Entry<String, Object> updateColumnEntry : updateRow.getUpdateColumnEntries()) {
-			columnNames.add(updateColumnEntry.getKey());
-			columnValues.add(updateColumnEntry.getValue().toString());
-		}
-		StringBuilder builder = new StringBuilder();
-		builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
-		builder.append(" VALUES ").append("(").append(collectionToDelimitedString(columnValues, ", ", "'", "'"))
-				.append(")");
-		return builder.toString();
-	}
+    private String createUpsertClause(UpdateRow updateRow) {
+        List<String> columnNames = new ArrayList<String>();
+        List<String> columnValues = new ArrayList<String>();
+        for (Entry<String, Object> updateColumnEntry : updateRow.getUpdateColumnEntries()) {
+            columnNames.add(updateColumnEntry.getKey());
+            columnValues.add(updateColumnEntry.getValue().toString());
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
+        builder.append(" VALUES ").append("(")
+                .append(collectionToDelimitedString(columnValues, ", ", "'", "'")).append(")");
+        return builder.toString();
+    }
 }

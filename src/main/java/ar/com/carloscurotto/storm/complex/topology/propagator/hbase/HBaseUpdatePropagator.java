@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
 import java.sql.Connection;
@@ -22,96 +19,103 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdateProp
  *
  */
 public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
-  
-  private static final long serialVersionUID = 1L;
-  
-  /**
-   * The builder that creates the query.
-   */
-  public QueryBuilder queryBuilder;
 
-  /**
-   * The data source to execute the query.
-   */
-  private DataSource dataSource;
+    private static final long serialVersionUID = 1L;
 
-  /**
-   * Creates an {@link HBaseUpdatePropagator} for the given query builder and data source.
-   *
-   * @param theQueryBuilder
-   *            the given query builder.
-   * @param theDataSource
-   *            the given data source.
-   */
-  public HBaseUpdatePropagator(final QueryBuilder theQueryBuilder,
-          final DataSource theDataSource) {
-      Validate.notNull(theQueryBuilder, "The query builder can not be null.");
-      Validate.notNull(theDataSource, "The data source can not be null.");
-      queryBuilder = theQueryBuilder;
-      dataSource = theDataSource;
-  }
+    /**
+     * The builder that creates the query.
+     */
+    public QueryBuilder queryBuilder;
 
-  /* (non-Javadoc)
-   * @see ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator#doExecute(ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext)
-   */
-  @Override
-  protected ResultRow doExecute(UpdatePropagatorContext theContext) {
-    return generateResultRowForExecution(theContext);
-}
+    /**
+     * The data source to execute the query.
+     */
+    private DataSource dataSource;
 
-  private ResultRow generateResultRowForExecution(UpdatePropagatorContext theContext) {
-    String theRowId = "EmptyRowID";
-    try {
-      Validate.notNull(theContext, "The Update object cannot be null.");
-      theRowId = theContext.getRow().getId();
-      String upsertQuery = createUpsertQuery(theContext);
-      executeUpsertQuery(upsertQuery);
-    } catch (Exception e) {
-      return new ResultRow(theRowId, ResultRowStatus.FAILURE, e.getMessage());
+    /**
+     * Creates an {@link HBaseUpdatePropagator} for the given query builder and data source.
+     *
+     * @param theQueryBuilder
+     *            the given query builder.
+     * @param theDataSource
+     *            the given data source.
+     */
+    public HBaseUpdatePropagator(final QueryBuilder theQueryBuilder, final DataSource theDataSource) {
+        Validate.notNull(theQueryBuilder, "The query builder can not be null.");
+        Validate.notNull(theDataSource, "The data source can not be null.");
+        queryBuilder = theQueryBuilder;
+        dataSource = theDataSource;
     }
-    return new ResultRow(theRowId, ResultRowStatus.SUCCESS, "Row succefully updated.");
-  }
-  
-  private String createUpsertQuery(final UpdatePropagatorContext theUpdate) {
-    return queryBuilder.build(theUpdate);
-  }
 
-  private void executeUpsertQuery(final String upsertQuery) {
-    Connection connection = null;
-    try {
-      connection = dataSource.getConnection();
-      Statement statement = connection.createStatement();
-      statement.execute(upsertQuery);
-      int updateCount = statement.getUpdateCount();
-      if (updateCount != 1) {
-        connection.rollback();
-        throw new RuntimeException("Rolling back query [" + upsertQuery
-            + "], it matched more than one result.");
-      }
-      connection.commit();
-    } catch (SQLException e) {
-      throw new RuntimeException("Something went wrong while executing the query");
-    } finally {
-      DbUtils.closeQuietly(connection);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator#doExecute(ar.com.carloscurotto
+     * .storm.complex.topology.propagator.context.UpdatePropagatorContext)
+     */
+    @Override
+    protected ResultRow doExecute(UpdatePropagatorContext theContext) {
+        return generateResultRowForExecution(theContext);
     }
-  }
 
-  /* (non-Javadoc)
-   * @see ar.com.carloscurotto.storm.complex.service.OpenAwareService#doOpen()
-   */
-  @Override
-  protected void doOpen() {
-    // TODO Auto-generated method stub
+    private ResultRow generateResultRowForExecution(UpdatePropagatorContext theContext) {
+        String theRowId = "EmptyRowID";
+        try {
+            Validate.notNull(theContext, "The Context cannot be null.");
+            theRowId = theContext.getRow().getId();
+            String upsertQuery = createUpsertQuery(theContext);
+            executeUpsertQuery(upsertQuery);
+        } catch (Exception e) {
+            return new ResultRow(theRowId, ResultRowStatus.FAILURE, e.getMessage());
+        }
+        return new ResultRow(theRowId, ResultRowStatus.SUCCESS, "Row succefully updated.");
+    }
 
-  }
+    private String createUpsertQuery(final UpdatePropagatorContext theUpdate) {
+        return queryBuilder.build(theUpdate);
+    }
 
-  /* (non-Javadoc)
-   * @see ar.com.carloscurotto.storm.complex.service.OpenAwareService#doClose()
-   */
-  @Override
-  protected void doClose() {
-    // TODO Auto-generated method stub
+    private void executeUpsertQuery(final String upsertQuery) {
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            Statement statement = connection.createStatement();
+            statement.execute(upsertQuery);
+            int updateCount = statement.getUpdateCount();
+            if (updateCount != 1) {
+                connection.rollback();
+                throw new RuntimeException("Rolling back query [" + upsertQuery
+                        + "], it matched more than one result.");
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            throw new RuntimeException("Something went wrong while executing the query");
+        } finally {
+            DbUtils.closeQuietly(connection);
+        }
+    }
 
-  }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ar.com.carloscurotto.storm.complex.service.OpenAwareService#doOpen()
+     */
+    @Override
+    protected void doOpen() {
+        // TODO Auto-generated method stub
+
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see ar.com.carloscurotto.storm.complex.service.OpenAwareService#doClose()
+     */
+    @Override
+    protected void doClose() {
+        // TODO Auto-generated method stub
+
+    }
 
 }
