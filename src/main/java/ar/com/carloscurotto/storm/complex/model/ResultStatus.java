@@ -1,6 +1,6 @@
 package ar.com.carloscurotto.storm.complex.model;
 
-public enum ResultRowStatus {
+public enum ResultStatus {
     
     SUCCESS, FAILURE, SKIPPED
     
