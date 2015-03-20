@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="
-        http://www.springframework.org/schema/beans classpath:org/springframework/beans/factory/xml/spring-beans-4.1.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
   <!-- bean id="UpdatesSpoutFactory" class="com.jpmc.cib.csw.adp.update.topology.spout.kafka.KafkaUpdatesSpoutFactory"> <constructor-arg 
     value="localhost:2181" /> <constructor-arg value="test" /> </bean -->
@@ -13,7 +13,7 @@
       <bean id="ExternalUpdatePropagatorProvider" class="ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider">
         <constructor-arg>
           <map>
-            <entry key="SEMS" value-ref="NullUpdatePropagator"></entry>
+            <entry key="SEMS" value-ref="ExternalSemsUpdatePropagator"></entry>
           </map>
         </constructor-arg>
       </bean>
@@ -30,8 +30,8 @@
       <bean id="InternalUpdatePropagatorProvider" class="ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider">
         <constructor-arg>
           <map>
-            <entry key="SEMS" value-ref="NullUpdatePropagator"></entry>
-            <entry key="ANOTHER" value-ref="NullUpdatePropagator"></entry>
+            <entry key="SEMS" value-ref="InternalSemsUpdatePropagator"></entry>
+            <entry key="ANOTHER" value-ref="InternalAnotherUpdatePropagator"></entry>
           </map>
         </constructor-arg>
       </bean>
@@ -44,6 +44,10 @@
   	</constructor-arg>
   </bean>
 
-  <bean id="NullUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
+  <bean id="ExternalSemsUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
+  
+  <bean id="InternalSemsUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
+  
+  <bean id="InternalAnotherUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
 
 </beans>
