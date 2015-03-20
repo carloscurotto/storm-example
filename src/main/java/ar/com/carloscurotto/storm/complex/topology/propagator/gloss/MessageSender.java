@@ -2,6 +2,7 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.gloss;
 
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -12,13 +13,10 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.exception.GlossJmsException;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.exception.GlossMarshalException;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExcpTradeStatusMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.NormalTradeStatusMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeCommentsMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
-
 import ar.com.carloscurotto.storm.complex.transport.Producer;
 
 /**
@@ -26,7 +24,7 @@ import ar.com.carloscurotto.storm.complex.transport.Producer;
  *
  * @author D540601
  */
-public class MessageSender extends OpenAwareService<Messages, Void> {
+public class MessageSender extends OpenAwareService<List<TradeMessage>, Void> {
 
     protected Map<Class<? extends TradeMessage>, Marshaller> marshallers = new HashMap<Class<? extends TradeMessage>, Marshaller>();
 
@@ -44,6 +42,9 @@ public class MessageSender extends OpenAwareService<Messages, Void> {
         messageProducer = theMessageProducer;
     }
 
+    /**
+     * Creates the marshallers for the trade status messages classes and stores them in the marshallers map.
+     */
     @Override
     protected void doOpen() {
         try {
@@ -66,25 +67,29 @@ public class MessageSender extends OpenAwareService<Messages, Void> {
         messageProducer.close();
     }
 
+    /**
+     * Sends the messages in theMessages parameters using the internal producer.
+     * 
+     * @param theMessages
+     *            a {@link List<TradeMessage>} with the messages to be sent.
+     * @return null.
+     */
     @Override
-    protected Void doExecute(Messages theMessages) {
-        send(theMessages.getMainMessage());
-        if (theMessages.getCommentMessage() != null) {
-            send(theMessages.getCommentMessage());
+    protected Void doExecute(List<TradeMessage> theMessages) {
+        for (TradeMessage message : theMessages) {
+            send(message);
         }
         return null;
     }
 
     /**
-     * Sends a message into the queue after marshalling into a String.
+     * Sends a message after marshalling it into an xml string.
      *
      * @param theMessage
      *            a TradeMessage instance. It cannot be null.
-     * @throws GlossJmsException
-     *             when the message cannot be sent.
      */
-    public void send(TradeMessage theMessage) {
-        Validate.notNull(theMessage, "message cannot be null");
+    private void send(TradeMessage theMessage) {
+        Validate.notNull(theMessage, "The message cannot be null");
         messageProducer.send(marshal(theMessage));
     }
 
@@ -95,7 +100,7 @@ public class MessageSender extends OpenAwareService<Messages, Void> {
      *            the message to marshal to a string. It cannot be null.
      * @return the marshalled string representation of the message parameter.
      */
-    protected String marshal(TradeMessage theMessage) {
+    private String marshal(TradeMessage theMessage) {
         Validate.notNull(theMessage, "message cannot be null");
 
         StringWriter writer = new StringWriter();
@@ -107,7 +112,7 @@ public class MessageSender extends OpenAwareService<Messages, Void> {
             marshaller.marshal(theMessage, result);
             return writer.toString();
         } catch (JAXBException e) {
-            throw new GlossMarshalException(e);
+            throw new RuntimeException(e);
         }
     }
 }

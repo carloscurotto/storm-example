@@ -3,6 +3,10 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.Validate;
+
+import ar.com.carloscurotto.storm.complex.model.UpdateRow;
+
 /**
  * Represents the information for comments for update messages. It is intended to be marshalled into XML string using
  * the JAXB framework.
@@ -21,6 +25,26 @@ public class TradeCommentsMessage extends TradeMessage {
     private String eventCode = "SEMT";
     private String eventType = "SEMI";
     private ExceptionTradeNarrative narrative;
+
+    /**
+     * Builds an update comment message with the given {@link UpdateRow}.
+     * 
+     * @param {@link UpdateRow} with the needed column values to construct this TradeCommentsMessage. It must contain:
+     *        tradeNo, internalComments and userId.
+     */
+    public TradeCommentsMessage(final UpdateRow theUpdateRow) {
+        String theTradeNo = (String) theUpdateRow.getUpdateColumnValue("tradeNo");
+        String theInternalComments = (String) theUpdateRow.getUpdateColumnValue("internalComments");
+        String theUserId = (String) theUpdateRow.getUpdateColumnValue("userId");
+
+        Validate.notBlank(theUserId, "The userId cannot be blank");
+        Validate.notBlank(theTradeNo, "tradeNo cannot be blank");
+        Validate.notBlank(theInternalComments, "internalComments cannot be blank");
+
+        tradeNo = theTradeNo;
+        userName = theUserId;
+        narrative = new ExceptionTradeNarrative(theInternalComments);
+    }
 
     @Override
     protected void initMessageType() {

@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Narratives")
 public class ExceptionTradeNarrative {
 
-    private Integer noOfNarratives = 0;
+    private Integer numberOfNarratives = 0;
     private String narrativeCode1;
     private String narrativeText1;
     private String narrativeCode2;
@@ -24,13 +24,28 @@ public class ExceptionTradeNarrative {
     public ExceptionTradeNarrative() {
     }
 
+    /**
+     * Constructs and ExceptionTradeNarrative wih the given String, using it as narrative text and setting the number of
+     * narratives to one.
+     * 
+     * @param theInternalComments
+     *            a String with internal comments for the narrative. It is not required to have a specific content, it
+     *            can be blank or null.
+     * 
+     */
+    public ExceptionTradeNarrative(final String theInternalComments) {
+        narrativeCode1 = NormalTradeNarrative.INTERNAL_NARRATIVE_CODE;
+        narrativeText1 = theInternalComments;
+        numberOfNarratives = 1;
+    }
+
     @XmlElement(name = "NoOfNarratives")
     public Integer getNoOfNarratives() {
-        return this.noOfNarratives;
+        return this.numberOfNarratives;
     }
 
     public void setNoOfNarratives(Integer noOfNarratives) {
-        this.noOfNarratives = noOfNarratives;
+        this.numberOfNarratives = noOfNarratives;
     }
 
     @XmlElement(name = "NarrativeCode1")

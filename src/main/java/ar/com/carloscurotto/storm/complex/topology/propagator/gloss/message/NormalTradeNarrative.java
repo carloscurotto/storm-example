@@ -1,13 +1,12 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message;
 
-import org.apache.commons.lang3.Validate;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 /**
- * Internal element for trade messages. It is used mostly to represent
- * internal and external comments on an normal trade update message.
- * It is intended to be marshalled into XML string using the JAXB framework.
+ * Internal element for trade messages. It is used mostly to represent internal and external comments on an normal trade
+ * update message. It is intended to be marshalled into XML string using the JAXB framework.
+ * 
  * @author D540601
  *
  */
@@ -18,7 +17,7 @@ public class NormalTradeNarrative {
      * Represents the code for the update messages' internal comments.
      */
     public static final String INTERNAL_NARRATIVE_CODE = "SINT";
-    
+
     /**
      * Represents the code for the update messages' external comments.
      */
@@ -28,35 +27,22 @@ public class NormalTradeNarrative {
      * Represents the comment code for this narrative.
      */
     private String narrativeCode;
-    
+
     /**
      * Represent the comment text for this narrative.
      */
     private String narrativeText;
 
     /**
-     * Default constructor.
+     * Constructs the NormalTradeNarrative with the given external comments.
+     * 
+     * @param externalComments
+     *            a String with the external comment. It doesn't require to have content. It can be null or blank.
      */
-    public NormalTradeNarrative() {}
-    
-    /**
-     * Constructor.
-     *
-     * @param code
-     *            a String.
-     * @param text
-     *            a String.
-     * @throws IllegalArgumentException
-     *             if either code or tet is blank
-     */
-    public NormalTradeNarrative(String code, String text) {
-        Validate.notBlank(code, "code cannot be blank");
-        Validate.notBlank(text, "text cannt be blank");
-        this.narrativeCode = code;
-        this.narrativeText = text;
+    public NormalTradeNarrative(final String externalComments) {
+        this.narrativeCode = EXTERNAL_NARRATIVE_CODE;
+        this.narrativeText = externalComments;
     }
-
-    
 
     @XmlElement(name = "narrativeCode")
     public String getNarrativeCode() {
