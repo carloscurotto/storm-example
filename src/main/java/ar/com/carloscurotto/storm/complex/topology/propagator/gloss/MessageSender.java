@@ -13,7 +13,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.destination.IDestination;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.exception.GlossJmsException;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.exception.GlossMarshalException;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExcpTradeStatusMessage;
@@ -21,6 +20,7 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.Norm
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeCommentsMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
 
+import ar.com.carloscurotto.storm.complex.transport.Producer;
 
 /**
  * Sends the message into the queue. Knows what queue to use and knows how to marshall the messages.
@@ -31,11 +31,20 @@ public class MessageSender extends OpenAwareService<Messages, Void> {
 
     protected Map<Class<? extends TradeMessage>, Marshaller> marshallers = new HashMap<Class<? extends TradeMessage>, Marshaller>();
 
+    private Producer<String> messageProducer;
+
     /**
-     * Destination where the messages are directed.
+     * Constructs the MessageSender with the give message producer.
+     * 
+     * @param theMessageProducer
+     *            a {@link Producer<String>} that will be used to send the update messages to the consumer of the
+     *            producer.
      */
-    protected IDestination destination;
-    
+    public MessageSender(final Producer<String> theMessageProducer) {
+        Validate.notNull(theMessageProducer, "The message producer cannot be null");
+        messageProducer = theMessageProducer;
+    }
+
     @Override
     protected void doOpen() {
         try {
@@ -46,18 +55,16 @@ public class MessageSender extends OpenAwareService<Messages, Void> {
             marshallers.put(TradeCommentsMessage.class,
                     JAXBContext.newInstance(TradeCommentsMessage.class).createMarshaller());
         } catch (JAXBException e) {
-            throw new RuntimeException("MessageSender can't create the marshallers", e);
+            throw new RuntimeException(
+                    "MessageSender can't create the marshallers needed to convert the trade objects to xml",
+                    e);
         }
 
     }
 
     @Override
     protected void doClose() {
-        try {
-            destination.close();
-        } catch (JMSException e) {
-            throw new RuntimeException("MessageSender can't close destination", e);
-        }
+        messageProducer.close();
     }
 
     @Override
@@ -72,17 +79,14 @@ public class MessageSender extends OpenAwareService<Messages, Void> {
     /**
      * Sends a message into the queue after marshalling into a String.
      *
-     * @param theMessage a TradeMessage instance. It cannot be null.
+     * @param theMessage
+     *            a TradeMessage instance. It cannot be null.
      * @throws GlossJmsException
      *             when the message cannot be sent.
      */
     public void send(TradeMessage theMessage) {
         Validate.notNull(theMessage, "message cannot be null");
-        try {
-            destination.sendTextMessage(marshal(theMessage));
-        } catch (JMSException ex) {
-            throw new GlossJmsException(UpdateResultMessage.GLOSS_JMS_ERROR.toString(), ex);
-        }
+        messageProducer.send(marshal(theMessage));
     }
 
     /**
@@ -106,16 +110,5 @@ public class MessageSender extends OpenAwareService<Messages, Void> {
         } catch (JAXBException e) {
             throw new GlossMarshalException(e);
         }
-    }
-
-    /**
-     * Sets the current destination.
-     *
-     * @param destination
-     *            an IDestination to send messages to.
-     */
-    public void setDestination(IDestination destination) {
-        Validate.notNull(destination, "destination cannot be null");
-        this.destination = destination;
     }
 }
