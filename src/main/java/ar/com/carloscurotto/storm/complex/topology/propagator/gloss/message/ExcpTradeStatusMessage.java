@@ -4,27 +4,28 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * This is used to generate both - Exeption Trade Status Message & Comments message.
+ * This is used to generate Exception Trade Status Message XML. It is intended to be marshalled into XML string using
+ * the JAXB framework.
  *
- * @author e208105
+ * @author d540601
  *
  */
 @XmlRootElement(name = "IBOMsg")
 public class ExcpTradeStatusMessage extends TradeMessage {
-
+    /**
+     * Message type for this trade message.
+     */
+    private final String MESSAGE_TYPE = "SEMSAdapter.Trade.AddEvent";
+    
     private String userName;
-
-    private String msgType = "SEMSAdapter.Trade.AddEvent";
-
-    private String tradeNo = "";
-
     private String eventCode = "SCRT"; // defaulted for Status message
-
     private String eventType = "TENR"; // defaulted for Status message
+    private ExceptionTradeNarrative narrative;
 
-    private TradeNarrative narrative;
-
-    private Integer needReply = 0;
+    @Override
+    protected void initMessageType() {
+        setMsgType(MESSAGE_TYPE);
+    }
 
     @XmlElement(name = "UserName")
     public String getUserName() {
@@ -33,15 +34,6 @@ public class ExcpTradeStatusMessage extends TradeMessage {
 
     public void setUserName(String userName) {
         this.userName = userName;
-    }
-
-    @XmlElement(name = "msgType")
-    public String getMsgType() {
-        return msgType;
-    }
-
-    public void setMsgType(String msgType) {
-        this.msgType = msgType;
     }
 
     @XmlElement(name = "TradeNo")
@@ -72,20 +64,12 @@ public class ExcpTradeStatusMessage extends TradeMessage {
     }
 
     @XmlElement(name = "Narratives")
-    public TradeNarrative getNarrative() {
+    public ExceptionTradeNarrative getNarrative() {
         return this.narrative;
     }
 
-    public void setNarrative(TradeNarrative narrative) {
+    public void setNarrative(ExceptionTradeNarrative narrative) {
         this.narrative = narrative;
     }
 
-    @XmlElement(name = "needReply")
-    public Integer getNeedReply() {
-        return needReply;
-    }
-
-    public void setNeedReply(Integer needReply) {
-        this.needReply = needReply;
-    }
 }

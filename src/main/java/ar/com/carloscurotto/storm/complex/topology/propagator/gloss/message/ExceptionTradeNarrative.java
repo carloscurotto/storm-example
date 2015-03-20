@@ -3,8 +3,15 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Internal element for trade messages. It is used mostly to represent internal and external comments on an exception
+ * trade update message. It is intended to be marshalled into XML string using the JAXB framework.
+ * 
+ * @author D540601
+ *
+ */
 @XmlRootElement(name = "Narratives")
-public class TradeNarrative {
+public class ExceptionTradeNarrative {
 
     private Integer noOfNarratives = 0;
     private String narrativeCode1;
@@ -14,7 +21,7 @@ public class TradeNarrative {
     private String narrativeCode3;
     private String narrativeText3;
 
-    public TradeNarrative() {
+    public ExceptionTradeNarrative() {
     }
 
     @XmlElement(name = "NoOfNarratives")

@@ -9,14 +9,15 @@ import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExcpTradeStatusMessage;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.Narrative;
+import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.NormalTradeNarrative;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.NormalTradeStatusMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeCommentsMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeNarrative;
+import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExceptionTradeNarrative;
 
 /**
- * Builds the different type of TradeMessage.
+ * Builds normal, exception and comment trade messages, validating that the
+ * input data for construction is correct for every case.
  *
  * @author D540601
  */
@@ -78,8 +79,8 @@ public class MessageBuilder {
         Validate.notBlank(tradeNo, "tradeNo cannot be blank");
         Validate.notBlank(internalComments, "internalComments cannot be blank");
 
-        TradeNarrative narrative = new TradeNarrative();
-        narrative.setNarrativeCode1(Narrative.INTERNAL_NARRATIVE_CODE);
+        ExceptionTradeNarrative narrative = new ExceptionTradeNarrative();
+        narrative.setNarrativeCode1(NormalTradeNarrative.INTERNAL_NARRATIVE_CODE);
         narrative.setNarrativeText1(internalComments);
         narrative.setNoOfNarratives(1);
 
@@ -116,8 +117,8 @@ public class MessageBuilder {
         msg.setStatusDate(sdf.format(new Date()));
 
         if (StringUtils.isNotBlank(externalComments)) {
-            Narrative narrative = new Narrative();
-            narrative.setNarrativeCode(Narrative.EXTERNAL_NARRATIVE_CODE);
+            NormalTradeNarrative narrative = new NormalTradeNarrative();
+            narrative.setNarrativeCode(NormalTradeNarrative.EXTERNAL_NARRATIVE_CODE);
             narrative.setNarrativeText(externalComments);
             msg.setNarrative(narrative);
         }
@@ -143,7 +144,7 @@ public class MessageBuilder {
 
         Integer numberOfNarratives = 0;
 
-        TradeNarrative exceptionNarrative = new TradeNarrative();
+        ExceptionTradeNarrative exceptionNarrative = new ExceptionTradeNarrative();
 
         if (StringUtils.isNotBlank(externalComments)) {
             numberOfNarratives++;

@@ -4,14 +4,13 @@ import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
- * Propagates and update to the GLOSS external system.
+ * Propagates row information through messaging to the Gloss external system.
  *
  * @author D540601
  */
@@ -23,12 +22,13 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Message builder.
+     * Builds the xml string that compose the messages that are going to be sent
+     * to the Gloss external system.
      */
     private MessageBuilder messageBuilder;
 
     /**
-     * Message sender.
+     * Sends the strings that composes the messages to the gloss external system.
      */
     private MessageSender messageSender;
 

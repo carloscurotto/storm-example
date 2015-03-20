@@ -3,37 +3,32 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Message class to express the information for normal trade status messages. It is intended to be marshalled into XML
+ * string using the JAXB framework.
+ * 
+ * @author D540601
+ *
+ */
 @XmlRootElement(name = "IBOMsg")
 public class NormalTradeStatusMessage extends TradeMessage {
+    /**
+     * Message type for this trade message.
+     */
+    private final String MESSAGE_TYPE = "SEMSAdapter.Link.BankStatus";
 
-    private String msgType = "SEMSAdapter.Link.BankStatus";
-    private Integer needReply = 0;
     private String originName = "IBOAPP";
     private String originRef = "SEMS";
     private String instNumber;
     private String statusDate;
     private String serviceName = "SWFT";
     private String statusCode;
-    private String tradeNo;
     private String userId;
-    private Narrative narrative;
+    private NormalTradeNarrative narrative;
 
-    @XmlElement(name = "msgType")
-    public String getMsgType() {
-        return msgType;
-    }
-
-    public void setMsgType(String msgType) {
-        this.msgType = msgType;
-    }
-
-    @XmlElement(name = "needReply")
-    public Integer getNeedReply() {
-        return needReply;
-    }
-
-    public void setNeedReply(Integer needReply) {
-        this.needReply = needReply;
+    @Override
+    protected void initMessageType() {
+        setMsgType(MESSAGE_TYPE);
     }
 
     @XmlElement(name = "originName")
@@ -109,11 +104,11 @@ public class NormalTradeStatusMessage extends TradeMessage {
     }
 
     @XmlElement(name = "Narrative")
-    public Narrative getNarrative() {
+    public NormalTradeNarrative getNarrative() {
         return narrative;
     }
 
-    public void setNarrative(Narrative narrative) {
+    public void setNarrative(NormalTradeNarrative narrative) {
         this.narrative = narrative;
     }
 }

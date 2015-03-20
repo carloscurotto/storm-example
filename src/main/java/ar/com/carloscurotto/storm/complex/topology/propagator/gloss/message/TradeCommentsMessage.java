@@ -4,45 +4,27 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * This is used for generating Normal Trade Comments message. There is a difference in XML structure for Normal Trade
- * Status & Comments message. Currently, comments XML structure is same for Normal Trade & Exception Trade. However, it
- * was kept separate.
- *
- * @author e208105
+ * Represents the information for comments for update messages. It is intended to be marshalled into XML string using
+ * the JAXB framework.
+ * 
+ * @author D540601
  *
  */
 @XmlRootElement(name = "IBOMsg")
 public class TradeCommentsMessage extends TradeMessage {
-    private String msgType = "SEMSAdapter.Trade.AddEvent";
-
-    private Integer needReply = 0;
-
-    private String tradeNo;
+    /**
+     * Message type for this trade message.
+     */
+    private final String MESSAGE_TYPE = "SEMSAdapter.Trade.AddEvent";
 
     private String userName;
-
     private String eventCode = "SEMT";
-
     private String eventType = "SEMI";
+    private ExceptionTradeNarrative narrative;
 
-    private TradeNarrative narrative;
-
-    @XmlElement(name = "msgType")
-    public String getMsgType() {
-        return msgType;
-    }
-
-    public void setMsgType(String msgType) {
-        this.msgType = msgType;
-    }
-
-    @XmlElement(name = "needReply")
-    public Integer getNeedReply() {
-        return needReply;
-    }
-
-    public void setNeedReply(Integer needReply) {
-        this.needReply = needReply;
+    @Override
+    protected void initMessageType() {
+        setMsgType(MESSAGE_TYPE);
     }
 
     @XmlElement(name = "TradeNo")
@@ -82,11 +64,11 @@ public class TradeCommentsMessage extends TradeMessage {
     }
 
     @XmlElement(name = "Narratives")
-    public TradeNarrative getNarrative() {
+    public ExceptionTradeNarrative getNarrative() {
         return narrative;
     }
 
-    public void setNarrative(TradeNarrative narrative) {
+    public void setNarrative(ExceptionTradeNarrative narrative) {
         this.narrative = narrative;
     }
 
