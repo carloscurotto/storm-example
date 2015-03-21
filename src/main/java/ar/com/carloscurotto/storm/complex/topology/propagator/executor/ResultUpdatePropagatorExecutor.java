@@ -21,12 +21,12 @@ import ar.com.carloscurotto.storm.complex.transport.Producer;
 public class ResultUpdatePropagatorExecutor extends BaseFunction {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultUpdatePropagatorExecutor.class);
-    
-    private Producer<ResultRow> producer;
-    
-    public ResultUpdatePropagatorExecutor(final Producer<ResultRow> theProducer) {
+
+    private Producer producer;
+
+    public ResultUpdatePropagatorExecutor(final Producer theProducer) {
         Validate.notNull(theProducer, "The producer can not be null.");
         producer = theProducer;
     }
@@ -42,8 +42,8 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
     public void cleanup() {
         LOGGER.debug("Closing result update propagator");
         producer.close();
-    }    
-    
+    }
+
     @Override
     public void execute(TridentTuple theTuple, TridentCollector theCollector) {
         Update update = (Update) theTuple.getValueByField("update");
@@ -52,18 +52,19 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
 
         sendFinalResultRows(createFinalResultRows(update, externalResult, internalResult));
     }
-    
+
     private void sendFinalResultRows(final Collection<ResultRow> theFinalResultRows) {
         for (ResultRow finalResultRow : theFinalResultRows) {
             producer.send(finalResultRow);
         }
     }
-    
-    private Collection<ResultRow> createFinalResultRows(final Update theUpdate, final Result theExternalResult, final Result theInternalResult) {
+
+    private Collection<ResultRow> createFinalResultRows(final Update theUpdate, final Result theExternalResult,
+            final Result theInternalResult) {
         Collection<ResultRow> finalResultRows = new ArrayList<ResultRow>();
         for (UpdateRow updateRow : theUpdate.getRows()) {
             LOGGER.debug("Executing result update propagator for row [" + updateRow + "] on thread ["
-                    + Thread.currentThread().getName() + "].");            
+                    + Thread.currentThread().getName() + "].");
             ResultRow externalResultRow = theExternalResult.getRow(updateRow.getId());
             ResultRow internalResultRow = theInternalResult.getRow(updateRow.getId());
             finalResultRows.add(createFinalResultRow(externalResultRow, internalResultRow));
@@ -87,5 +88,5 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
                     + internalResultRow + "]");
         }
     }
-    
+
 }

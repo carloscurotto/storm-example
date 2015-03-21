@@ -71,8 +71,7 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
             int updateCount = statement.getUpdateCount();
             if (updateCount != 1) {
                 connection.rollback();
-                throw new RuntimeException("Rolling back query [" + upsertQuery
-                        + "], it matched more than one result.");
+                throw new RuntimeException("Rolling back query [" + upsertQuery + "], it matched more than one result.");
             }
             connection.commit();
         } catch (SQLException e) {
@@ -80,6 +79,14 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
         } finally {
             DbUtils.closeQuietly(connection);
         }
+    }
+
+    @Override
+    protected void doOpen() {
+    }
+
+    @Override
+    protected void doClose() {
     }
 
 }

@@ -8,20 +8,20 @@ import org.slf4j.LoggerFactory;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.transport.Producer;
 
-public class PrintResultRowProducer implements Producer<ResultRow>, Serializable {
-    
+public class PrintResultProducer implements Producer, Serializable {
+
     private static final long serialVersionUID = 1L;
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrintResultRowProducer.class);
-    
-    @Override
-    public void open() {
-        LOGGER.info("Opening null producer");
-    }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrintResultProducer.class);
 
     @Override
     public boolean isOpen() {
         return false;
+    }
+
+    @Override
+    public void open() {
+        LOGGER.info("Opening null producer");
     }
 
     @Override
@@ -33,5 +33,4 @@ public class PrintResultRowProducer implements Producer<ResultRow>, Serializable
     public void send(ResultRow theResultRow) {
         LOGGER.info("Sending message [" + theResultRow + "]");
     }
-    
 }
