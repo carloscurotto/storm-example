@@ -6,31 +6,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
+import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
 import ar.com.carloscurotto.storm.complex.transport.Producer;
 
-public class PrintResultProducer implements Producer, Serializable {
+public class PrintProducer extends OpenAwareBean<ResultRow, Void> implements Producer, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrintResultProducer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PrintProducer.class);
 
     @Override
-    public boolean isOpen() {
-        return false;
+    public void send(ResultRow theResultRow) {
+        doExecute(theResultRow);
     }
 
     @Override
-    public void open() {
+    protected void doOpen() {
         LOGGER.info("Opening null producer");
     }
 
     @Override
-    public void close() {
+    protected void doClose() {
         LOGGER.info("Closing null producer");
     }
 
     @Override
-    public void send(ResultRow theResultRow) {
+    protected Void doExecute(ResultRow theResultRow) {
         LOGGER.info("Sending message [" + theResultRow + "]");
+        return null;
     }
 }
