@@ -16,7 +16,7 @@ import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
-import ar.com.carloscurotto.storm.complex.transport.Producer;
+import ar.com.carloscurotto.storm.complex.transport.ResultProducer;
 
 public class ResultUpdatePropagatorExecutor extends BaseFunction {
 
@@ -24,23 +24,23 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultUpdatePropagatorExecutor.class);
 
-    private Producer producer;
+    private ResultProducer producer;
 
-    public ResultUpdatePropagatorExecutor(final Producer theProducer) {
-        Validate.notNull(theProducer, "The producer can not be null.");
-        producer = theProducer;
+    public ResultUpdatePropagatorExecutor(final ResultProducer theResultProducer) {
+        Validate.notNull(theResultProducer, "The result producer can not be null.");
+        producer = theResultProducer;
     }
 
     @SuppressWarnings("rawtypes")
     @Override
     public void prepare(Map theConfiguration, TridentOperationContext theContext) {
-        LOGGER.debug("Opening result update propagator");
+        LOGGER.debug("Opening result update propagator executor");
         producer.open();
     }
 
     @Override
     public void cleanup() {
-        LOGGER.debug("Closing result update propagator");
+        LOGGER.debug("Closing result update propagator executor");
         producer.close();
     }
 
@@ -50,26 +50,24 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
         Result externalResult = (Result) theTuple.getValueByField("external-result");
         Result internalResult = (Result) theTuple.getValueByField("internal-result");
 
-        sendFinalResultRows(createFinalResultRows(update, externalResult, internalResult));
+        sendFinalResult(createFinalResult(update, externalResult, internalResult));
     }
 
-    private void sendFinalResultRows(final Collection<ResultRow> theFinalResultRows) {
-        for (ResultRow finalResultRow : theFinalResultRows) {
-            producer.send(finalResultRow);
-        }
+    private void sendFinalResult(final Result theFinalResult) {
+        producer.send(theFinalResult);
     }
 
-    private Collection<ResultRow> createFinalResultRows(final Update theUpdate, final Result theExternalResult,
+    private Result createFinalResult(final Update theUpdate, final Result theExternalResult,
             final Result theInternalResult) {
         Collection<ResultRow> finalResultRows = new ArrayList<ResultRow>();
         for (UpdateRow updateRow : theUpdate.getRows()) {
-            LOGGER.debug("Executing result update propagator for row [" + updateRow + "] on thread ["
+            LOGGER.debug("Executing result update propagator executor for row [" + updateRow + "] on thread ["
                     + Thread.currentThread().getName() + "].");
             ResultRow externalResultRow = theExternalResult.getRow(updateRow.getId());
             ResultRow internalResultRow = theInternalResult.getRow(updateRow.getId());
             finalResultRows.add(createFinalResultRow(externalResultRow, internalResultRow));
         }
-        return finalResultRows;
+        return new Result(finalResultRows);
     }
 
     private ResultRow createFinalResultRow(final ResultRow externalResultRow, final ResultRow internalResultRow) {

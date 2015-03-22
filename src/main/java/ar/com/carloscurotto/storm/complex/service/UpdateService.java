@@ -4,7 +4,7 @@ import org.apache.commons.lang.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.Update;
-import ar.com.carloscurotto.storm.complex.transport.Submitter;
+import ar.com.carloscurotto.storm.complex.transport.UpdateSubmitter;
 
 /**
  * This class represents the main class of our update service. Clients will use this class to execute updates against
@@ -14,7 +14,7 @@ import ar.com.carloscurotto.storm.complex.transport.Submitter;
  */
 public class UpdateService extends OpenAwareBean<Update, Result> {
 
-    private Submitter submitter;
+    private UpdateSubmitter submitter;
 
     /**
      * Creates an update service.
@@ -22,7 +22,7 @@ public class UpdateService extends OpenAwareBean<Update, Result> {
      * @param theSubmitter
      *            the submitter to use when executing updates. It can not be null.
      */
-    public UpdateService(final Submitter theSubmitter) {
+    public UpdateService(final UpdateSubmitter theSubmitter) {
         Validate.notNull(theSubmitter, "The submitter can not be null.");
         submitter = theSubmitter;
     }

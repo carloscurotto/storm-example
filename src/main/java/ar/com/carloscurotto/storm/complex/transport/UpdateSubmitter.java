@@ -16,7 +16,7 @@ import ar.com.carloscurotto.storm.complex.service.Openable;
  * @param <O>
  *            The response context data type
  */
-public interface Submitter extends Openable, Closeable {
+public interface UpdateSubmitter extends Openable, Closeable {
 
     /**
      * Sends the given context in a synchronous way, blocking the caller till the result is returned. This call

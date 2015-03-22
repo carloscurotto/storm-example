@@ -40,7 +40,7 @@
 
   <bean id="ResultUpdatePropagatorExecutor" class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.ResultUpdatePropagatorExecutor">
   	<constructor-arg>
-      <bean id="PrintProducer" class="ar.com.carloscurotto.storm.complex.transport.print.PrintProducer" />
+      <bean id="PrintProducer" class="ar.com.carloscurotto.storm.complex.transport.print.PrintResultProducer" />
   	</constructor-arg>
   </bean>
 

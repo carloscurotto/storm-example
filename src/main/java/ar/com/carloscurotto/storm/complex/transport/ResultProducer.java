@@ -1,6 +1,6 @@
 package ar.com.carloscurotto.storm.complex.transport;
 
-import ar.com.carloscurotto.storm.complex.model.ResultRow;
+import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.service.Closeable;
 import ar.com.carloscurotto.storm.complex.service.Openable;
 
@@ -9,7 +9,7 @@ import ar.com.carloscurotto.storm.complex.service.Openable;
  *
  * @author O605461
  */
-public interface Producer extends Openable, Closeable {
+public interface ResultProducer extends Openable, Closeable {
 
     /**
      * Sends the given context in a synchronous way. This call will block the caller until the actual send is made. Note
@@ -18,5 +18,5 @@ public interface Producer extends Openable, Closeable {
      * @param theResult
      *            the data to send.
      */
-    public void send(ResultRow theResult);
+    public void send(Result theResult);
 }
