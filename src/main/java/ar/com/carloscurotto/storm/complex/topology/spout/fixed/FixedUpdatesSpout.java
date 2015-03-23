@@ -25,12 +25,12 @@ public class FixedUpdatesSpout extends BaseRichSpout {
     @Override
     public void open(Map theConfiguration, TopologyContext theTopologyContext, SpoutOutputCollector theCollector) {
         collector = theCollector;
-        Update first = createUpdateFor("SEMS", "row-1");
-        Update second = createUpdateFor("ANOTHER", "row-2");
+        Update first = createUpdateFor("id-1", "SEMS", "row-1");
+        Update second = createUpdateFor("id-2", "ANOTHER", "row-2");
         updates = new Update[] { first, second };
     }
 
-    private Update createUpdateFor(final String theSystemId, final String theRowId) {
+    private Update createUpdateFor(final String theId, final String theSystemId, final String theRowId) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("parameter-key1", "parameter-value1");
 
@@ -45,7 +45,7 @@ public class FixedUpdatesSpout extends BaseRichSpout {
         UpdateRow row = new UpdateRow(theRowId, keyColumns, updateColumns);
         rows.add(row);
 
-        return new Update(theSystemId, "table", parameters, rows);
+        return new Update(theId, theSystemId, "table", parameters, rows);
     }
 
     @Override

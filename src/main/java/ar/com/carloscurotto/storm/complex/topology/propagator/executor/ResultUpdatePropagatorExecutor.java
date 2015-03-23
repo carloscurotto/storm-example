@@ -67,7 +67,7 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
             ResultRow internalResultRow = theInternalResult.getRow(updateRow.getId());
             finalResultRows.add(createFinalResultRow(externalResultRow, internalResultRow));
         }
-        return new Result(finalResultRows);
+        return new Result(theUpdate.getId(), finalResultRows);
     }
 
     private ResultRow createFinalResultRow(final ResultRow externalResultRow, final ResultRow internalResultRow) {

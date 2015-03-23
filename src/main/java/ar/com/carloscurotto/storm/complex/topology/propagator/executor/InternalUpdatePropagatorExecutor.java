@@ -40,7 +40,7 @@ public class InternalUpdatePropagatorExecutor extends AbstractUpdatePropagatorEx
                 resultRows.add(ResultRow.skip(updateRow.getId()));
             }
         }
-        theCollector.emit(new Values(new Result(resultRows)));
+        theCollector.emit(new Values(new Result(update.getId(), resultRows)));
     }
 
 }
