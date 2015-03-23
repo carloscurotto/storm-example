@@ -12,25 +12,33 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /**
- * This class contains a collection of {@link UpdateRow}s to be updated and all the meta data needed for the different
- * {@link AbstractUpdatePropagator} implementations to execute the update on each row.
+ * Represents each update that we are going to receive containing all the parameters to execute it.
  *
  * @author O605461
  */
 public class Update implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    /** This id tells which propagators will handle this update. */
+    
+    /**
+     * The id that identifies this update.
+     */
+    private String id;
+    /**
+     * This id tells to which system this particular update applies to.
+     */
     private String systemId;
-
-    /** The table name containing the collection of rows. */
+    /**
+     * The name of the table this update applies to.
+     */
     private String tableName;
-
-    /** The parameters for this particular update. */
+    /**
+     * The parameters for this particular update.
+     */
     private Map<String, Object> parameters = new HashMap<String, Object>();
-
-    /** The updated rows. */
+    /**
+     * The updated rows.
+     */
     private Map<String, UpdateRow> rows = new HashMap<String, UpdateRow>();
 
     /**
@@ -43,6 +51,7 @@ public class Update implements Serializable {
     /**
      * Constructor.
      *
+     * @param theId the id that identifies this update.
      * @param theSystemId
      *            the systems's id for this particular update. It can not be blank.
      * @param theTableName
@@ -52,18 +61,30 @@ public class Update implements Serializable {
      * @param theRows
      *            the rows updated. It can not be null nor empty.
      */
-    public Update(final String theSystemId, final String theTableName, final Map<String, Object> theParameters,
-            final Collection<UpdateRow> theRows) {
+    public Update(final String theId, final String theSystemId, final String theTableName,
+            final Map<String, Object> theParameters, final Collection<UpdateRow> theRows) {
+        Validate.notBlank(theId, "The id can not be blank.");
         Validate.notBlank(theSystemId, "The system id can not be blank.");
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theParameters, "The parameters can not be null.");
-        Validate.notEmpty(theRows, "The rows can not be null nor empty.");
+        Validate.notNull(theRows, "The rows can not be null.");
+        Validate.notEmpty(theRows, "The rows can not be empty.");
+        id = theId;
         systemId = theSystemId;
         tableName = theTableName;
         parameters.putAll(theParameters);
         for (UpdateRow theRow : theRows) {
             rows.put(theRow.getId(), theRow);
         }
+    }
+    
+    /**
+     * Gets the update's id.
+     * 
+     * @return the update's id.
+     */
+    public String getId() {
+        return id;
     }
 
     /**
@@ -126,26 +147,30 @@ public class Update implements Serializable {
     /**
      * Gets the rows for this particular update.
      *
-     * @return the rows for this particular update. It is never null nor empty.
+     * @return the rows for this particular update.
      */
     public Collection<UpdateRow> getRows() {
         return Collections.unmodifiableCollection(rows.values());
     }
 
     /**
-     * Gets all the ids of every row.
+     * Gets the row associated with the given id.
      *
-     * @return the ids of every row. It is never null nor empty.
+     * @param theId
+     *            the given row id. It can not be blank.
+     * @return the row associated with the given row id or null if there is no row associated with the given id.
      */
-    public Collection<String> getRowsId() {
-        return Collections.unmodifiableCollection(rows.keySet());
+    public UpdateRow getRow(final String theId) {
+        Validate.notBlank(theId, "The id can not be blank");
+        return rows.get(theId);
     }
 
     @Override
     public boolean equals(final Object object) {
         if (object instanceof Update) {
             final Update other = (Update) object;
-            return Objects.equal(systemId, other.systemId) && Objects.equal(parameters, other.parameters)
+            return Objects.equal(id, other.id) && Objects.equal(systemId, other.systemId)
+                    && Objects.equal(tableName, other.tableName) && Objects.equal(parameters, other.parameters)
                     && Objects.equal(rows, other.rows);
         }
         return false;
@@ -153,12 +178,12 @@ public class Update implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(systemId, parameters, rows);
+        return Objects.hashCode(id, systemId, tableName, parameters, rows);
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("systemId", systemId).add("parameters", parameters).add("rows",
-                rows).toString();
+        return MoreObjects.toStringHelper(this).add("id", id).add("systemId", systemId).add("tableName", tableName)
+                .add("parameters", parameters).add("rows", rows).toString();
     }
 }
