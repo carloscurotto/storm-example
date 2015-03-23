@@ -68,7 +68,6 @@ public class Update implements Serializable {
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theParameters, "The parameters can not be null.");
         Validate.notNull(theRows, "The rows can not be null.");
-        Validate.notEmpty(theRows, "The rows can not be empty.");
         id = theId;
         systemId = theSystemId;
         tableName = theTableName;

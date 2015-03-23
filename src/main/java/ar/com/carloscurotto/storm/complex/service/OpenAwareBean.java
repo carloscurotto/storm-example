@@ -1,7 +1,5 @@
 package ar.com.carloscurotto.storm.complex.service;
 
-import org.apache.commons.lang.Validate;
-
 import com.google.common.base.Preconditions;
 
 /**
@@ -68,12 +66,10 @@ public abstract class OpenAwareBean<T, R> implements Closeable, Openable {
      * 
      * @param theContext
      *            a {@code T} instance that serves as context. It can be null.
-     * @return a {@code R} with the result of executing this method. It is never null.
+     * @return a {@code R} with the result of executing this method.
      */
     public final R execute(final T theContext) {
         Preconditions.checkState(isOpen(), "Can not execute a closed service.  Please, open it first.");
-        R result = doExecute(theContext);
-        Validate.notNull(result, "The result cannot be null");
         return doExecute(theContext);
     }
 

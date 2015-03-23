@@ -12,7 +12,7 @@ import ar.com.carloscurotto.storm.complex.transport.memory.queue.InMemoryResults
 public class InMemoryResultProducer extends OpenAwareBean<Result, Void> implements ResultProducer, Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private InMemoryResultsQueue results = new InMemoryResultsQueue();
 
     @Override

@@ -12,7 +12,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 public class Result implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     private String id;
@@ -24,38 +24,29 @@ public class Result implements Serializable {
      */
     @Deprecated
     public Result() {}
-    
-    /**
-     * Creates a result of processing the update with the given id.
-     * 
-     * @param theId
-     *            the corresponding update's id. It can not be blank.
-     * @param theRows
-     *            the result rows. It can not be null nor empty.
-     */
+
     public Result(final String theId, final Collection<ResultRow> theRows) {
         Validate.notBlank(theId, "The id can not be blank.");
         Validate.notNull(theRows, "The rows can not be null.");
-        Validate.notEmpty(theRows, "The rows can not be empty.");
         id = theId;
         for (ResultRow theRow : theRows) {
             rows.put(theRow.getId(), theRow);
         }
     }
-    
+
     public String getId() {
         return id;
     }
-    
+
     public Collection<ResultRow> getRows() {
         return Collections.unmodifiableCollection(rows.values());
     }
-    
+
     public ResultRow getRow(final String theId) {
         Validate.notBlank(theId, "The id can not be blank");
         return rows.get(theId);
     }
-    
+
     @Override
     public boolean equals(final Object object) {
         if (object instanceof Result) {
@@ -74,5 +65,5 @@ public class Result implements Serializable {
     public String toString() {
         return MoreObjects.toStringHelper(this).add("id", id).add("rows", rows).toString();
     }
-    
+
 }
