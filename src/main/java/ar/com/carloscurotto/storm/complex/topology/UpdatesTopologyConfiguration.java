@@ -3,6 +3,7 @@ package ar.com.carloscurotto.storm.complex.topology;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import ar.com.carloscurotto.storm.complex.service.UpdateService;
 import ar.com.carloscurotto.storm.complex.topology.propagator.executor.ExternalUpdatePropagatorExecutor;
 import ar.com.carloscurotto.storm.complex.topology.propagator.executor.InternalUpdatePropagatorExecutor;
 import ar.com.carloscurotto.storm.complex.topology.propagator.executor.ResultUpdatePropagatorExecutor;
@@ -17,6 +18,7 @@ public class UpdatesTopologyConfiguration {
     private static final String EXTERNAL_UPDATE_PROPAGATOR_EXECUTOR = "ExternalUpdatePropagatorExecutor";
     private static final String INTERNAL_UPDATE_PROPAGATOR_EXECUTOR = "InternalUpdatePropagatorExecutor";
     private static final String RESULT_UPDATE_PROPAGATOR_EXECUTOR = "ResultUpdatePropagatorExecutor";
+    private static final String UPDATE_SERVICE = "UpdateService";
 
     private ApplicationContext context;
 
@@ -39,5 +41,9 @@ public class UpdatesTopologyConfiguration {
 
     public ResultUpdatePropagatorExecutor getResultUpdatePropagatorExecutor() {
         return (ResultUpdatePropagatorExecutor) context.getBean(RESULT_UPDATE_PROPAGATOR_EXECUTOR);
+    }
+    
+    public UpdateService getUpdateService() {
+        return (UpdateService) context.getBean(UPDATE_SERVICE);
     }
 }

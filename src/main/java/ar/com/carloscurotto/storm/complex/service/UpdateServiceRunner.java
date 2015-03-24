@@ -11,8 +11,7 @@ import org.slf4j.LoggerFactory;
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
-import ar.com.carloscurotto.storm.complex.transport.UpdateSubmitter;
-import ar.com.carloscurotto.storm.complex.transport.memory.InMemoryUpdateSubmitter;
+import ar.com.carloscurotto.storm.complex.topology.UpdatesTopologyConfiguration;
 
 public class UpdateServiceRunner {
     
@@ -20,15 +19,21 @@ public class UpdateServiceRunner {
 
     public static void main(String[] args) {
         
-        UpdateSubmitter submitter = new InMemoryUpdateSubmitter();
-        UpdateService service = new UpdateService(submitter);
+        UpdatesTopologyConfiguration configuration = new UpdatesTopologyConfiguration();
+        
+        UpdateService service = configuration.getUpdateService();
         service.open();
+        
         Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
         Result firstResult = service.execute(firstUpdate);
+        
         LOGGER.info("First result: " + firstResult);
+        
         Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");
         Result secondResult = service.execute(secondUpdate);
+        
         LOGGER.info("Second result: " + secondResult);
+        
         service.close();
         
     }
