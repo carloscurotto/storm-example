@@ -2,7 +2,7 @@ package ar.com.carloscurotto.storm.complex.model;
 
 import org.apache.commons.lang.Validate;
 
-public class ResultRowMessage {
+public class ResultRowMessageResolver {
 
     public static String getMessage(final ResultRow theExternalResult, final ResultRow theInternalResult) {
         Validate.notNull(theExternalResult, "The external result cannot be null");
