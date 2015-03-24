@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @RunWith(EasyMockRunner.class)
 public class QueryExecutorTest {
 
-    private QueryExecutor queryExecutor;
+    private DataSourceQueryExecutor queryExecutor;
 
     @Mock
     private DataSource dataSourceMock;
@@ -34,12 +34,12 @@ public class QueryExecutorTest {
 
     @Before
     public void setUp() {
-        queryExecutor = new QueryExecutor(dataSourceMock);
+        queryExecutor = new DataSourceQueryExecutor(dataSourceMock);
     }
 
     @Test(expected = NullPointerException.class)
     public void newInstanceNullDataSource() {
-        queryExecutor = new QueryExecutor(null);
+        queryExecutor = new DataSourceQueryExecutor(null);
     }
 
     @Test(expected = IllegalArgumentException.class)

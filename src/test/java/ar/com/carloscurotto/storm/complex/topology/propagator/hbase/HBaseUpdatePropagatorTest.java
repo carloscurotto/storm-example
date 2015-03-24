@@ -44,7 +44,7 @@ public class HBaseUpdatePropagatorTest {
     private QueryBuilder queryBuilderMock;
 
     @Mock
-    private QueryExecutor queryExecutorMock;
+    private DataSourceQueryExecutor queryExecutorMock;
 
     @Mock
     private UpdatePropagatorContext context;

@@ -1,62 +1,19 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-import javax.sql.DataSource;
-
-import org.apache.commons.dbutils.DbUtils;
-import org.apache.commons.lang3.Validate;
-
 /**
- * This query executor runs a query against a database that is encapsulated by a given {@link DataSource}.
+ * Implementations are responsible for running a query against its corresponding destination.
  *
- * @author N619614
+ * @author O605461, W506376
  *
  */
-public class QueryExecutor {
+public interface QueryExecutor {
 
     /**
-     * The data source from where this executor gets a connection.
-     */
-    private DataSource dataSource;
-
-    /**
-     * Constructs a {@link QueryExecutor} with the given data source.
-     *
-     * @param theDataSource
-     *            the data source from where this executor gets a connection. It cannot be null.
-     */
-    public QueryExecutor(final DataSource theDataSource) {
-        Validate.notNull(theDataSource, "The data source cannot be null");
-        dataSource = theDataSource;
-    }
-
-    /**
-     * Executes the given query against the database that is encapsulated by the data source of this class.
+     * Executes the given query. Implementations should handle the exceptions that may arise.
      *
      * @param theQuery
-     *            the query to be run. It cannot be blank.
+     *            the query to be run.
      */
-    public void execute(final String theQuery) {
-        Validate.notBlank(theQuery, "The query to be executed cannot be blank");
-        Connection connection = null;
-        try {
-            connection = dataSource.getConnection();
-            Statement statement = connection.createStatement();
-            statement.execute(theQuery);
-            int updateCount = statement.getUpdateCount();
-            if (updateCount != 1) {
-                connection.rollback();
-                throw new RuntimeException("Rolling back query [" + theQuery + "], it matched more than one result.");
-            }
-            connection.commit();
-        } catch (SQLException e) {
-            throw new RuntimeException("Something went wrong while executing the query: " + theQuery);
-        } finally {
-            DbUtils.closeQuietly(connection);
-        }
-    }
+    void execute(String theQuery);
 
 }
