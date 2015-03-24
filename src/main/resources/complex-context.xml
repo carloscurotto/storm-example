@@ -6,7 +6,7 @@
   <!-- bean id="UpdatesSpoutFactory" class="com.jpmc.cib.csw.adp.update.topology.spout.kafka.KafkaUpdatesSpoutFactory"> <constructor-arg 
     value="localhost:2181" /> <constructor-arg value="test" /> </bean -->
 
-  <bean id="UpdatesSpoutFactory" class="ar.com.carloscurotto.storm.complex.topology.spout.fixed.FixedUpdatesSpoutFactory" />
+  <bean id="UpdatesSpoutFactory" class="ar.com.carloscurotto.storm.complex.topology.spout.memory.InMemoryUpdatesSpoutFactory" />
 
   <bean id="ExternalUpdatePropagatorExecutor" class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.ExternalUpdatePropagatorExecutor">
     <constructor-arg>
@@ -40,7 +40,7 @@
 
   <bean id="ResultUpdatePropagatorExecutor" class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.ResultUpdatePropagatorExecutor">
   	<constructor-arg>
-      <bean id="PrintProducer" class="ar.com.carloscurotto.storm.complex.transport.print.PrintResultProducer" />
+      <bean id="InMemoryResultProducer" class="ar.com.carloscurotto.storm.complex.transport.memory.InMemoryResultProducer" />
   	</constructor-arg>
   </bean>
 

@@ -40,7 +40,7 @@ public class ExternalUpdatePropagatorExecutor extends AbstractUpdatePropagatorEx
         } else {
             resultRows = createSkipResultRows(update);
         }
-        theCollector.emit(new Values(new Result(resultRows)));
+        theCollector.emit(new Values(new Result(update.getId(), resultRows)));
     }
 
     private Collection<ResultRow> executePropagator(final Update theUpdate) {
