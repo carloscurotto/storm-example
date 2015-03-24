@@ -24,7 +24,7 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
     private String brokerUrl;
     private Connection connection;
     private Session session;
-    private Destination destination;
+    private Destination replyTopic;
     private MessageProducer producer;
     
     public ActiveMQResultProducer(final String theBrokerUrl) {
@@ -44,18 +44,20 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
             connection = connectionFactory.createConnection();
             connection.start();
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            destination = session.createTopic("test");
-            producer = session.createProducer(destination);
+            replyTopic = session.createTopic("results");
+            producer = session.createProducer(replyTopic);
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);            
         } catch (Exception e) {
             throw new RuntimeException("Error creating active mq producer.", e);
         }
-        
     }
 
     @Override
     protected void doClose() {
         try {
+            if (producer != null) {
+                producer.close();
+            }            
             if (session != null) {
                 session.close();
             }            
@@ -67,7 +69,7 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
         } finally {
             session = null;
             connection = null;
-            destination = null;
+            replyTopic = null;
             producer = null;
         }
     }
@@ -77,13 +79,13 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
         try {
             BytesMessage message = session.createBytesMessage();
             byte[] bytes = SerializationUtils.serialize(theResult);
-            message.writeObject(bytes);
+            message.writeBytes(bytes);
+            message.setJMSCorrelationID(theResult.getId());
+            producer.send(message);
+            return null;
         } catch (Exception e) {
             throw new RuntimeException("Error sending result [" + theResult + "].", e);
         }
-        return null;
     }
-    
-    
     
 }

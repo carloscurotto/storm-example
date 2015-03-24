@@ -15,7 +15,7 @@ public class InMemoryUpdatesSpout extends BaseRichSpout {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int TUPLE_SLEEP_MILLIS = 1000 * 5;
+    private static final int TUPLE_SLEEP_MILLIS = 1000 * 1;
 
     private InMemoryUpdatesQueue updates = new InMemoryUpdatesQueue();
     private SpoutOutputCollector collector;
