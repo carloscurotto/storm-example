@@ -2,6 +2,7 @@ package ar.com.carloscurotto.storm.complex.transport.activemq;
 
 import java.io.Serializable;
 
+import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
@@ -9,6 +10,7 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.Result;
@@ -32,7 +34,7 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
 
     @Override
     public void send(Result theResult) {
-        doExecute(theResult);
+        execute(theResult);
     }
 
     @Override
@@ -72,6 +74,13 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
 
     @Override
     protected Void doExecute(Result theResult) {
+        try {
+            BytesMessage message = session.createBytesMessage();
+            byte[] bytes = SerializationUtils.serialize(theResult);
+            message.writeObject(bytes);
+        } catch (Exception e) {
+            throw new RuntimeException("Error sending result [" + theResult + "].", e);
+        }
         return null;
     }
     
