@@ -1,5 +1,7 @@
 package ar.com.carloscurotto.storm.complex.model;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
@@ -15,7 +17,9 @@ import com.google.common.base.Preconditions;
  *
  * @author O605461, W506376
  */
-public class ResultRow {
+public class ResultRow implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * The identifier that is associated with the {@link UpdateRow}
