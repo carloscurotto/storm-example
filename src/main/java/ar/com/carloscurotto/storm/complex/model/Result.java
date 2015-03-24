@@ -1,5 +1,6 @@
 package ar.com.carloscurotto.storm.complex.model;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,8 +11,10 @@ import org.apache.commons.lang3.Validate;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
-public class Result {
+public class Result implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
     private String id;
 
     private Map<String, ResultRow> rows = new HashMap<String, ResultRow>();
