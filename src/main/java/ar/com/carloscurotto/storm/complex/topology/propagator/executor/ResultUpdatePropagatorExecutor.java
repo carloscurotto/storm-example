@@ -1,7 +1,7 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.executor;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
@@ -14,8 +14,8 @@ import storm.trident.operation.TridentOperationContext;
 import storm.trident.tuple.TridentTuple;
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
+import ar.com.carloscurotto.storm.complex.model.ResultRowMessage;
 import ar.com.carloscurotto.storm.complex.model.Update;
-import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.transport.ResultProducer;
 
 public class ResultUpdatePropagatorExecutor extends BaseFunction {
@@ -46,45 +46,41 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
 
     @Override
     public void execute(TridentTuple theTuple, TridentCollector theCollector) {
+        Result finalResult = collectResults(theTuple);
+        producer.send(finalResult);
+    }
+
+    private Result collectResults(final TridentTuple theTuple) {
         Update update = (Update) theTuple.getValueByField("update");
         Result externalResult = (Result) theTuple.getValueByField("external-result");
         Result internalResult = (Result) theTuple.getValueByField("internal-result");
 
-        sendFinalResult(createFinalResult(update, externalResult, internalResult));
-    }
-
-    private void sendFinalResult(final Result theFinalResult) {
-        producer.send(theFinalResult);
+        return createFinalResult(update, externalResult, internalResult);
     }
 
     private Result createFinalResult(final Update theUpdate, final Result theExternalResult,
             final Result theInternalResult) {
-        Collection<ResultRow> finalResultRows = new ArrayList<ResultRow>();
-        for (UpdateRow updateRow : theUpdate.getRows()) {
-            LOGGER.debug("Executing result update propagator executor for row [" + updateRow + "] on thread ["
+        Collection<ResultRow> finalResultRows = new LinkedList<ResultRow>();
+        for (String updateRowId : theUpdate.getUpdateRowsId()) {
+            LOGGER.debug("Executing result update propagator executor for row [" + updateRowId + "] on thread ["
                     + Thread.currentThread().getName() + "].");
-            ResultRow externalResultRow = theExternalResult.getRow(updateRow.getId());
-            ResultRow internalResultRow = theInternalResult.getRow(updateRow.getId());
-            finalResultRows.add(createFinalResultRow(externalResultRow, internalResultRow));
+            ResultRow externalResultRow = theExternalResult.getRow(updateRowId);
+            ResultRow internalResultRow = theInternalResult.getRow(updateRowId);
+            finalResultRows.add(createResult(externalResultRow, internalResultRow));
         }
         return new Result(finalResultRows);
     }
 
-    private ResultRow createFinalResultRow(final ResultRow externalResultRow, final ResultRow internalResultRow) {
-        if (externalResultRow.isSuccessful() && internalResultRow.isSuccessful()) {
-            return ResultRow.success(externalResultRow.getId(), "External and internal update sucessful.");
-        } else if (externalResultRow.isSkipped() && internalResultRow.isSuccessful()) {
-            return ResultRow.success(externalResultRow.getId(),
-                    "External update skipped and internal update sucessful.");
-        } else if (externalResultRow.isSuccessful() && internalResultRow.isFailure()) {
-            return ResultRow.success(externalResultRow.getId(),
-                    "External update successful and internal update failed.");
-        } else if (externalResultRow.isFailure()) {
-            return ResultRow.failure(externalResultRow.getId(), "External update failed.");
-        } else {
-            throw new RuntimeException("Update results not supported [external=" + externalResultRow + ", internal= "
-                    + internalResultRow + "]");
+    private ResultRow createResult(final ResultRow theExternalResultRow, final ResultRow theInternalResultRow) {
+        String message = ResultRowMessage.getMessage(theExternalResultRow, theInternalResultRow);
+        if (isFailure(theExternalResultRow, theInternalResultRow)) {
+            return ResultRow.failure(theExternalResultRow.getId(), message);
         }
+
+        return ResultRow.success(theExternalResultRow.getId(), message);
     }
 
+    private boolean isFailure(final ResultRow theExternalResult, final ResultRow theInternalResult) {
+        return theExternalResult.isFailure() || (theExternalResult.isSkipped() && theInternalResult.isFailure());
+    }
 }

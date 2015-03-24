@@ -29,7 +29,7 @@ public class InternalUpdatePropagatorExecutor extends AbstractUpdatePropagatorEx
         Update update = (Update) theTuple.getValueByField("update");
         Result externalResult = (Result) theTuple.getValueByField("external-result");
         Collection<ResultRow> resultRows = new ArrayList<ResultRow>();
-        for (UpdateRow updateRow : update.getRows()) {
+        for (UpdateRow updateRow : update.getUpdateRows()) {
             ResultRow externalResultRow = externalResult.getRow(updateRow.getId());
             if (externalResultRow.isSuccessful() || externalResultRow.isSkipped()) {
                 ResultRow resultRow = process(update, updateRow);

@@ -12,26 +12,25 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 /**
- * Represents each update that we are going to receive containing all the parameters to execute it.
+ * This class contains a collection of {@link UpdateRow}s to be updated and all the meta data needed for the different
+ * {@link AbstractUpdatePropagator} implementations to execute the update on each row.
  *
  * @author O605461
  */
 public class Update implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    /**
-     * This id tells to which system this particular update applies to.
-     */
+
+    /** This id tells which propagators will handle this update. */
     private String systemId;
 
+    /** The table name containing the collection of rows. */
     private String tableName;
-    /**
-     * The parameters for this particular update.
-     */
+
+    /** The parameters for this particular update. */
     private Map<String, Object> parameters = new HashMap<String, Object>();
-    /**
-     * The updated rows.
-     */
+
+    /** The updated rows. */
     private Map<String, UpdateRow> rows = new HashMap<String, UpdateRow>();
 
     /**
@@ -51,14 +50,14 @@ public class Update implements Serializable {
      * @param theParameters
      *            the parameters for this particular update. It can not be null.
      * @param theRows
-     *            the rows updated. It can not be null.
+     *            the rows updated. It can not be null nor empty.
      */
-    public Update(final String theSystemId, final String theTableName,
-            final Map<String, Object> theParameters, final Collection<UpdateRow> theRows) {
+    public Update(final String theSystemId, final String theTableName, final Map<String, Object> theParameters,
+            final Collection<UpdateRow> theRows) {
         Validate.notBlank(theSystemId, "The system id can not be blank.");
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theParameters, "The parameters can not be null.");
-        Validate.notNull(theRows, "The rows can not be null.");
+        Validate.notEmpty(theRows, "The rows can not be null nor empty.");
         systemId = theSystemId;
         tableName = theTableName;
         parameters.putAll(theParameters);
@@ -127,30 +126,26 @@ public class Update implements Serializable {
     /**
      * Gets the rows for this particular update.
      *
-     * @return the rows for this particular update.
+     * @return the rows for this particular update. It is never null nor empty.
      */
-    public Collection<UpdateRow> getRows() {
+    public Collection<UpdateRow> getUpdateRows() {
         return Collections.unmodifiableCollection(rows.values());
     }
 
     /**
-     * Gets the row associated with the given id.
+     * Gets all the ids of every row.
      *
-     * @param theId
-     *            the given row id. It can not be blank.
-     * @return the row associated with the given row id or null if there is no row associated with the given id.
+     * @return the ids of every row. It is never null nor empty.
      */
-    public UpdateRow getRow(final String theId) {
-        Validate.notBlank(theId, "The id can not be blank");
-        return rows.get(theId);
+    public Collection<String> getUpdateRowsId() {
+        return Collections.unmodifiableCollection(rows.keySet());
     }
 
     @Override
     public boolean equals(final Object object) {
         if (object instanceof Update) {
             final Update other = (Update) object;
-            return Objects.equal(systemId, other.systemId)
-                    && Objects.equal(parameters, other.parameters)
+            return Objects.equal(systemId, other.systemId) && Objects.equal(parameters, other.parameters)
                     && Objects.equal(rows, other.rows);
         }
         return false;
@@ -163,7 +158,7 @@ public class Update implements Serializable {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("systemId", systemId)
-                .add("parameters", parameters).add("rows", rows).toString();
+        return MoreObjects.toStringHelper(this).add("systemId", systemId).add("parameters", parameters).add("rows",
+                rows).toString();
     }
 }

@@ -44,8 +44,8 @@ public class ExternalUpdatePropagatorExecutor extends AbstractUpdatePropagatorEx
     }
 
     private Collection<ResultRow> executePropagator(final Update theUpdate) {
-        Collection<ResultRow> resultRows = new ArrayList<ResultRow>(theUpdate.getRows().size());
-        for (UpdateRow updateRow : theUpdate.getRows()) {
+        Collection<ResultRow> resultRows = new ArrayList<ResultRow>(theUpdate.getUpdateRows().size());
+        for (UpdateRow updateRow : theUpdate.getUpdateRows()) {
             ResultRow resultRow = process(theUpdate, updateRow);
             resultRows.add(resultRow);
         }
@@ -55,8 +55,8 @@ public class ExternalUpdatePropagatorExecutor extends AbstractUpdatePropagatorEx
     private Collection<ResultRow> createSkipResultRows(final Update theUpdate) {
         LOGGER.debug("Skipping external update propagator for row [" + theUpdate + "] on thread ["
                 + Thread.currentThread().getName() + "].");
-        Collection<ResultRow> resultRows = new ArrayList<ResultRow>(theUpdate.getRows().size());
-        for (UpdateRow updateRow : theUpdate.getRows()) {
+        Collection<ResultRow> resultRows = new ArrayList<ResultRow>(theUpdate.getUpdateRows().size());
+        for (UpdateRow updateRow : theUpdate.getUpdateRows()) {
             resultRows.add(ResultRow.skip(updateRow.getId()));
         }
         return resultRows;
