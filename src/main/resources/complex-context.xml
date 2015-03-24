@@ -49,5 +49,11 @@
   <bean id="InternalSemsUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
   
   <bean id="InternalAnotherUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
+  
+  <bean id="UpdateService" class="ar.com.carloscurotto.storm.complex.service.UpdateService">
+  	<constructor-arg>
+  		<bean id="InMemoryUpdateSubmitter" class="ar.com.carloscurotto.storm.complex.transport.memory.InMemoryUpdateSubmitter" />
+  	</constructor-arg>
+  </bean>
 
 </beans>
