@@ -128,7 +128,7 @@ public class Update implements Serializable {
      *
      * @return the rows for this particular update. It is never null nor empty.
      */
-    public Collection<UpdateRow> getUpdateRows() {
+    public Collection<UpdateRow> getRows() {
         return Collections.unmodifiableCollection(rows.values());
     }
 
@@ -137,7 +137,7 @@ public class Update implements Serializable {
      *
      * @return the ids of every row. It is never null nor empty.
      */
-    public Collection<String> getUpdateRowsId() {
+    public Collection<String> getRowsId() {
         return Collections.unmodifiableCollection(rows.keySet());
     }
 

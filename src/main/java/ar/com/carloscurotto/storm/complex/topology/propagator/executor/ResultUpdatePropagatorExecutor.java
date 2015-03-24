@@ -61,7 +61,7 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
     private Result createFinalResult(final Update theUpdate, final Result theExternalResult,
             final Result theInternalResult) {
         Collection<ResultRow> finalResultRows = new LinkedList<ResultRow>();
-        for (String updateRowId : theUpdate.getUpdateRowsId()) {
+        for (String updateRowId : theUpdate.getRowsId()) {
             LOGGER.debug("Executing result update propagator executor for row [" + updateRowId + "] on thread ["
                     + Thread.currentThread().getName() + "].");
             ResultRow externalResultRow = theExternalResult.getRow(updateRowId);
