@@ -6,10 +6,10 @@ import org.apache.commons.lang.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
-import ar.com.carloscurotto.storm.complex.transport.ResultProducer;
+import ar.com.carloscurotto.storm.complex.transport.Producer;
 import ar.com.carloscurotto.storm.complex.transport.memory.queue.InMemoryResultsQueue;
 
-public class InMemoryResultProducer extends OpenAwareBean<Result, Void> implements ResultProducer, Serializable {
+public class InMemoryResultProducer extends OpenAwareBean<Result, Void> implements Producer<Result>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

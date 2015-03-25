@@ -8,9 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
-import ar.com.carloscurotto.storm.complex.transport.ResultProducer;
+import ar.com.carloscurotto.storm.complex.transport.Producer;
 
-public class PrintResultProducer extends OpenAwareBean<Result, Void> implements ResultProducer, Serializable {
+public class PrintResultProducer extends OpenAwareBean<Result, Void> implements Producer<Result>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

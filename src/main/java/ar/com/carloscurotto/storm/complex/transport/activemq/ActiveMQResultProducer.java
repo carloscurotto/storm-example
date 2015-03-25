@@ -15,18 +15,18 @@ import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
-import ar.com.carloscurotto.storm.complex.transport.ResultProducer;
+import ar.com.carloscurotto.storm.complex.transport.Producer;
 
-public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implements ResultProducer, Serializable {
+public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implements Producer<Result>, Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     private String brokerUrl;
     private Connection connection;
     private Session session;
     private Destination replyTopic;
     private MessageProducer producer;
-    
+
     public ActiveMQResultProducer(final String theBrokerUrl) {
         Validate.notBlank(theBrokerUrl, "The broker url can not be blank.");
         brokerUrl = theBrokerUrl;
@@ -46,7 +46,7 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             replyTopic = session.createTopic("results");
             producer = session.createProducer(replyTopic);
-            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);            
+            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
         } catch (Exception e) {
             throw new RuntimeException("Error creating active mq producer.", e);
         }
@@ -57,10 +57,10 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
         try {
             if (producer != null) {
                 producer.close();
-            }            
+            }
             if (session != null) {
                 session.close();
-            }            
+            }
             if (connection != null) {
                 connection.close();
             }
@@ -87,5 +87,5 @@ public class ActiveMQResultProducer extends OpenAwareBean<Result, Void> implemen
             throw new RuntimeException("Error sending result [" + theResult + "].", e);
         }
     }
-    
+
 }

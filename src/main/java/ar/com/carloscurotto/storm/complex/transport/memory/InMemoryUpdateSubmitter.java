@@ -5,15 +5,15 @@ import org.apache.commons.lang3.Validate;
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
-import ar.com.carloscurotto.storm.complex.transport.UpdateSubmitter;
+import ar.com.carloscurotto.storm.complex.transport.Submitter;
 import ar.com.carloscurotto.storm.complex.transport.memory.queue.InMemoryResultsQueue;
 import ar.com.carloscurotto.storm.complex.transport.memory.queue.InMemoryUpdatesQueue;
 
-public class InMemoryUpdateSubmitter extends OpenAwareBean<Update, Result> implements UpdateSubmitter {
-    
+public class InMemoryUpdateSubmitter extends OpenAwareBean<Update, Result> implements Submitter<Update, Result> {
+
     private InMemoryResultsQueue results = new InMemoryResultsQueue();
     private InMemoryUpdatesQueue updates = new InMemoryUpdatesQueue();
-    
+
     @Override
     public Result submit(final Update theUpdate) {
         return doExecute(theUpdate);
@@ -37,11 +37,11 @@ public class InMemoryUpdateSubmitter extends OpenAwareBean<Update, Result> imple
         put(theUpdate);
         return take(theUpdate);
     }
-    
+
     private void put(final Update theUpdate) {
         updates.put(theUpdate);
     }
-    
+
     private Result take(final Update theUpdate) {
         Result theResult = results.take();
         while (!theResult.getId().equals(theUpdate.getId())) {

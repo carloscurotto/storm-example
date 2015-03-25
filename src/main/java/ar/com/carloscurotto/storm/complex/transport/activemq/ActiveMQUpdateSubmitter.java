@@ -18,10 +18,10 @@ import org.slf4j.LoggerFactory;
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
-import ar.com.carloscurotto.storm.complex.transport.UpdateSubmitter;
+import ar.com.carloscurotto.storm.complex.transport.Submitter;
 
-public class ActiveMQUpdateSubmitter extends OpenAwareBean<Update, Result> implements UpdateSubmitter {
-    
+public class ActiveMQUpdateSubmitter extends OpenAwareBean<Update, Result> implements Submitter<Update, Result> {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ActiveMQBrokerRunner.class);
 
     private String brokerUrl;
@@ -30,7 +30,7 @@ public class ActiveMQUpdateSubmitter extends OpenAwareBean<Update, Result> imple
     private Destination requestTopic;
     private Destination replyTopic;
     private MessageProducer producer;
-    
+
     public ActiveMQUpdateSubmitter(final String theBrokerUrl) {
         Validate.notBlank(theBrokerUrl, "The broker url can not be blank.");
         brokerUrl = theBrokerUrl;
@@ -49,7 +49,7 @@ public class ActiveMQUpdateSubmitter extends OpenAwareBean<Update, Result> imple
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
         } catch (Exception e) {
             throw new RuntimeException("Error creating active mq update submitter.", e);
-        }        
+        }
     }
 
     @Override
@@ -60,7 +60,7 @@ public class ActiveMQUpdateSubmitter extends OpenAwareBean<Update, Result> imple
             }
             if (session != null) {
                 session.close();
-            }            
+            }
             if (connection != null) {
                 connection.close();
             }
@@ -72,14 +72,14 @@ public class ActiveMQUpdateSubmitter extends OpenAwareBean<Update, Result> imple
             requestTopic = null;
             replyTopic = null;
             producer = null;
-        }        
+        }
     }
 
     @Override
     public Result submit(Update theUpdate) {
         return execute(theUpdate);
     }
-    
+
     @Override
     protected Result doExecute(Update theUpdate) {
         MessageConsumer consumer = null;
@@ -91,7 +91,7 @@ public class ActiveMQUpdateSubmitter extends OpenAwareBean<Update, Result> imple
             request.writeBytes(serializedBytes);
             request.setJMSCorrelationID(theUpdate.getId());
             producer.send(request);
-            
+
             BytesMessage response = (BytesMessage) consumer.receive();
             byte deserializedBytes[] = new byte[(int) response.getBodyLength()];
             response.readBytes(deserializedBytes);
