@@ -3,7 +3,6 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
@@ -21,21 +20,11 @@ public class ExcpTradeStatusMessage extends TradeMessage {
      * Message type for this trade message.
      */
     private final String MESSAGE_TYPE = "SEMSAdapter.Trade.AddEvent";
-
+    
     private String userName;
     private String eventCode = "SCRT"; // defaulted for Status message
     private String eventType = "TENR"; // defaulted for Status message
     private ExceptionTradeNarrative narrative;
-
-    /**
-     * Code for external comments in an exception trade messages.
-     */
-    private static final String SCLT_NARRATIVE_CODE = "SCLT";
-
-    /**
-     * Code for internal status for exception trades status messages.
-     */
-    private static final String ISTS_NARRATIVE_CODE = "ISTS";
 
     /**
      * Creates an exception trade message with the information on the give {@link UpdateRow} parameter.
@@ -56,25 +45,6 @@ public class ExcpTradeStatusMessage extends TradeMessage {
         Integer numberOfNarratives = 0;
 
         ExceptionTradeNarrative exceptionNarrative = new ExceptionTradeNarrative();
-
-        if (StringUtils.isNotBlank(theExternalComments)) {
-            numberOfNarratives++;
-            exceptionNarrative.setNarrativeCode1(SCLT_NARRATIVE_CODE);
-            exceptionNarrative.setNarrativeText1(theExternalComments);
-        }
-
-        if (StringUtils.isNotBlank(theStatusCode)) {
-            numberOfNarratives++;
-            if (StringUtils.isNotBlank(theExternalComments)) {
-                exceptionNarrative.setNarrativeCode2(ISTS_NARRATIVE_CODE);
-                exceptionNarrative.setNarrativeText2(theStatusCode);
-            } else {
-                exceptionNarrative.setNarrativeCode1(ISTS_NARRATIVE_CODE);
-                exceptionNarrative.setNarrativeText1(theStatusCode);
-            }
-        }
-
-        exceptionNarrative.setNoOfNarratives(numberOfNarratives);
 
         tradeNo = theTradeNo;
         userName = theUserId;

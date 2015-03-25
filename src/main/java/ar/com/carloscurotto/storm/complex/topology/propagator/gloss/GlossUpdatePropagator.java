@@ -66,6 +66,19 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
     }
 
     /**
+     * Propagates the changes in the row to the Gloss system.
+     * 
+     * @param theParameters
+     *            the parameters for this update. It cannot be null.
+     * @param theUpdateRow
+     *            the row to propagate. It cannot be null.
+     */
+    private void propagateRow(final Map<String, Object> theParameters, UpdateRow theUpdateRow) {
+        List<TradeMessage> messages = messageBuilder.build(theParameters, theUpdateRow);
+        messageSender.execute(messages);
+    }
+    
+    /**
      * Propagates the changes in the update object to the Gloss system.
      * 
      * @param theContext
@@ -84,18 +97,5 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
         }
 
         return UpdatePropagatorResult.createSuccess("SUCCESS");
-    }
-
-    /**
-     * Propagates the changes in the row to the Gloss system.
-     * 
-     * @param theParameters
-     *            the parameters for this update. It cannot be null.
-     * @param theUpdateRow
-     *            the row to propagate. It cannot be null.
-     */
-    private void propagateRow(final Map<String, Object> theParameters, UpdateRow theUpdateRow) {
-        List<TradeMessage> messages = messageBuilder.build(theParameters, theUpdateRow);
-        messageSender.doExecute(messages);
     }
 }

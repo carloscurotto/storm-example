@@ -3,6 +3,8 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Internal element for trade messages. It is used mostly to represent internal and external comments on an exception
  * trade update message. It is intended to be marshalled into XML string using the JAXB framework.
@@ -13,19 +15,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Narratives")
 public class ExceptionTradeNarrative {
 
-    private Integer numberOfNarratives = 0;
+    /**
+     * Code for external comments in an exception trade messages.
+     */
+    private static final String SCLT_NARRATIVE_CODE = "SCLT";
+
+    /**
+     * Code for internal status for exception trades status messages.
+     */
+    private static final String ISTS_NARRATIVE_CODE = "ISTS";
+    
+    private Integer numberOfNarratives;
     private String narrativeCode1;
     private String narrativeText1;
     private String narrativeCode2;
     private String narrativeText2;
-    private String narrativeCode3;
-    private String narrativeText3;
 
     public ExceptionTradeNarrative() {
     }
 
     /**
-     * Constructs and ExceptionTradeNarrative wih the given String, using it as narrative text and setting the number of
+     * Constructs an ExceptionTradeNarrative with the given String, using it as narrative text and setting the number of
      * narratives to one.
      * 
      * @param theInternalComments
@@ -37,6 +47,32 @@ public class ExceptionTradeNarrative {
         narrativeCode1 = NormalTradeNarrative.INTERNAL_NARRATIVE_CODE;
         narrativeText1 = theInternalComments;
         numberOfNarratives = 1;
+    }
+        
+    /**
+     * Constructs an ExceptionTradeNarrative with "theExternalComments" as narrativeText1 or
+     * theStatusCode as narrativeText1 or narrativeText2 depending on the current case.
+     * @param theExternalComments text used as external comments. It can be null or blank.
+     * @param theStatusCode text used as status code. It can be null or blank.
+     */
+    public ExceptionTradeNarrative(final String theExternalComments, final String theStatusCode) {        
+        numberOfNarratives = 0;
+        if (StringUtils.isNotBlank(theExternalComments)) {
+            numberOfNarratives++;
+            narrativeCode1 = SCLT_NARRATIVE_CODE;
+            narrativeText1 = theExternalComments;
+        }
+
+        if (StringUtils.isNotBlank(theStatusCode)) {
+            numberOfNarratives++;
+            if (StringUtils.isNotBlank(theExternalComments)) {
+                narrativeCode2 = ISTS_NARRATIVE_CODE;
+                narrativeText2 = theStatusCode;
+            } else {
+                narrativeCode1 = ISTS_NARRATIVE_CODE;
+                narrativeText1 = theStatusCode;
+            }
+        }
     }
 
     @XmlElement(name = "NoOfNarratives")
@@ -82,23 +118,5 @@ public class ExceptionTradeNarrative {
 
     public void setNarrativeText2(String narrativeText2) {
         this.narrativeText2 = narrativeText2;
-    }
-
-    @XmlElement(name = "NarrativeCode3")
-    public String getNarrativeCode3() {
-        return narrativeCode3;
-    }
-
-    public void setNarrativeCode3(String narrativeCode3) {
-        this.narrativeCode3 = narrativeCode3;
-    }
-
-    @XmlElement(name = "NarrativeText3")
-    public String getNarrativeText3() {
-        return narrativeText3;
-    }
-
-    public void setNarrativeText3(String narrativeText3) {
-        this.narrativeText3 = narrativeText3;
     }
 }
