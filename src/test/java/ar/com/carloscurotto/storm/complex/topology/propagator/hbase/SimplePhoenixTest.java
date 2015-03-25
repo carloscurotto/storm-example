@@ -35,7 +35,7 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropa
  */
 public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
     
-//    static Logger logger = LoggerFactory.getLogger("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.SimplePhoenixTest");
+    static Logger logger = LoggerFactory.getLogger("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.SimplePhoenixTest");
 
     public static final String LOCALHOST = "localhost";
     public static final String PHOENIX_JDBC_URL = JDBC_PROTOCOL + JDBC_PROTOCOL_SEPARATOR
