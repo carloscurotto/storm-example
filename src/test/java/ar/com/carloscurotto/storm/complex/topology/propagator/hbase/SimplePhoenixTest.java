@@ -119,7 +119,6 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         dropTradeTable(con);
         createTradeTable(con);
 
-//        logger.debug("Calling HBaseUpdatePropagator and see what happens");
         QueryBuilder theQueryBuilder = new QueryBuilder();
 
         QueryExecutor queryExecutor = new DataSourceQueryExecutor(theDataSource);
@@ -135,8 +134,6 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         
         System.out.println("Result: Status " + updatePropagatorResult.getStatus() + " Message " + updatePropagatorResult.getMessage());
 
-//        logger.debug("HBaseUpdatePropagator finished");
-        
         showTradeTable(con);
 
         con.close();
