@@ -152,6 +152,15 @@ public class Update implements Serializable {
     public Collection<UpdateRow> getRows() {
         return Collections.unmodifiableCollection(rows.values());
     }
+    
+    /**
+     * Gets all the ids of every row.
+     *
+     * @return the ids of every row. It is never null nor empty.
+     */
+    public Collection<String> getRowsId() {
+        return Collections.unmodifiableCollection(rows.keySet());
+    }    
 
     /**
      * Gets the row associated with the given id.
