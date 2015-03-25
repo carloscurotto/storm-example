@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
+import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
  * @author N619614
@@ -132,7 +133,9 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
         UpdatePropagatorContext theContext = getUpdatePropagatorContext();
 
-        hBaseUpdatePropagator.execute(theContext);
+        UpdatePropagatorResult updatePropagatorResult = hBaseUpdatePropagator.execute(theContext);
+        
+        System.out.println("Result: Status " + updatePropagatorResult.getStatus() + " Message " + updatePropagatorResult.getMessage());
 
 //        logger.debug("HBaseUpdatePropagator finished");
         
@@ -151,8 +154,9 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         ResultSet resultSet = stmt.executeQuery(sql);
         con.commit();
         
+        int i = 1;
         while (resultSet.next()) {
-            System.out.println(resultSet.getMetaData().toString());
+            System.out.println(i++ + ": " + resultSet.getMetaData().toString());
         }
         
         stmt.close();
