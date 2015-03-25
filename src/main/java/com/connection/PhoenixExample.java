@@ -167,8 +167,6 @@ public class PhoenixExample {
         Map<String, Object> keyColumns = new HashMap<String, Object>();
         
         keyColumns.put("record_no", 1);
-//        keyColumns.put("condition1", "conditionValue1");
-//        keyColumns.put("condition2", "conditionValue2");
         
         String[] columnNames = TradeTableBuilder.createColumnNames();
         Object[] columnValues = TradeTableBuilder.createColumnValues();
@@ -178,7 +176,6 @@ public class PhoenixExample {
             updateColumns.put(columnNames[i], columnValues[i]);
         }
         
-//        updateColumns.put("column2", "value2");
 
         UpdateRow theRow = new UpdateRow("theSystemId", keyColumns, updateColumns);
 
