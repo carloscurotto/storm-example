@@ -17,7 +17,7 @@ public class InMemoryResultProducer extends OpenAwareBean<Result, Void> implemen
 
     @Override
     public void send(Result theResult) {
-        doExecute(theResult);
+        execute(theResult);
     }
 
     @Override

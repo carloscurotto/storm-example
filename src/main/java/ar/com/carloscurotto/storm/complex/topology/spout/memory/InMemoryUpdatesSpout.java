@@ -15,7 +15,7 @@ public class InMemoryUpdatesSpout extends BaseRichSpout {
 
     private static final long serialVersionUID = 1L;
 
-    private static final int TUPLE_SLEEP_MILLIS = 1000 * 5;
+    private static final int TUPLE_SLEEP_MILLIS = 1000 * 1;
 
     private InMemoryUpdatesQueue updates = new InMemoryUpdatesQueue();
     private SpoutOutputCollector collector;
@@ -39,12 +39,12 @@ public class InMemoryUpdatesSpout extends BaseRichSpout {
         if (update != null) {
             collector.emit(new Values(update));
         }
-        sleep(TUPLE_SLEEP_MILLIS);
+        sleepTuple();
     }
     
-    private void sleep(long theMillis) {
+    private void sleepTuple() {
         try {
-            Thread.sleep(theMillis);
+            Thread.sleep(TUPLE_SLEEP_MILLIS);
         } catch (InterruptedException e) {
             throw new RuntimeException("Error sleeping", e);
         }
