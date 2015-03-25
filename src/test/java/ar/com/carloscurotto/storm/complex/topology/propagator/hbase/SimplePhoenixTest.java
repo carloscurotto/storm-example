@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
+import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
  * @author N619614

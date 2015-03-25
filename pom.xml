@@ -91,11 +91,7 @@
 			<artifactId>phoenix-core</artifactId>
 			<version>4.2.2</version>
 			<type>test-jar</type>
-<<<<<<< HEAD
-<!-- 			<scope>test</scope> -->
-=======
 			<scope>test</scope>
->>>>>>> Phoenix integration tests work in progress
 			<optional>true</optional>
 		</dependency>
 
