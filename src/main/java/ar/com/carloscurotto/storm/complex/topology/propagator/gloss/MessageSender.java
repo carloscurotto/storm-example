@@ -13,19 +13,18 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.service.OpenAwareService;
+import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
-import ar.com.carloscurotto.storm.complex.transport.Producer;
 
 /**
  * Sends the message into the queue. Knows what queue to use and knows how to marshall the messages.
  *
  * @author D540601
  */
-public class MessageSender extends OpenAwareService<List<TradeMessage>, Void> {
+public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
 
     private Map<Class<? extends TradeMessage>, Marshaller> marshallers = new HashMap<Class<? extends TradeMessage>, Marshaller>();
-    private Producer<String> messageProducer;
+    //private Producer<String> messageProducer;
     private List<Class<? extends TradeMessage>> messageClasses;
 
     /**
@@ -38,11 +37,11 @@ public class MessageSender extends OpenAwareService<List<TradeMessage>, Void> {
      *            a {@link List<Class<? extends TradeMessage>>} with the classes (.class) whose data this message sender
      *            will send.
      */
-    public MessageSender(final Producer<String> theMessageProducer,
+    public MessageSender(//final Producer<String> theMessageProducer,
             List<Class<? extends TradeMessage>> theMessageClasses) {
-        Validate.notNull(theMessageProducer, "The message producer cannot be null");
+        //Validate.notNull(theMessageProducer, "The message producer cannot be null");
         Validate.notEmpty(theMessageClasses, "The message classes list cannot be empty");
-        messageProducer = theMessageProducer;
+        //messageProducer = theMessageProducer;
         messageClasses = theMessageClasses;
     }
 
@@ -53,7 +52,7 @@ public class MessageSender extends OpenAwareService<List<TradeMessage>, Void> {
      */
     @Override
     protected void doOpen() {
-        messageProducer.open();
+        //messageProducer.open();
 
         try {
             for (Class<? extends TradeMessage> clazz : messageClasses) {
@@ -67,7 +66,7 @@ public class MessageSender extends OpenAwareService<List<TradeMessage>, Void> {
 
     @Override
     protected void doClose() {
-        messageProducer.close();
+        //messageProducer.close();
     }
 
     /**
@@ -93,7 +92,7 @@ public class MessageSender extends OpenAwareService<List<TradeMessage>, Void> {
      */
     private void send(TradeMessage theMessage) {
         Validate.notNull(theMessage, "The message cannot be null");
-        messageProducer.send(marshal(theMessage));
+        //messageProducer.send(marshal(theMessage));
     }
 
     /**

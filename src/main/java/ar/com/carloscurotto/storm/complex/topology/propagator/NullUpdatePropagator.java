@@ -12,4 +12,12 @@ public class NullUpdatePropagator extends AbstractUpdatePropagator {
         return UpdatePropagatorResult.createSuccess("Row updated sucessfully.");
     }
 
+    @Override
+    protected void doOpen() {
+    }
+
+    @Override
+    protected void doClose() {
+    }
+
 }

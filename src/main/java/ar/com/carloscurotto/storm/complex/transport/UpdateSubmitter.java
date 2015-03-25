@@ -1,5 +1,7 @@
 package ar.com.carloscurotto.storm.complex.transport;
 
+import ar.com.carloscurotto.storm.complex.model.Result;
+import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.service.Closeable;
 import ar.com.carloscurotto.storm.complex.service.Openable;
 
@@ -14,7 +16,7 @@ import ar.com.carloscurotto.storm.complex.service.Openable;
  * @param <O>
  *            The response context data type
  */
-public interface Submitter<I, O> extends Openable, Closeable {
+public interface UpdateSubmitter extends Openable, Closeable {
 
     /**
      * Sends the given context in a synchronous way, blocking the caller till the result is returned. This call
@@ -24,5 +26,5 @@ public interface Submitter<I, O> extends Openable, Closeable {
      *            the context data to send.
      * @return the result received.
      */
-    public O submit(I theContext);
+    public Result submit(Update theContext);
 }

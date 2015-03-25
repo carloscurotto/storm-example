@@ -20,9 +20,9 @@ import backtype.storm.tuple.Fields;
  *
  * @author O605461
  */
-public class UpdatesTopologySubmitter {
+public class UpdatesTopologyRunner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UpdatesTopologySubmitter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdatesTopologyRunner.class);
 
     /**
      * Submits our topology to the cluster.
@@ -76,7 +76,7 @@ public class UpdatesTopologySubmitter {
 
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("complex-updates", config, topology);
-
+            
             LOGGER.debug("Press any key to stop processing...");
             System.in.read();
 
@@ -86,5 +86,5 @@ public class UpdatesTopologySubmitter {
         }
 
     }
-
+    
 }

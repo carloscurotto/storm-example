@@ -2,15 +2,16 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
 import static org.springframework.util.StringUtils.collectionToDelimitedString;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
-
+import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
+import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 
 /**
  * This class is in charge of building the query from the {@link Collection<UpsertRow>} used to insert/update data into
@@ -19,7 +20,9 @@ import ar.com.carloscurotto.storm.complex.model.UpdateRow;
  * @author N619614
  *
  */
-public class QueryBuilder {
+public class QueryBuilder implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Builds the query from the {@link Update}.
@@ -38,8 +41,7 @@ public class QueryBuilder {
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theUpdateRow, "The update row can not be null.");
         StringBuilder upsertQuery = new StringBuilder();
-        upsertQuery.append("UPSERT INTO ").append(theTableName).append(" ")
-                .append(createUpsertClause(theUpdateRow));
+        upsertQuery.append("UPSERT INTO ").append(theTableName).append(" ").append(createUpsertClause(theUpdateRow));
         upsertQuery.append(" WHERE ").append(createWhereClause(theUpdateRow));
         return upsertQuery.toString();
     }
@@ -47,8 +49,7 @@ public class QueryBuilder {
     private String createWhereClause(UpdateRow updateRow) {
         List<String> keyValueConditions = new ArrayList<String>();
         for (Entry<String, Object> keyColumnEntry : updateRow.getKeyColumnEntries()) {
-            keyValueConditions.add(keyColumnEntry.getKey() + " = '" + keyColumnEntry.getValue()
-                    + "'");
+            keyValueConditions.add(keyColumnEntry.getKey() + " = '" + keyColumnEntry.getValue() + "'");
         }
         return collectionToDelimitedString(keyValueConditions, " AND ");
     }
@@ -62,8 +63,8 @@ public class QueryBuilder {
         }
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
-        builder.append(" VALUES ").append("(")
-                .append(collectionToDelimitedString(columnValues, ", ", "'", "'")).append(")");
+        builder.append(" VALUES ").append("(").append(collectionToDelimitedString(columnValues, ", ", "'", "'"))
+                .append(")");
         return builder.toString();
     }
 }
