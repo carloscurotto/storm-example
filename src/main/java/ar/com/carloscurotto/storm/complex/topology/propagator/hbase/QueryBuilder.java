@@ -2,12 +2,14 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
 import static org.springframework.util.StringUtils.collectionToDelimitedString;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
 
+import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 
@@ -18,7 +20,9 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdateProp
  * @author N619614
  *
  */
-public class QueryBuilder {
+public class QueryBuilder implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * Builds the query from the {@link Update}.

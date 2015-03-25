@@ -50,7 +50,14 @@
 
   <bean id="ExternalSemsUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
   
-  <bean id="InternalSemsUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
+  <bean id="InternalSemsUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.hbase.HBaseUpdatePropagator">
+  	<constructor-arg>
+  		<bean id="QueryBuilder" class="ar.com.carloscurotto.storm.complex.topology.propagator.hbase.QueryBuilder" />
+  	</constructor-arg>
+  	<constructor-arg>
+  		<bean id="QueryExecutor" class="ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PrintQueryExecutor" />
+  	</constructor-arg>
+  </bean>
   
   <bean id="InternalAnotherUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
   
