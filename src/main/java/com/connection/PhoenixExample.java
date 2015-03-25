@@ -59,6 +59,7 @@ public class PhoenixExample {
     public static void TestTradeTable() throws SQLException {
         
         logger.debug("Getting the DataSource and the Conncetion from it");
+
         DataSource theDataSource = new MainConfigForTest().getDataSource("");
 
         Connection con = theDataSource.getConnection();
