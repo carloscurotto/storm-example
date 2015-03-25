@@ -60,7 +60,7 @@ public class PhoenixExample {
         
         logger.debug("Getting the DataSource and the Conncetion from it");
         DataSource theDataSource = new MainConfigForTest().getDataSource("");
-        
+
         Connection con = theDataSource.getConnection();
         
         dropTradeTable(con);
