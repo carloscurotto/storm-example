@@ -26,7 +26,7 @@ public class InMemoryUpdatesSpout extends BaseRichSpout {
         collector = theCollector;
         updates.open();
     }
-    
+
     @Override
     public void close() {
         updates.close();
@@ -41,7 +41,7 @@ public class InMemoryUpdatesSpout extends BaseRichSpout {
         }
         sleepTuple();
     }
-    
+
     private void sleepTuple() {
         try {
             Thread.sleep(TUPLE_SLEEP_MILLIS);
@@ -54,5 +54,5 @@ public class InMemoryUpdatesSpout extends BaseRichSpout {
     public void declareOutputFields(OutputFieldsDeclarer theDeclarer) {
         theDeclarer.declare(new Fields("update"));
     }
-    
+
 }
