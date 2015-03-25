@@ -24,7 +24,7 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
     /**
      * The executor for the query returned by the query builder.
      */
-    private DataSourceQueryExecutor queryExecutor;
+    private QueryExecutor queryExecutor;
 
     /**
      * Creates an {@link HBaseUpdatePropagator} for the given query builder and query executor.
@@ -34,7 +34,7 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
      * @param theQueryExecutor
      *            the given query executor. It cannot be null.
      */
-    public HBaseUpdatePropagator(final QueryBuilder theQueryBuilder, final DataSourceQueryExecutor theQueryExecutor) {
+    public HBaseUpdatePropagator(final QueryBuilder theQueryBuilder, final QueryExecutor theQueryExecutor) {
         Validate.notNull(theQueryBuilder, "The query builder can not be null.");
         Validate.notNull(theQueryExecutor, "The query executor can not be null.");
         queryBuilder = theQueryBuilder;
