@@ -41,8 +41,7 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
      * @param theMessageBuilder
      *            the given message builder. It can not be null.
      */
-    public GlossUpdatePropagator(final MessageSender theMessageSender,
-            final MessageBuilder theMessageBuilder) {
+    public GlossUpdatePropagator(final MessageSender theMessageSender, final MessageBuilder theMessageBuilder) {
         Validate.notNull(theMessageSender, "The message sender can not be null.");
         Validate.notNull(theMessageBuilder, "The message builder can not be null.");
         messageSender = theMessageSender;
@@ -67,7 +66,7 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
 
     /**
      * Propagates the changes in the row to the Gloss system.
-     * 
+     *
      * @param theParameters
      *            the parameters for this update. It cannot be null.
      * @param theUpdateRow
@@ -77,10 +76,10 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
         List<TradeMessage> messages = messageBuilder.build(theParameters, theUpdateRow);
         messageSender.execute(messages);
     }
-    
+
     /**
      * Propagates the changes in the update object to the Gloss system.
-     * 
+     *
      * @param theContext
      *            a {@link UpdatePropagatorContext} the context for this method. Provides the execution context and the
      *            parameters for this method. {@link UpdatePropagatorContext#getParameters()} and
@@ -92,10 +91,9 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
         Validate.notNull(theContext, "The update cannot be null.");
         try {
             propagateRow(theContext.getParameters(), theContext.getRow());
+            return UpdatePropagatorResult.createSuccess("SUCCESS");
         } catch (Exception e) {
             return UpdatePropagatorResult.createFailure(e.getMessage());
         }
-
-        return UpdatePropagatorResult.createSuccess("SUCCESS");
     }
 }

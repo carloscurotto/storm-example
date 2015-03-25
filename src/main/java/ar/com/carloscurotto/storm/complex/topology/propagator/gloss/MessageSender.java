@@ -1,6 +1,5 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +10,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
@@ -29,7 +29,7 @@ public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
 
     /**
      * Constructs the MessageSender with the give message producer and the message classes.
-     * 
+     *
      * @param theMessageProducer
      *            a {@link Producer<String>} that will be used to send the update messages to the consumer of the
      *            producer.
@@ -47,7 +47,7 @@ public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
 
     /**
      * Creates the marshallers for the trade status messages classes and stores them in the marshallers map.
-     * 
+     *
      * @throws {@link RuntimeException} when a JAXBContext or a marshaller can't be created for a "clazz".
      */
     @Override
@@ -60,7 +60,7 @@ public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
             }
         } catch (JAXBException e) {
             throw new RuntimeException(
-                 "MessageSender can't create the marshallers needed to convert the trade objects to xml", e);
+                    "MessageSender can't create the marshallers needed to convert the trade objects to xml", e);
         }
     }
 
@@ -71,7 +71,7 @@ public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
 
     /**
      * Sends the messages in theMessages parameters using the internal producer.
-     * 
+     *
      * @param theMessages
      *            a {@link List<TradeMessage>} with the messages to be sent.
      * @return null.
@@ -116,20 +116,19 @@ public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
 
         Marshaller marshaller = marshallers.get(theMessage.getClass());
         if (marshaller == null) {
-            throw new RuntimeException(
-               "Configuration error: there isn't any marshalled configured for class:" + theMessage.getClass());
+            throw new RuntimeException("Configuration error: there isn't any marshalled configured for class:"
+                    + theMessage.getClass());
         }
 
         try {
             marshaller.marshal(theMessage, stream);
             result = writer.toString();
-            writer.close();
         } catch (JAXBException e) {
             throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
-        
+
         return result;
     }
 }
