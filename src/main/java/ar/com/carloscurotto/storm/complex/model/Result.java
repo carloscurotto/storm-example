@@ -25,9 +25,18 @@ public class Result implements Serializable {
     @Deprecated
     public Result() {}
     
+    /**
+     * Creates a result of processing the update with the given id.
+     * 
+     * @param theId
+     *            the corresponding update's id. It can not be blank.
+     * @param theRows
+     *            the result rows. It can not be null nor empty.
+     */
     public Result(final String theId, final Collection<ResultRow> theRows) {
         Validate.notBlank(theId, "The id can not be blank.");
         Validate.notNull(theRows, "The rows can not be null.");
+        Validate.notEmpty(theRows, "The rows can not be empty.");
         id = theId;
         for (ResultRow theRow : theRows) {
             rows.put(theRow.getId(), theRow);
