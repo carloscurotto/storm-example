@@ -42,7 +42,7 @@ public class QueryBuilder implements Serializable {
         Validate.notNull(theUpdateRow, "The update row can not be null.");
         StringBuilder upsertQuery = new StringBuilder();
         upsertQuery.append("UPSERT INTO ").append(theTableName).append(" ").append(createUpsertClause(theUpdateRow));
-        upsertQuery.append(" WHERE ").append(createWhereClause(theUpdateRow));
+        //upsertQuery.append(" WHERE ").append(createWhereClause(theUpdateRow));
         return upsertQuery.toString();
     }
 
@@ -61,7 +61,7 @@ public class QueryBuilder implements Serializable {
             columnNames.add(updateColumnEntry.getKey());
             Object value = updateColumnEntry.getValue();
             //TODO the condition below doesnt work
-            columnValues.add((value instanceof Number || value instanceof Boolean)?value:"'" + value.toString() + "'");
+            columnValues.add((value instanceof Number)?value:"'" + value.toString() + "'");
         }
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
