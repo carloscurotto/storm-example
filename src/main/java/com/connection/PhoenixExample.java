@@ -1,6 +1,6 @@
 package com.connection;
 
-import java.sql.Connection;
+/*import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,10 +22,10 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.hbase.QueryExecuto
 import ar.com.carloscurotto.storm.complex.topology.propagator.hbase.TradeTableBuilder;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class PhoenixExample {
+import org.slf4j.LoggerFactory;*/
     
+public class PhoenixExample {
+    /*
     static Logger logger = LoggerFactory.getLogger("com.connection.PhoenixExample");
 
     public static void main(String[] args) throws SQLException {
@@ -187,5 +187,5 @@ public class PhoenixExample {
         
         return updatePropagatorContext;
     }
-
+*/
 }
