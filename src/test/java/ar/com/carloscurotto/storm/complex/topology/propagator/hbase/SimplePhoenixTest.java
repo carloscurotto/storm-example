@@ -22,13 +22,11 @@ import org.apache.phoenix.query.QueryServices;
 import org.apache.phoenix.schema.ConstraintViolationException;
 import org.apache.phoenix.schema.TypeMismatchException;
 import org.apache.phoenix.util.QueryUtil;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
-import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
  * @author N619614
@@ -51,8 +49,8 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         ResultSet rset = null;
         Properties props = new Properties();
         props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
-
-        Connection con = DriverManager.getConnection(getUrl(), props);
+        
+        Connection con = DriverManager.getConnection("jdbc:phoenix:localhost:42100", props);
         stmt = con.createStatement();
 
         ResultSet rs = stmt
@@ -74,6 +72,7 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         int count = con.createStatement().executeUpdate(
                 "upsert into test values (1,'Hello',to_date('2013-01-01'))");
         System.out.println(count);
+        con.commit();
         try {
             // TEST.MYKEY may not be null
             count = con.createStatement().executeUpdate(
@@ -105,23 +104,60 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         rset = stmt.executeQuery("EXPLAIN SELECT * FROM ATABLE LIMIT 1");
 
         System.out.println(QueryUtil.getExplainPlan(rset));
+        
+        createTradeTable(con);
+        
+        count = con.createStatement().executeUpdate(
+        "UPSERT INTO TRADE (Postage, CounterpartyDescription, TradingCurrency, OverdueDays, Origin, AGE_BUCKET, record_no, MISSING_SSI_IND, BROKER_SHRT_NME, HIGH_VALUE_QTY_IND, FirmAccount, RAG, OpenConsideration, ENTITY_ID, RrNo, TGID, Levy, TradeType, SettlementTypeDescription, Price, AUTOFX_IND, OpenConsiderationUSD, PrimaryQuantity, TradeGroupType, AdpInstrumentRefDesc, AdpInstrumentRef, BROKER_COVERAGE_NAME, MARKET, Stamp, instNumber, ProcStatus, Tariff, ReportTradeType, TRSTradeRef, PENDING_UPDATE, StorageStatus, FirmAccountDescription, CompanyGlossReference, TimeStamp, CpartyExternalReference, ValueDate, Vat, Commission, SettleQuantity, TradeCategoryDesc, OperationType, TRADE_TYPE_DESC, SpecialInstr4, SpecialInstr3, BsNarrative, OpenQuantity, BankStatus, PrincipalTradeCurrency, RELATIONSHIP_ID, ExchangeRateIndicator, KEY_CLIENT_IND, CounterpartyReference, BUYIN, BankStatusCategory, Exposure, BUSINESS, GrossCredit, REGION, TradeVersion, tradeNo, SettlementDiv, ExchangeRate, SettleStatus, BankStatusDesciption, ClearanceCode, NetConsideration, PrincipalSettlingCurrency, UserName, SEMEID, OperationTypeDescription, LinkType, SettleCode, ASSIGN_TO, TradeStatus, AccruedInterest, ActualSettleDate, RPT_MKT_REGION, RelationshipOrEntityId, TradeDate, AGE, SIDE, IsinReference, FAMILY_SNAME, TradeReference, SettlementCurrency, IntNarrative, ManualStatusInd, service, ParentTradeReference, SpecialInstr1, SpecialInstr2, FinanceRate) VALUES (123456, 'Valor', 'Valor', 123456, 'Valor', 'Valor', 1, true, 'Valor', true, 'Valor', 'Valor', 123456, 'Valor', 'Valor', 'Valor', 123456, 'Valor', 'Valor', 123456, true, 123456, 123456, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 123456, 123456, 'Valor', 123456, 'Valor', 'Valor', true, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', to_date('2015-03-19 16:02:30'), 123456, 123456, 123456, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 123456, 'Valor', 123456, 'Valor', 'Valor', true, 'Valor', 'Valor', 'Valor', 123456, 'Valor', 123456, 'Valor', 123456, 123456, 'Valor', 123456, 'Valor', 'Valor', 'Valor', 123456, 123456, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 123456, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', true, 'Valor', 'Valor', 'Valor', 'Valor', 123456)");
+        
+        stmt = con.createStatement();
+        rset = stmt.executeQuery("EXPLAIN SELECT * FROM TRADE LIMIT 1");
+
+        System.out.println(QueryUtil.getExplainPlan(rset));
+
 
         stmt.close();
         con.close();
     }
 
+    @Ignore
     @Test
     public void TestTradeTable() throws SQLException {
+        
+        Statement stmt = null;
+        ResultSet rset = null;
+        
 
 //        logger.debug("Getting the DataSource and the Conncetion from it");
         DataSource theDataSource = new MainConfigForTest().getDataSource(getUrl());
-
         Connection con = theDataSource.getConnection();
 
-        dropTradeTable(con);
+    
+//        Properties props = new Properties();
+//        props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
+//        Connection con = DriverManager.getConnection(getUrl(), props);
+
+        //dropTradeTable(con);
+        
         createTradeTable(con);
+        
+        int count = con.createStatement().executeUpdate(
+                "UPSERT INTO TRADE (Postage, CounterpartyDescription, TradingCurrency, OverdueDays, Origin, AGE_BUCKET, record_no, MISSING_SSI_IND, BROKER_SHRT_NME, HIGH_VALUE_QTY_IND, FirmAccount, RAG, OpenConsideration, ENTITY_ID, RrNo, TGID, Levy, TradeType, SettlementTypeDescription, Price, AUTOFX_IND, OpenConsiderationUSD, PrimaryQuantity, TradeGroupType, AdpInstrumentRefDesc, AdpInstrumentRef, BROKER_COVERAGE_NAME, MARKET, Stamp, instNumber, ProcStatus, Tariff, ReportTradeType, TRSTradeRef, PENDING_UPDATE, StorageStatus, FirmAccountDescription, CompanyGlossReference, TimeStamp, CpartyExternalReference, ValueDate, Vat, Commission, SettleQuantity, TradeCategoryDesc, OperationType, TRADE_TYPE_DESC, SpecialInstr4, SpecialInstr3, BsNarrative, OpenQuantity, BankStatus, PrincipalTradeCurrency, RELATIONSHIP_ID, ExchangeRateIndicator, KEY_CLIENT_IND, CounterpartyReference, BUYIN, BankStatusCategory, Exposure, BUSINESS, GrossCredit, REGION, TradeVersion, tradeNo, SettlementDiv, ExchangeRate, SettleStatus, BankStatusDesciption, ClearanceCode, NetConsideration, PrincipalSettlingCurrency, UserName, SEMEID, OperationTypeDescription, LinkType, SettleCode, ASSIGN_TO, TradeStatus, AccruedInterest, ActualSettleDate, RPT_MKT_REGION, RelationshipOrEntityId, TradeDate, AGE, SIDE, IsinReference, FAMILY_SNAME, TradeReference, SettlementCurrency, IntNarrative, ManualStatusInd, service, ParentTradeReference, SpecialInstr1, SpecialInstr2, FinanceRate) VALUES (123456, 'Valor', 'Valor', 123456, 'Valor', 'Valor', 1, true, 'Valor', true, 'Valor', 'Valor', 123456, 'Valor', 'Valor', 'Valor', 123456, 'Valor', 'Valor', 123456, true, 123456, 123456, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 123456, 123456, 'Valor', 123456, 'Valor', 'Valor', true, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', to_date('2015-03-19 16:02:30'), 123456, 123456, 123456, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 123456, 'Valor', 123456, 'Valor', 'Valor', true, 'Valor', 'Valor', 'Valor', 123456, 'Valor', 123456, 'Valor', 123456, 123456, 'Valor', 123456, 'Valor', 'Valor', 'Valor', 123456, 123456, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 123456, 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', 'Valor', true, 'Valor', 'Valor', 'Valor', 'Valor', 123456)");
+        System.out.println(count);
+    
+        con.commit();
+        
+                
+//                stmt = con.createStatement();
+//                rset = stmt.executeQuery("EXPLAIN SELECT * FROM TRADE LIMIT 1");
+//
+//                System.out.println(count);
+//                System.out.println(QueryUtil.getExplainPlan(rset));
+                
+
 
 //        logger.debug("Calling HBaseUpdatePropagator and see what happens");
+/*                                
         QueryBuilder theQueryBuilder = new QueryBuilder();
 
         QueryExecutor queryExecutor = new DataSourceQueryExecutor(theDataSource);
@@ -136,10 +172,11 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         UpdatePropagatorResult updatePropagatorResult = hBaseUpdatePropagator.propagate(theContext);
         
         System.out.println("Result: Status " + updatePropagatorResult.getStatus() + " Message " + updatePropagatorResult.getMessage());
+*/        
 
 //        logger.debug("HBaseUpdatePropagator finished");
         
-        showTradeTable(con);
+        //showTradeTable(con);
 
         con.close();
     }
@@ -216,5 +253,6 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
         return updatePropagatorContext;
     }
+    
 
 }

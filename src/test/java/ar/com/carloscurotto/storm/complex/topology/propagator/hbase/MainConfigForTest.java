@@ -39,6 +39,7 @@ public class MainConfigForTest {
         comboPooledDataSource.setInitialPoolSize(maxPoolSize);
         comboPooledDataSource.setInitialPoolSize(acquireIncrement);
         comboPooledDataSource.setInitialPoolSize(maxIdleTime);
+        comboPooledDataSource.setConnectionCustomizerClassName("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.AutocommitFalseConnectionCustomizer");
         return comboPooledDataSource;
     }
 

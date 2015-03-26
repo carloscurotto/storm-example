@@ -3,7 +3,10 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 import static org.springframework.util.StringUtils.collectionToDelimitedString;
 
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -61,12 +64,24 @@ public class QueryBuilder implements Serializable {
             columnNames.add(updateColumnEntry.getKey());
             Object value = updateColumnEntry.getValue();
             //TODO the condition below doesnt work
-            columnValues.add((value instanceof Number)?value:"'" + value.toString() + "'");
+            columnValues.add(valueFormatter(value));
         }
         StringBuilder builder = new StringBuilder();
         builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
         builder.append(" VALUES ").append("(")
                 .append(collectionToDelimitedString(columnValues, ", ")).append(")");
         return builder.toString();
+    }
+
+    private String valueFormatter(Object value) {
+        if (value instanceof Number) {
+            return value.toString();
+        } else if (value instanceof Boolean) {
+            return value.toString();
+        } else if (value instanceof Date) {
+            return "to_date('" + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(value) + "')";
+        } else { 
+            return "'" + value.toString() + "'";
+        }
     }
 }
