@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.sql.DataSource;
-
 import org.apache.phoenix.query.BaseConnectionlessQueryTest;
 import org.apache.phoenix.query.QueryServices;
 import org.apache.phoenix.schema.ConstraintViolationException;
@@ -25,19 +23,14 @@ import org.apache.phoenix.schema.TypeMismatchException;
 import org.apache.phoenix.util.QueryUtil;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
-import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
  * @author N619614
  */
 public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
-    
-    static Logger logger = LoggerFactory.getLogger("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.SimplePhoenixTest");
 
     public static final String LOCALHOST = "localhost";
     public static final String PHOENIX_JDBC_URL = JDBC_PROTOCOL + JDBC_PROTOCOL_SEPARATOR
@@ -54,8 +47,8 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         ResultSet rset = null;
         Properties props = new Properties();
         props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
-
-        Connection con = DriverManager.getConnection(getUrl(), props);
+        
+        Connection con = DriverManager.getConnection("jdbc:phoenix:localhost:42100", props);
         stmt = con.createStatement();
 
         ResultSet rs = stmt
@@ -78,7 +71,6 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
                 "upsert into test values (1,'Hello',to_date('2013-01-01'))");
         System.out.println(count);
         con.commit();
-
         try {
             // TEST.MYKEY may not be null
             count = con.createStatement().executeUpdate(
@@ -240,5 +232,6 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
         return updatePropagatorContext;
     }
+    
 
 }
