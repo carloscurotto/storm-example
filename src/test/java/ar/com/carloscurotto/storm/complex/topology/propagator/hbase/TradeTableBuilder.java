@@ -1,5 +1,8 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 public class TradeTableBuilder {
 
     public static String dropTable() {
@@ -12,12 +15,17 @@ public class TradeTableBuilder {
 
     
     public static String[] createColumnNames() {
-        String[] columnNames = {"record_no, FirmAccount, FirmAccountDescription, AdpInstrumentRef, AdpInstrumentRefDesc, TradingCurrency, IsinReference, PrimaryQuantity, SettleQuantity, CounterpartyReference, CounterpartyDescription, TradeType, OperationType, OperationTypeDescription, NetConsideration, PrincipalTradeCurrency, PrincipalSettlingCurrency, AccruedInterest, TradeDate, ValueDate, ActualSettleDate, Price, FinanceRate, TradeReference, ParentTradeReference, TRSTradeRef, TGID, SEMEID, TradeStatus, SettleStatus, SettlementTypeDescription, SettlementCurrency, BankStatus, BankStatusDesciption, BankStatusCategory, Origin, LinkType, OverdueDays, RrNo, Exposure, CompanyGlossReference, ClearanceCode, OpenQuantity, OpenConsideration, BsNarrative, IntNarrative, UserName, CpartyExternalReference, ExchangeRate, ExchangeRateIndicator, SettlementDiv, SettleCode, Postage, Stamp, Tariff, Vat, Levy, GrossCredit, Commission, SpecialInstr1, SpecialInstr2, SpecialInstr3, SpecialInstr4, TradeVersion, TimeStamp, tradeNo, instNumber, service, ProcStatus, BROKER_SHRT_NME, BROKER_COVERAGE_NAME, OpenConsiderationUSD, RAG, AGE, MARKET, BUYIN, REGION, RPT_MKT_REGION, ASSIGN_TO, SIDE, RELATIONSHIP_ID, BUSINESS, RelationshipOrEntityId, ENTITY_ID, FAMILY_SNAME, TRADE_TYPE_DESC, ReportTradeType, TradeCategoryDesc, TradeGroupType, AGE_BUCKET, PENDING_UPDATE, AUTOFX_IND, KEY_CLIENT_IND, HIGH_VALUE_QTY_IND, MISSING_SSI_IND, ManualStatusInd, StorageStatus"};
+        String[] columnNames = {"record_no", "FirmAccount", "FirmAccountDescription", "AdpInstrumentRef", "AdpInstrumentRefDesc", "TradingCurrency", "IsinReference", "PrimaryQuantity", "SettleQuantity", "CounterpartyReference", "CounterpartyDescription", "TradeType", "OperationType", "OperationTypeDescription", "NetConsideration", "PrincipalTradeCurrency", "PrincipalSettlingCurrency", "AccruedInterest", "TradeDate", "ValueDate", "ActualSettleDate", "Price", "FinanceRate", "TradeReference", "ParentTradeReference", "TRSTradeRef", "TGID", "SEMEID", "TradeStatus", "SettleStatus", "SettlementTypeDescription", "SettlementCurrency", "BankStatus", "BankStatusDesciption", "BankStatusCategory", "Origin", "LinkType", "OverdueDays", "RrNo", "Exposure", "CompanyGlossReference", "ClearanceCode", "OpenQuantity", "OpenConsideration", "BsNarrative", "IntNarrative", "UserName", "CpartyExternalReference", "ExchangeRate", "ExchangeRateIndicator", "SettlementDiv", "SettleCode", "Postage", "Stamp", "Tariff", "Vat", "Levy", "GrossCredit", "Commission", "SpecialInstr1", "SpecialInstr2", "SpecialInstr3", "SpecialInstr4", "TradeVersion", "TimeStamp", "tradeNo", "instNumber", "service", "ProcStatus", "BROKER_SHRT_NME", "BROKER_COVERAGE_NAME", "OpenConsiderationUSD", "RAG", "AGE", "MARKET", "BUYIN", "REGION", "RPT_MKT_REGION", "ASSIGN_TO", "SIDE", "RELATIONSHIP_ID", "BUSINESS", "RelationshipOrEntityId", "ENTITY_ID", "FAMILY_SNAME", "TRADE_TYPE_DESC", "ReportTradeType", "TradeCategoryDesc", "TradeGroupType", "AGE_BUCKET", "PENDING_UPDATE", "AUTOFX_IND", "KEY_CLIENT_IND", "HIGH_VALUE_QTY_IND", "MISSING_SSI_IND", "ManualStatusInd", "StorageStatus"};
         return columnNames;
     }
     
     public static Object[] createColumnValues() {
-        Object[] columnValues = {1, "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", 123456, 123456, "Valor", "Valor", "Valor", "Valor", "Valor", 123456, 123456, 123456, 123456, "Valor", "2015-03-19 16:02:30", "Valor", 123456, 123456, "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", 123456, "Valor", 123456, "Valor", "Valor", 123456, 123456, "Valor", "Valor", "Valor", "Valor", 123456, "Valor", "Valor", "Valor", 123456, 123456, 123456, 123456, 123456, 123456, 123456, "Valor", "Valor", "Valor", "Valor", 123456, "Valor", 123456, 123456, "Valor", "Valor", "Valor", "Valor", 123456, "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", true, true, true, true, true, true, "Valor"}; 
+        Object[] columnValues;
+        try {
+        columnValues = new Object[] {1, "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", 123456, 123456, "Valor", "Valor", "Valor", "Valor", "Valor", 123456, 123456, 123456, 123456, "Valor", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2015-03-19 16:02:30"), "Valor", 123456, 123456, "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", 123456, "Valor", 123456, "Valor", "Valor", 123456, 123456, "Valor", "Valor", "Valor", "Valor", 123456, "Valor", "Valor", "Valor", 123456, 123456, 123456, 123456, 123456, 123456, 123456, "Valor", "Valor", "Valor", "Valor", 123456, "Valor", 123456, 123456, "Valor", "Valor", "Valor", "Valor", 123456, "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", "Valor", true, true, true, true, true, true, "Valor"};
+        } catch (ParseException e) {
+            return new Object[] {}; 
+        }
         return columnValues;
     }
 
