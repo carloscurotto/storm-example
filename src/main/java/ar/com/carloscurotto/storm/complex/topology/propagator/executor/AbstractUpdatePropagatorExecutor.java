@@ -11,7 +11,7 @@ import storm.trident.operation.TridentOperationContext;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
-import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
+import ar.com.carloscurotto.storm.complex.service.OpenAwarePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 import ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider;
 import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
@@ -28,8 +28,9 @@ public abstract class AbstractUpdatePropagatorExecutor extends BaseFunction {
     }
 
     protected ResultRow process(final Update theUpdate, final UpdateRow theUpdateRow) {
-        AbstractUpdatePropagator propagator = propagatorProvider.getPropagator(theUpdate.getSystemId());
-        UpdatePropagatorResult updatePropagatorResult = propagator.execute(new UpdatePropagatorContext(theUpdate
+        OpenAwarePropagator<UpdatePropagatorContext, UpdatePropagatorResult> propagator = propagatorProvider
+                .getPropagator(theUpdate.getSystemId());
+        UpdatePropagatorResult updatePropagatorResult = propagator.propagate(new UpdatePropagatorContext(theUpdate
                 .getTableName(), theUpdateRow, theUpdate.getParameters()));
         ResultRow resultRow = updatePropagatorResult.toResultRow();
         resultRow.setId(theUpdateRow.getId());

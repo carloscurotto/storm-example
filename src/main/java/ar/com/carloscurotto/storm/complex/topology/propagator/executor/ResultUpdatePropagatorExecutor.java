@@ -16,7 +16,7 @@ import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.ResultRowMessageResolver;
 import ar.com.carloscurotto.storm.complex.model.Update;
-import ar.com.carloscurotto.storm.complex.transport.Producer;
+import ar.com.carloscurotto.storm.complex.service.OpenAwareProducer;
 
 public class ResultUpdatePropagatorExecutor extends BaseFunction {
 
@@ -24,9 +24,9 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultUpdatePropagatorExecutor.class);
 
-    private Producer<Result> producer;
+    private OpenAwareProducer<Result> producer;
 
-    public ResultUpdatePropagatorExecutor(final Producer<Result> theResultProducer) {
+    public ResultUpdatePropagatorExecutor(final OpenAwareProducer<Result> theResultProducer) {
         Validate.notNull(theResultProducer, "The result producer can not be null.");
         producer = theResultProducer;
     }

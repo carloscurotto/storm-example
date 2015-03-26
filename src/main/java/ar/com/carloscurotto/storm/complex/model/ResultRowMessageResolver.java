@@ -12,7 +12,7 @@ public class ResultRowMessageResolver {
         String internalResultMessage = getStatusMessage(theInternalResult, "internal");
         StringBuilder finalResultMessage = new StringBuilder();
         if (!theExternalResult.isFailure()) {
-            return finalResultMessage.append("The ").append(internalResultMessage).append("and the ").append(
+            return finalResultMessage.append("The ").append(internalResultMessage).append(" and the ").append(
                     externalResultMessage).toString();
         } else {
             return finalResultMessage.append("The ").append(externalResultMessage).toString();

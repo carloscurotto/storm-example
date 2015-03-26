@@ -2,7 +2,7 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
+import ar.com.carloscurotto.storm.complex.service.OpenAwarePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
@@ -12,7 +12,7 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropa
  *
  * @author N619614
  */
-public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
+public class HBaseUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorContext, UpdatePropagatorResult> {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,7 +42,7 @@ public class HBaseUpdatePropagator extends AbstractUpdatePropagator {
     }
 
     @Override
-    protected UpdatePropagatorResult doExecute(UpdatePropagatorContext theContext) {
+    protected UpdatePropagatorResult doPropagate(UpdatePropagatorContext theContext) {
         Validate.notNull(theContext, "The Context cannot be null.");
         try {
             queryExecutor.execute(queryBuilder.build(theContext));
