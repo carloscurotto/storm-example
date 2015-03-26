@@ -14,3 +14,5 @@ bin/
 
 # IDE files
 *.settings
+*.iml
+.idea/
