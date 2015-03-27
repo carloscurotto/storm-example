@@ -9,6 +9,8 @@ import javax.jms.Session;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.Validate;
 
+import com.google.common.base.Preconditions;
+
 import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
 
 public class ActiveMQConfiguration extends OpenAwareBean implements Serializable {
@@ -61,6 +63,7 @@ public class ActiveMQConfiguration extends OpenAwareBean implements Serializable
     }
 
     public Session getSession() {
+        Preconditions.checkState(isOpen(), "The session couldn't be created. Try calling open()");
         return session;
     }
 }

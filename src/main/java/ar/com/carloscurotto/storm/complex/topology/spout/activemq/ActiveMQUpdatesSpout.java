@@ -46,7 +46,7 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
             consumer = session.createConsumer(requestTopic);
             collector = theCollector;
         } catch (Exception e) {
-            activeMQConfiguration.close();
+            close();
             throw new RuntimeException("Error opening active mq updates spout.", e);
         }
     }

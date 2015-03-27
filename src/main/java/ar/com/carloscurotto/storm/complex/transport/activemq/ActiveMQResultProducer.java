@@ -38,8 +38,7 @@ public class ActiveMQResultProducer extends OpenAwareProducer<Result> implements
             producer = session.createProducer(replyTopic);
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
         } catch (Exception e) {
-            activeMQConfiguration.close();
-            doClose();
+            close();
             throw new RuntimeException("Error creating active mq producer.", e);
         }
     }
@@ -59,6 +58,7 @@ public class ActiveMQResultProducer extends OpenAwareProducer<Result> implements
 
     @Override
     protected void doClose() {
+        activeMQConfiguration.close();
         closeProducer();
     }
 
