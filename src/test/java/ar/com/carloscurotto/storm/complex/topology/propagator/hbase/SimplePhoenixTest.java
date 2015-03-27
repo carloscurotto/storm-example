@@ -7,6 +7,7 @@ import static org.apache.phoenix.util.PhoenixRuntime.JDBC_PROTOCOL_TERMINATOR;
 import static org.apache.phoenix.util.PhoenixRuntime.PHOENIX_TEST_DRIVER_URL_PARAM;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,8 +15,6 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.sql.DataSource;
 
 import org.apache.phoenix.query.BaseConnectionlessQueryTest;
 import org.apache.phoenix.query.QueryServices;
@@ -42,6 +41,7 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
             + JDBC_PROTOCOL_SEPARATOR + CONNECTIONLESS + JDBC_PROTOCOL_TERMINATOR
             + PHOENIX_TEST_DRIVER_URL_PARAM;
 
+    @Ignore
     @Test
     public void simpleTest() throws Exception {
 
@@ -119,19 +119,22 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         stmt.close();
         con.close();
     }
-
-    @Ignore
+    
     @Test
-    public void TestTradeTable() throws SQLException {
+    public void TestTradeTable() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         
         Statement stmt = null;
         ResultSet rset = null;
         
 
 //        logger.debug("Getting the DataSource and the Conncetion from it");
-        DataSource theDataSource = new MainConfigForTest().getDataSource(getUrl());
-        Connection con = theDataSource.getConnection();
-
+//        DataSource theDataSource = new MainConfigForTest().getDataSource(getUrl());
+//        Connection con = theDataSource.getConnection();
+        
+        DriverManager.registerDriver((Driver) Class.forName("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PhoenixDriverNonCommit").newInstance());
+        //Connection con = DriverManager.getConnection("jdbc:phoenix:none;test=true");
+        //Connection con = DriverManager.getConnection("jdbc:losi:none");
+        Connection con = DriverManager.getConnection("jdbc:losiiii:none;test=true");
     
 //        Properties props = new Properties();
 //        props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
