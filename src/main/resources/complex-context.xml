@@ -91,4 +91,31 @@
 		</constructor-arg>
 	</bean>
 
+	<!-- GLOSS SUBMODULE CONFIGURATION -->
+	<bean id="GlossUpdatePropagator"
+		class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.GlossUpdatePropagator">
+		<constructor-arg ref="messageSender" />
+		<constructor-arg ref="messageBuilder" />
+	</bean>
+
+	<bean id="messageSender"
+		class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.MessageSender">
+		<constructor-arg ref="glossDestination" />
+		<constructor-arg>
+			<list>
+				<value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExceptionTradeNarrative
+				</value>
+				<value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExcpTradeStatusMessage
+				</value>
+				<value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.NormalTradeNarrative
+				</value>
+				<value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.NormalTradeStatusMessage
+				</value>
+				<value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeCommentsMessage
+				</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="messageBuilder"
+		class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.MessageBuilder" />
 </beans>
