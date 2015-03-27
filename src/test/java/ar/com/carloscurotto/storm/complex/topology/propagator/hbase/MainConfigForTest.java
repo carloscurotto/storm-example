@@ -29,7 +29,7 @@ public class MainConfigForTest {
     public DataSource getDataSource(String url) {
         ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
         try {
-            comboPooledDataSource.setDriverClass("org.apache.phoenix.jdbc.PhoenixTestDriver");
+            comboPooledDataSource.setDriverClass("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PhoenixDriverNonCommit");
         } catch (PropertyVetoException e) {
             throw new RuntimeException("Couldn't load driver class", e);
         }
