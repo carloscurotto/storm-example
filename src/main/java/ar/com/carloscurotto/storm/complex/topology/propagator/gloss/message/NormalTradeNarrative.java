@@ -16,7 +16,7 @@ public class NormalTradeNarrative {
     /**
      * Represents the code for the update messages' external comments.
      */
-    public static final String EXTERNAL_NARRATIVE_CODE = "ERR";
+    private static final String EXTERNAL_NARRATIVE_CODE = "ERR";
 
     /**
      * Represents the comment code for this narrative.

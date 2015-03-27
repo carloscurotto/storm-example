@@ -38,7 +38,7 @@ public abstract class TradeMessage {
      */
     protected TradeMessage(final UpdateRow theUpdateRow, final String theMessageType) {
         Validate.notNull(theUpdateRow, "The update row cannot be null.");
-        Validate.notEmpty(theMessageType, "The messageType cannot be null.");
+        Validate.notBlank(theMessageType, "The messageType cannot be blank.");
         
         String theTradeNumber = (String) theUpdateRow.getUpdateColumnValue("tradeNo");
         String theUserId = (String) theUpdateRow.getUpdateColumnValue("userId");

@@ -49,6 +49,7 @@ public class ExceptionTradeStatusMessage extends TradeMessage {
      */
     public ExceptionTradeStatusMessage(final UpdateRow theUpdateRow) {
         super(theUpdateRow, MESSAGE_TYPE);
+        
         String theExternalComments = (String) theUpdateRow.getUpdateColumnValue("externalComments");
         String theStatusCode = (String) theUpdateRow.getUpdateColumnValue("statusCode");
         
