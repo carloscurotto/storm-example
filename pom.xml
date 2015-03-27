@@ -81,7 +81,7 @@
 			<artifactId>phoenix-core</artifactId>
 			<version>4.2.2</version>
 			<type>test-jar</type>
-			<scope>test</scope>
+<!-- 			<scope>test</scope> -->
 			<optional>true</optional>
 		</dependency>
 
