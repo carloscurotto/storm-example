@@ -53,7 +53,6 @@ public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
     @Override
     protected void doOpen() {
         messageProducer.open();
-
         try {
             for (Class<? extends TradeMessage> clazz : messageClasses) {
                 marshallers.put(clazz, JAXBContext.newInstance(clazz).createMarshaller());

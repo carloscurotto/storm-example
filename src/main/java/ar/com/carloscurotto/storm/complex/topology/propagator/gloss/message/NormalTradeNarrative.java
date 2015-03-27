@@ -14,11 +14,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class NormalTradeNarrative {
 
     /**
-     * Represents the code for the update messages' internal comments.
-     */
-    public static final String INTERNAL_NARRATIVE_CODE = "SINT";
-
-    /**
      * Represents the code for the update messages' external comments.
      */
     public static final String EXTERNAL_NARRATIVE_CODE = "ERR";
@@ -33,6 +28,14 @@ public class NormalTradeNarrative {
      */
     private String narrativeText;
 
+    /**
+     * This constructor should not be used.
+     * It is only here for the use of the JAXB framework that needs it for unmarshalling process
+     * and to check annotation compliance to the framework standards
+     */
+    @Deprecated
+    public NormalTradeNarrative(){}
+    
     /**
      * Constructs the NormalTradeNarrative with the given external comments.
      * 
@@ -49,16 +52,8 @@ public class NormalTradeNarrative {
         return narrativeCode;
     }
 
-    public void setNarrativeCode(String narrativeCode) {
-        this.narrativeCode = narrativeCode;
-    }
-
     @XmlElement(name = "narrativeText")
     public String getNarrativeText() {
         return narrativeText;
-    }
-
-    public void setNarrativeText(String narrativeText) {
-        this.narrativeText = narrativeText;
     }
 }

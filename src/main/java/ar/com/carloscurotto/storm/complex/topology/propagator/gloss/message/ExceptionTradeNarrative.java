@@ -31,22 +31,13 @@ public class ExceptionTradeNarrative {
     private String narrativeCode2;
     private String narrativeText2;
 
-    public ExceptionTradeNarrative() {
-    }
-
     /**
-     * Constructs an ExceptionTradeNarrative with the given String, using it as narrative text and setting the number of
-     * narratives to one.
-     * 
-     * @param theInternalComments
-     *            a String with internal comments for the narrative. It is not required to have a specific content, it
-     *            can be blank or null.
-     * 
+     * This constructor should not be used.
+     * It is only here for the use of the JAXB framework that needs it for unmarshalling process
+     * and to check annotation compliance to the framework standards
      */
-    public ExceptionTradeNarrative(final String theInternalComments) {
-        narrativeCode1 = NormalTradeNarrative.INTERNAL_NARRATIVE_CODE;
-        narrativeText1 = theInternalComments;
-        numberOfNarratives = 1;
+    @Deprecated
+    public ExceptionTradeNarrative() {
     }
         
     /**
@@ -80,17 +71,9 @@ public class ExceptionTradeNarrative {
         return this.numberOfNarratives;
     }
 
-    public void setNoOfNarratives(Integer noOfNarratives) {
-        this.numberOfNarratives = noOfNarratives;
-    }
-
     @XmlElement(name = "NarrativeCode1")
     public String getNarrativeCode1() {
         return this.narrativeCode1;
-    }
-
-    public void setNarrativeCode1(String narrativeCode1) {
-        this.narrativeCode1 = narrativeCode1;
     }
 
     @XmlElement(name = "NarrativeText1")
@@ -98,25 +81,13 @@ public class ExceptionTradeNarrative {
         return this.narrativeText1;
     }
 
-    public void setNarrativeText1(String narrativeText1) {
-        this.narrativeText1 = narrativeText1;
-    }
-
     @XmlElement(name = "NarrativeCode2")
     public String getNarrativeCode2() {
         return this.narrativeCode2;
     }
 
-    public void setNarrativeCode2(String narrativeCode2) {
-        this.narrativeCode2 = narrativeCode2;
-    }
-
     @XmlElement(name = "NarrativeText2")
     public String getNarrativeText2() {
         return this.narrativeText2;
-    }
-
-    public void setNarrativeText2(String narrativeText2) {
-        this.narrativeText2 = narrativeText2;
     }
 }
