@@ -3,16 +3,16 @@ package ar.com.carloscurotto.storm.complex.topology.spout.activemq;
 import java.util.Map;
 
 import javax.jms.BytesMessage;
-import javax.jms.Connection;
 import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.Update;
+import ar.com.carloscurotto.storm.complex.transport.activemq.ActiveMQConfiguration;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -23,58 +23,47 @@ import backtype.storm.tuple.Values;
 public class ActiveMQUpdatesSpout extends BaseRichSpout {
 
     private static final long serialVersionUID = 1L;
-    
+
     private static final int TUPLE_SLEEP_MILLIS = 1000 * 1;
-    
     private SpoutOutputCollector collector;
-    
-    private String brokerUrl;
+    private ActiveMQConfiguration activeMQConfiguration;
     private Session session;
-    private Connection connection;
     private Destination requestTopic;
     private MessageConsumer consumer;
-    
-    public ActiveMQUpdatesSpout(final String theBrokerUrl) {
-        Validate.notBlank(theBrokerUrl, "The broker url can not be blank.");
-        brokerUrl = theBrokerUrl;
-    }    
+
+    public ActiveMQUpdatesSpout(final ActiveMQConfiguration theActiveMQConfiguration) {
+        Validate.notNull(theActiveMQConfiguration, "The activeMQ configuration cannot be null");
+        activeMQConfiguration = theActiveMQConfiguration;
+    }
 
     @SuppressWarnings("rawtypes")
     @Override
     public void open(Map theConfiguration, TopologyContext theTopologyContext, SpoutOutputCollector theCollector) {
         try {
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
-            connection = connectionFactory.createConnection();
-            connection.start();
-            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            activeMQConfiguration.open();
+            session = activeMQConfiguration.getSession();
             requestTopic = session.createTopic("updates");
             consumer = session.createConsumer(requestTopic);
             collector = theCollector;
         } catch (Exception e) {
+            close();
             throw new RuntimeException("Error opening active mq updates spout.", e);
-        }        
+        }
     }
-    
+
     @Override
     public void close() {
-        try {
-            if (consumer != null) {
-                consumer.close();
-            }
-            if (session != null) {
+        closeConsumer();
+        activeMQConfiguration.close();
+    }
+
+    private void closeConsumer() {
+        if (session != null) {
+            try {
                 session.close();
-            }            
-            if (connection != null) {
-                connection.close();
+            } catch (JMSException jmsException) {
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Error closing active mq updates spout.", e);
-        } finally {
-            session = null;
-            connection = null;
-            requestTopic = null;
-            consumer = null;
-        }                
+        }
     }
 
     @Override
@@ -97,5 +86,5 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
     public void declareOutputFields(OutputFieldsDeclarer theDeclarer) {
         theDeclarer.declare(new Fields("update"));
     }
-    
+
 }

@@ -14,30 +14,30 @@ import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.UpdatesTopologyConfiguration;
 
 public class UpdateServiceRunner {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateServiceRunner.class);
 
     public static void main(String[] args) {
-        
+
         UpdatesTopologyConfiguration configuration = new UpdatesTopologyConfiguration();
-        
+
         UpdateService service = configuration.getUpdateService();
         service.open();
-        
+
         Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
-        Result firstResult = service.execute(firstUpdate);
-        
+        Result firstResult = service.submit(firstUpdate);
+
         LOGGER.info("First result: " + firstResult);
-        
+
         Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");
-        Result secondResult = service.execute(secondUpdate);
-        
+        Result secondResult = service.submit(secondUpdate);
+
         LOGGER.info("Second result: " + secondResult);
-        
+
         service.close();
-        
+
     }
-    
+
     // TODO move this method somewhere else, it is repeated with FixedUpdatesSpout
     private static Update createUpdateFor(final String theId, final String theSystemId, final String theRowId) {
         Map<String, Object> parameters = new HashMap<String, Object>();
@@ -56,5 +56,5 @@ public class UpdateServiceRunner {
 
         return new Update(theId, theSystemId, "table", parameters, rows);
     }
-    
+
 }
