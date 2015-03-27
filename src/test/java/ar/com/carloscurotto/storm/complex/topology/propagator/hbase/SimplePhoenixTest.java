@@ -5,6 +5,7 @@ import static org.apache.phoenix.util.PhoenixRuntime.JDBC_PROTOCOL;
 import static org.apache.phoenix.util.PhoenixRuntime.JDBC_PROTOCOL_SEPARATOR;
 import static org.apache.phoenix.util.PhoenixRuntime.JDBC_PROTOCOL_TERMINATOR;
 import static org.apache.phoenix.util.PhoenixRuntime.PHOENIX_TEST_DRIVER_URL_PARAM;
+import static org.apache.phoenix.util.TestUtil.PHOENIX_CONNECTIONLESS_JDBC_URL;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -16,6 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.sql.DataSource;
+
+import org.apache.phoenix.jdbc.PhoenixConnection;
 import org.apache.phoenix.query.BaseConnectionlessQueryTest;
 import org.apache.phoenix.query.QueryServices;
 import org.apache.phoenix.schema.ConstraintViolationException;
@@ -32,7 +36,7 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdateProp
  */
 public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
     
-    static Logger logger = LoggerFactory.getLogger("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.SimplePhoenixTest");
+//    static Logger logger = LoggerFactory.getLogger("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.SimplePhoenixTest");
 
     public static final String LOCALHOST = "localhost";
     public static final String PHOENIX_JDBC_URL = JDBC_PROTOCOL + JDBC_PROTOCOL_SEPARATOR
@@ -134,11 +138,11 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         DriverManager.registerDriver((Driver) Class.forName("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PhoenixDriverNonCommit").newInstance());
         //Connection con = DriverManager.getConnection("jdbc:phoenix:none;test=true");
         //Connection con = DriverManager.getConnection("jdbc:losi:none");
-        Connection con = DriverManager.getConnection("jdbc:losiiii:none;test=true");
+//        Connection con = DriverManager.getConnection("jdbc:losiiii:none;test=true");
     
-//        Properties props = new Properties();
-//        props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
-//        Connection con = DriverManager.getConnection(getUrl(), props);
+        Properties props = new Properties();
+        props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
+        Connection con = DriverManager.getConnection(getUrl(), props).unwrap(NoCommitConnection.class);
 
         //dropTradeTable(con);
         
@@ -256,6 +260,7 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
         return updatePropagatorContext;
     }
+ 
     
 
 }
