@@ -31,7 +31,6 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdateProp
  * @author N619614
  */
 public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
-
     public static final String LOCALHOST = "localhost";
     public static final String PHOENIX_JDBC_URL = JDBC_PROTOCOL + JDBC_PROTOCOL_SEPARATOR
             + LOCALHOST + JDBC_PROTOCOL_TERMINATOR + PHOENIX_TEST_DRIVER_URL_PARAM;
@@ -132,11 +131,11 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         DriverManager.registerDriver((Driver) Class.forName("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PhoenixDriverNonCommit").newInstance());
         //Connection con = DriverManager.getConnection("jdbc:phoenix:none;test=true");
         //Connection con = DriverManager.getConnection("jdbc:losi:none");
-        Connection con = DriverManager.getConnection("jdbc:losiiii:none;test=true");
+//        Connection con = DriverManager.getConnection("jdbc:losiiii:none;test=true");
     
-//        Properties props = new Properties();
-//        props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
-//        Connection con = DriverManager.getConnection(getUrl(), props);
+        Properties props = new Properties();
+        props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
+        Connection con = DriverManager.getConnection(getUrl(), props).unwrap(NoCommitConnection.class);
 
         //dropTradeTable(con);
         
@@ -232,6 +231,7 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
         return updatePropagatorContext;
     }
+ 
     
 
 }
