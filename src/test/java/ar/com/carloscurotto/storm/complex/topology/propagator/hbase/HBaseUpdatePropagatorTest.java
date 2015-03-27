@@ -65,31 +65,34 @@ public class HBaseUpdatePropagatorTest {
     }
 
     @Test
-    public void doExecuteNullUpdatePropagatorContext() {
+    public void propagateNullUpdatePropagatorContext() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage(equalTo("The Context cannot be null."));
-        hbaseInternalUpdatePropagator.doExecute(null);
+        hbaseInternalUpdatePropagator.open();
+        hbaseInternalUpdatePropagator.propagate(null);
     }
 
     @Test
-    public void doExecute() {
+    public void propagate() {
         expect(queryBuilderMock.build(context)).andReturn("Query");
         queryExecutorMock.execute(eq("Query"));
         expectLastCall();
         replay(queryBuilderMock, queryExecutorMock);
-        UpdatePropagatorResult result = hbaseInternalUpdatePropagator.doExecute(context);
+        hbaseInternalUpdatePropagator.open();
+        UpdatePropagatorResult result = hbaseInternalUpdatePropagator.propagate(context);
         verify(queryBuilderMock, queryExecutorMock);
         assertThat(result.getStatus(), equalTo(ResultStatus.SUCCESS));
         assertThat(result.getMessage(), equalTo("Row succefully updated."));
     }
 
     @Test
-    public void doExecuteExecutorThrowsException() {
+    public void propagateExecutorThrowsException() {
         expect(queryBuilderMock.build(context)).andReturn("Query");
         queryExecutorMock.execute(eq("Query"));
         expectLastCall().andThrow(new RuntimeException("An error occurred"));
         replay(queryBuilderMock, queryExecutorMock);
-        UpdatePropagatorResult result = hbaseInternalUpdatePropagator.doExecute(context);
+        hbaseInternalUpdatePropagator.open();
+        UpdatePropagatorResult result = hbaseInternalUpdatePropagator.propagate(context);
         verify(queryBuilderMock, queryExecutorMock);
         assertThat(result.getStatus(), equalTo(ResultStatus.FAILURE));
         assertThat(result.getMessage(), equalTo("An error occurred"));

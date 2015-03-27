@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
-import ar.com.carloscurotto.storm.complex.topology.propagator.AbstractUpdatePropagator;
+import ar.com.carloscurotto.storm.complex.service.OpenAwarePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
@@ -16,7 +16,7 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropa
  *
  * @author D540601
  */
-public class GlossUpdatePropagator extends AbstractUpdatePropagator {
+public class GlossUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorContext, UpdatePropagatorResult> {
 
     /**
      * serial version id.
@@ -31,7 +31,7 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
     /**
      * Sends the strings that composes the messages to the gloss external system.
      */
-    private MessageSender messageSender;
+    private GlossMessageProducer messageSender;
 
     /**
      * Creates a {@link GlossUpdatePropagator} for the given message sender and builder.
@@ -41,7 +41,7 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
      * @param theMessageBuilder
      *            the given message builder. It can not be null.
      */
-    public GlossUpdatePropagator(final MessageSender theMessageSender, final MessageBuilder theMessageBuilder) {
+    public GlossUpdatePropagator(final GlossMessageProducer theMessageSender, final MessageBuilder theMessageBuilder) {
         Validate.notNull(theMessageSender, "The message sender can not be null.");
         Validate.notNull(theMessageBuilder, "The message builder can not be null.");
         messageSender = theMessageSender;
@@ -74,7 +74,7 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
      */
     private void propagateRow(final Map<String, Object> theParameters, UpdateRow theUpdateRow) {
         List<TradeMessage> messages = messageBuilder.build(theParameters, theUpdateRow);
-        messageSender.execute(messages);
+        messageSender.send(messages);
     }
 
     /**
@@ -87,7 +87,7 @@ public class GlossUpdatePropagator extends AbstractUpdatePropagator {
      *            cannot be null.
      */
     @Override
-    protected UpdatePropagatorResult doExecute(UpdatePropagatorContext theContext) {
+    protected UpdatePropagatorResult doPropagate(UpdatePropagatorContext theContext) {
         Validate.notNull(theContext, "The update cannot be null.");
         try {
             propagateRow(theContext.getParameters(), theContext.getRow());

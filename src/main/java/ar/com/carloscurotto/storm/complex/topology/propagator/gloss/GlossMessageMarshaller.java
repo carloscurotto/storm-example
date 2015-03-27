@@ -13,46 +13,27 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
 
-/**
- * Sends the message into the queue. Knows what queue to use and knows how to marshall the messages.
- *
- * @author D540601
- */
-public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
+public class GlossMessageMarshaller {
 
     private Map<Class<? extends TradeMessage>, Marshaller> marshallers = new HashMap<Class<? extends TradeMessage>, Marshaller>();
-    private Producer<String> messageProducer;
     private List<Class<? extends TradeMessage>> messageClasses;
 
     /**
-     * Constructs the MessageSender with the give message producer and the message classes.
+     * Constructs the GlossMessageMarshaller with the given list of message classes.
      *
-     * @param theMessageProducer
-     *            a {@link Producer<String>} that will be used to send the update messages to the consumer of the
-     *            producer.
      * @param theMessageClasses
      *            a {@link List<Class<? extends TradeMessage>>} with the classes (.class) whose data this message sender
-     *            will send.
+     *            will send. It cannot be null nor empty.
      */
-    public MessageSender(final Producer<String> theMessageProducer,
-            List<Class<? extends TradeMessage>> theMessageClasses) {
-        Validate.notNull(theMessageProducer, "The message producer cannot be null");
+    public GlossMessageMarshaller(final List<Class<? extends TradeMessage>> theMessageClasses) {
         Validate.notEmpty(theMessageClasses, "The message classes list cannot be empty");
-        messageProducer = theMessageProducer;
         messageClasses = theMessageClasses;
+        initializeMarshallers();
     }
 
-    /**
-     * Creates the marshallers for the trade status messages classes and stores them in the marshallers map.
-     *
-     * @throws {@link RuntimeException} when a JAXBContext or a marshaller can't be created for a "clazz".
-     */
-    @Override
-    protected void doOpen() {
-        messageProducer.open();
+    private void initializeMarshallers() {
         try {
             for (Class<? extends TradeMessage> clazz : messageClasses) {
                 marshallers.put(clazz, JAXBContext.newInstance(clazz).createMarshaller());
@@ -61,37 +42,6 @@ public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
             throw new RuntimeException(
                     "MessageSender can't create the marshallers needed to convert the trade objects to xml", e);
         }
-    }
-
-    @Override
-    protected void doClose() {
-        messageProducer.close();
-    }
-
-    /**
-     * Sends the messages in theMessages parameters using the internal producer.
-     *
-     * @param theMessages
-     *            a {@link List<TradeMessage>} with the messages to be sent.
-     * @return null.
-     */
-    @Override
-    protected Void doExecute(List<TradeMessage> theMessages) {
-        for (TradeMessage message : theMessages) {
-            send(message);
-        }
-        return null;
-    }
-
-    /**
-     * Sends a message after marshalling it into an xml string.
-     *
-     * @param theMessage
-     *            a TradeMessage instance. It cannot be null.
-     */
-    private void send(TradeMessage theMessage) {
-        Validate.notNull(theMessage, "The message cannot be null");
-        messageProducer.send(marshal(theMessage));
     }
 
     /**
@@ -106,7 +56,7 @@ public class MessageSender extends OpenAwareBean<List<TradeMessage>, Void> {
      * @throws {@link RuntimeException} when the {@link StringWriter} used to retrieve the marshalled string can't close
      *         properly.
      */
-    private String marshal(TradeMessage theMessage) {
+    public String marshal(final TradeMessage theMessage) {
         Validate.notNull(theMessage, "message cannot be null");
 
         String result = null;
