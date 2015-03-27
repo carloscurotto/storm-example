@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExcpTradeStatusMessage;
+import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExceptionTradeStatusMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.NormalTradeStatusMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeCommentsMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
@@ -21,7 +21,7 @@ public class MessageBuilder {
     /**
      * Builds the update message/s depending on the information in the given parameters. It can at most build two
      * messages: one main message that can be either a {@link NormalTradeStatusMessage} or a
-     * {@link ExcpTradeStatusMessage} and a {@link TradeCommentsMessage}.
+     * {@link ExceptionTradeStatusMessage} and a {@link TradeCommentsMessage}.
      * 
      * @param theParameters
      *            a {@link java.util.Map<String, Object>}. It must have as a keys "updateStatus" as a boolean and
@@ -48,14 +48,14 @@ public class MessageBuilder {
     }
 
     /**
-     * Builds a {@link TradeMessage} that could be either a {@link ExcpTradeStatusMessage} or a
+     * Builds a {@link TradeMessage} that could be either a {@link ExceptionTradeStatusMessage} or a
      * {@link NormalTradeStatusMessage} according to the input parameters.
      * 
      * @param theParameters
      *            a {@link Map<String, Object>}. It must contain "exceptionTrade" as a boolean.
      * @param theUpdateRow
      *            {@link UpdateRow} the row which state should be translated into string messages.
-     * @return a {@link TradeMessage} that can be either a {@link ExcpTradeStatusMessage} or
+     * @return a {@link TradeMessage} that can be either a {@link ExceptionTradeStatusMessage} or
      *         {@link NormalTradeStatusMessage}
      */
     private TradeMessage buildTrade(final Map<String, Object> theParameters,
@@ -64,7 +64,7 @@ public class MessageBuilder {
 
         Boolean exceptionTrade = (Boolean) theParameters.get("exceptionTrade");
         if (exceptionTrade) {
-            result = new ExcpTradeStatusMessage(theUpdateRow);
+            result = new ExceptionTradeStatusMessage(theUpdateRow);
         } else {
             result = new NormalTradeStatusMessage(theUpdateRow);
         }

@@ -3,8 +3,6 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang3.Validate;
-
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 
 /**
@@ -19,85 +17,61 @@ public class TradeCommentsMessage extends TradeMessage {
     /**
      * Message type for this trade message.
      */
-    private final String MESSAGE_TYPE = "SEMSAdapter.Trade.AddEvent";
+    private final static String MESSAGE_TYPE = "SEMSAdapter.Trade.AddEvent";
 
-    private String userName;
-    private String eventCode = "SEMT";
-    private String eventType = "SEMI";
-    private ExceptionTradeNarrative narrative;
+    /**
+     * Default event code for trade comment messages.
+     */
+    private static final String DEFAULT_EVENT_CODE = "SEMT";
+    
+    /**
+     * Default event type for trade comment messages.
+     */
+    private static final String DEFAULT_EVENT_TYPE = "SEMI";
+    private TradeCommentsNarrative narrative;
 
+    /**
+     * This constructor should not be used.
+     * It is only here for the use of the JAXB framework that needs it for unmarshalling process
+     * and to check annotation compliance to the framework standards
+     */
+    @Deprecated
+    public TradeCommentsMessage(){}
+    
     /**
      * Builds an update comment message with the given {@link UpdateRow}.
      * 
-     * @param {@link UpdateRow} with the needed column values to construct this TradeCommentsMessage. It must contain:
-     *        tradeNo, internalComments and userId.
+     * @param {@link UpdateRow} with the needed column values to construct this TradeCommentsMessage. 
+     * It must contain: internalComments.
      */
     public TradeCommentsMessage(final UpdateRow theUpdateRow) {
-        String theTradeNo = (String) theUpdateRow.getUpdateColumnValue("tradeNo");
+        super(theUpdateRow, MESSAGE_TYPE);
         String theInternalComments = (String) theUpdateRow.getUpdateColumnValue("internalComments");
-        String theUserId = (String) theUpdateRow.getUpdateColumnValue("userId");
-
-        Validate.notBlank(theUserId, "The userId cannot be blank");
-        Validate.notBlank(theTradeNo, "tradeNo cannot be blank");
-        Validate.notBlank(theInternalComments, "internalComments cannot be blank");
-
-        tradeNo = theTradeNo;
-        userName = theUserId;
-        narrative = new ExceptionTradeNarrative(theInternalComments);
-    }
-
-    @Override
-    protected void initMessageType() {
-        setMsgType(MESSAGE_TYPE);
+        narrative = new TradeCommentsNarrative(theInternalComments);
     }
 
     @XmlElement(name = "TradeNo")
-    public String getTradeNo() {
-        return tradeNo;
-    }
-
-    public void setTradeNo(String tradeNo) {
-        this.tradeNo = tradeNo;
+    public String getTradeNumber() {
+        return super.getTradeNumber();
     }
 
     @XmlElement(name = "UserName")
     public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userId) {
-        this.userName = userId;
+        return super.getUserId();
     }
 
     @XmlElement(name = "EventCode")
     public String getEventCode() {
-        return eventCode;
-    }
-
-    public void setEventCode(String eventCode) {
-        this.eventCode = eventCode;
+        return DEFAULT_EVENT_CODE;
     }
 
     @XmlElement(name = "EventType")
     public String getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(String eventType) {
-        this.eventType = eventType;
+        return DEFAULT_EVENT_TYPE;
     }
 
     @XmlElement(name = "Narratives")
-    public ExceptionTradeNarrative getNarrative() {
+    public TradeCommentsNarrative getNarrative() {
         return narrative;
-    }
-
-    public void setNarrative(ExceptionTradeNarrative narrative) {
-        this.narrative = narrative;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
     }
 }
