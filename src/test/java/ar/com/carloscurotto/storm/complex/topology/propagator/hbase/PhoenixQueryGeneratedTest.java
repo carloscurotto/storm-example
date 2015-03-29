@@ -38,7 +38,7 @@ public class PhoenixQueryGeneratedTest extends BaseConnectionlessQueryTest {
 	HBaseUpdatePropagator hBaseUpdatePropagator = new HBaseUpdatePropagator(theQueryBuilder, queryExecutor);
 	hBaseUpdatePropagator.open();
 	UpdatePropagatorContext theContext = getUpdatePropagatorContext();
-	UpdatePropagatorResult updatePropagatorResult = hBaseUpdatePropagator.execute(theContext);
+	UpdatePropagatorResult updatePropagatorResult = hBaseUpdatePropagator.propagate(theContext);
 	assertThat(updatePropagatorResult.getStatus(), equalTo(ResultStatus.SUCCESS));
     }
 

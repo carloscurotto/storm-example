@@ -1,17 +1,10 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import org.apache.phoenix.jdbc.PhoenixConnection;
 import org.apache.phoenix.jdbc.PhoenixTestDriver;
-import org.apache.phoenix.query.ConnectionQueryServices;
-import org.apache.phoenix.query.ConnectionlessQueryServicesImpl;
-import org.apache.phoenix.query.QueryServices;
-import org.apache.phoenix.schema.PMetaData;
 
 public class PhoenixDriverNonCommit extends PhoenixTestDriver {
 
