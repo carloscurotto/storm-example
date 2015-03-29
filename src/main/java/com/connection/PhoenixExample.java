@@ -77,7 +77,11 @@ public class PhoenixExample {
         
         UpdatePropagatorContext theContext = getUpdatePropagatorContext();
         
+<<<<<<< HEAD
         hBaseUpdatePropagator.propagate(theContext );
+=======
+        hBaseUpdatePropagator.execute(theContext );
+>>>>>>> 3254e625ec53be03e7d57d7526040c770906e530
         
         logger.debug("HBaseUpdatePropagator finished");
         

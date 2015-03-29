@@ -139,11 +139,11 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         DriverManager.registerDriver((Driver) Class.forName("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PhoenixDriverNonCommit").newInstance());
         //Connection con = DriverManager.getConnection("jdbc:phoenix:none;test=true");
         //Connection con = DriverManager.getConnection("jdbc:losi:none");
-//        Connection con = DriverManager.getConnection("jdbc:losiiii:none;test=true");
+        Connection con = DriverManager.getConnection("jdbc:losiiii:none;test=true");
     
-        Properties props = new Properties();
-        props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
-        Connection con = DriverManager.getConnection(getUrl(), props).unwrap(NoCommitConnection.class);
+//        Properties props = new Properties();
+//        props.setProperty(QueryServices.DATE_FORMAT_ATTRIB, "yyyy-MM-dd");
+//        Connection con = DriverManager.getConnection(getUrl(), props);
 
         //dropTradeTable(con);
         
@@ -177,7 +177,11 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
         UpdatePropagatorContext theContext = getUpdatePropagatorContext();
 
+<<<<<<< HEAD
         UpdatePropagatorResult updatePropagatorResult = hBaseUpdatePropagator.propagate(theContext);
+=======
+        UpdatePropagatorResult updatePropagatorResult = hBaseUpdatePropagator.execute(theContext);
+>>>>>>> 3254e625ec53be03e7d57d7526040c770906e530
         
         System.out.println("Result: Status " + updatePropagatorResult.getStatus() + " Message " + updatePropagatorResult.getMessage());
 */        
@@ -261,7 +265,5 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
         return updatePropagatorContext;
     }
- 
-    
 
 }
