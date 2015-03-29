@@ -55,7 +55,6 @@ public class QueryBuilder implements Serializable {
      * UPSERT INTO tableTarget(col1, col2) SELECT col3, col4 FROM tableSource WHERE col5 < 100
      */
     
-    @SuppressWarnings("unused")
     private String createSelectStatement(String theTableName, List<String> theColumnNames, List<String> theColumnValues, Set<Entry<String, Object>> theKeyColumnEntries) {
 	StringBuilder builder = new StringBuilder();
 	builder.append(" SELECT ").append(collectionToDelimitedString(theColumnNames, ", ")).append(" FROM ").append(theTableName);
@@ -82,11 +81,12 @@ public class QueryBuilder implements Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append("UPSERT INTO ").append(theTableName).append(" ");
         builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
-//        builder.append(createSelectStatement(theTableName, columnNames, columnValues, theUpdateRow.getKeyColumnEntries()));
-        builder.append(createValueClause(columnValues));
+        builder.append(createSelectStatement(theTableName, columnNames, columnValues, theUpdateRow.getKeyColumnEntries()));
+//        builder.append(createValueClause(columnValues));
         return builder.toString();
     }
     
+    @SuppressWarnings("unused")
     private String createValueClause(List<String> theColumnValues) {
 	StringBuilder builder = new StringBuilder();
 	builder.append(" VALUES ").append("(").append(collectionToDelimitedString(theColumnValues, ", ")).append(")");
