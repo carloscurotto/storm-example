@@ -5,7 +5,6 @@ import static org.apache.phoenix.util.PhoenixRuntime.JDBC_PROTOCOL;
 import static org.apache.phoenix.util.PhoenixRuntime.JDBC_PROTOCOL_SEPARATOR;
 import static org.apache.phoenix.util.PhoenixRuntime.JDBC_PROTOCOL_TERMINATOR;
 import static org.apache.phoenix.util.PhoenixRuntime.PHOENIX_TEST_DRIVER_URL_PARAM;
-import static org.apache.phoenix.util.TestUtil.PHOENIX_CONNECTIONLESS_JDBC_URL;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -17,9 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.sql.DataSource;
-
-import org.apache.phoenix.jdbc.PhoenixConnection;
 import org.apache.phoenix.query.BaseConnectionlessQueryTest;
 import org.apache.phoenix.query.QueryServices;
 import org.apache.phoenix.schema.ConstraintViolationException;
@@ -128,8 +124,8 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
     @Test
     public void TestTradeTable() throws SQLException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         
-        Statement stmt = null;
-        ResultSet rset = null;
+//        Statement stmt = null;
+//        ResultSet rset = null;
         
 
 //        logger.debug("Getting the DataSource and the Conncetion from it");
@@ -193,6 +189,7 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         con.close();
     }
 
+    @SuppressWarnings("unused")
     private void showTradeTable(Connection con) throws SQLException {
         Statement stmt;
         stmt = con.createStatement();
@@ -212,6 +209,7 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
         
     }
 
+    @SuppressWarnings("unused")
     private void dropTradeTable(Connection con) throws SQLException {
 
 //        logger.debug("Droping the TRADE table first");
@@ -240,6 +238,7 @@ public class SimplePhoenixTest extends BaseConnectionlessQueryTest {
 
     }
 
+    @SuppressWarnings("unused")
     private UpdatePropagatorContext getUpdatePropagatorContext() {
         HashMap<String, Object> theParameters = new HashMap<String, Object>();
         Map<String, Object> keyColumns = new HashMap<String, Object>();

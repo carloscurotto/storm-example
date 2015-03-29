@@ -55,6 +55,7 @@ public class QueryBuilder implements Serializable {
      * UPSERT INTO tableTarget(col1, col2) SELECT col3, col4 FROM tableSource WHERE col5 < 100
      */
     
+    @SuppressWarnings("unused")
     private String createSelectStatement(String theTableName, List<String> theColumnNames, List<String> theColumnValues, Set<Entry<String, Object>> theKeyColumnEntries) {
 	StringBuilder builder = new StringBuilder();
 	builder.append(" SELECT ").append(collectionToDelimitedString(theColumnNames, ", ")).append(" FROM ").append(theTableName);
