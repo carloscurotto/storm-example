@@ -1,6 +1,9 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 
 import java.beans.PropertyVetoException;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
@@ -29,8 +32,9 @@ public class MainConfigForTest {
     public DataSource getDataSource(String url) {
         ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
         try {
+            DriverManager.registerDriver((Driver) Class.forName("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PhoenixDriverNonCommit").newInstance());
             comboPooledDataSource.setDriverClass("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PhoenixDriverNonCommit");
-        } catch (PropertyVetoException e) {
+        } catch (PropertyVetoException | InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
             throw new RuntimeException("Couldn't load driver class", e);
         }
         comboPooledDataSource.setJdbcUrl(url);

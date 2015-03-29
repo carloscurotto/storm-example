@@ -3,12 +3,12 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.hbase;
 import static org.springframework.util.StringUtils.collectionToDelimitedString;
 
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang3.Validate;
 
@@ -44,39 +44,56 @@ public class QueryBuilder implements Serializable {
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theUpdateRow, "The update row can not be null.");
         StringBuilder upsertQuery = new StringBuilder();
-        upsertQuery.append("UPSERT INTO ").append(theTableName).append(" ").append(createUpsertClause(theUpdateRow));
-        //upsertQuery.append(" WHERE ").append(createWhereClause(theUpdateRow));
+        upsertQuery.append(createUpsertClause(theTableName, theUpdateRow));
+//        upsertQuery.append(" WHERE ").append(createWhereClause(theUpdateRow));
         return upsertQuery.toString();
     }
 
-    private String createWhereClause(UpdateRow updateRow) {
+    //TODO
+    /* This is just to guide writing the Query
+     * Delete it when not more necessary
+     * UPSERT INTO tableTarget(col1, col2) SELECT col3, col4 FROM tableSource WHERE col5 < 100
+     */
+    
+    private String createSelectStatement(String theTableName, List<String> theColumnNames, List<String> theColumnValues, Set<Entry<String, Object>> theKeyColumnEntries) {
+	StringBuilder builder = new StringBuilder();
+	builder.append(" SELECT ").append(collectionToDelimitedString(theColumnNames, ", ")).append(" FROM ").append(theTableName);
+	builder.append(" WHERE ").append(createAndSeparatedCondition(theKeyColumnEntries));
+	return builder.toString();
+    }
+
+    private String createAndSeparatedCondition(Set<Entry<String,Object>> theKeyColumnEntries) {
         List<String> keyValueConditions = new ArrayList<String>();
-        for (Entry<String, Object> keyColumnEntry : updateRow.getKeyColumnEntries()) {
-            keyValueConditions.add(keyColumnEntry.getKey() + " = '" + keyColumnEntry.getValue() + "'");
+        for (Entry<String, Object> keyColumnEntry : theKeyColumnEntries) {
+            keyValueConditions.add(keyColumnEntry.getKey() + " = " + valueFormatter(keyColumnEntry.getValue()));
         }
         return collectionToDelimitedString(keyValueConditions, " AND ");
     }
 
-    private String createUpsertClause(UpdateRow updateRow) {
+    private String createUpsertClause(String theTableName, UpdateRow theUpdateRow) {
         List<String> columnNames = new ArrayList<String>();
-        List<Object> columnValues = new ArrayList<Object>();
-        for (Entry<String, Object> updateColumnEntry : updateRow.getUpdateColumnEntries()) {
+        List<String> columnValues = new ArrayList<String>();
+        for (Entry<String, Object> updateColumnEntry : theUpdateRow.getUpdateColumnEntries()) {
             columnNames.add(updateColumnEntry.getKey());
             Object value = updateColumnEntry.getValue();
-            //TODO the condition below doesnt work
             columnValues.add(valueFormatter(value));
         }
         StringBuilder builder = new StringBuilder();
+        builder.append("UPSERT INTO ").append(theTableName).append(" ");
         builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
-        builder.append(" VALUES ").append("(")
-                .append(collectionToDelimitedString(columnValues, ", ")).append(")");
+//        builder.append(createSelectStatement(theTableName, columnNames, columnValues, theUpdateRow.getKeyColumnEntries()));
+        builder.append(createValueClause(columnValues));
         return builder.toString();
+    }
+    
+    private String createValueClause(List<String> theColumnValues) {
+	StringBuilder builder = new StringBuilder();
+	builder.append(" VALUES ").append("(").append(collectionToDelimitedString(theColumnValues, ", ")).append(")");
+	return builder.toString();
     }
 
     private String valueFormatter(Object value) {
-        if (value instanceof Number) {
-            return value.toString();
-        } else if (value instanceof Boolean) {
+        if (value instanceof Number || value instanceof Boolean) {
             return value.toString();
         } else if (value instanceof Date) {
             return "to_date('" + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(value) + "')";
