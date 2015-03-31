@@ -10,7 +10,7 @@ public class TradeCommentsNarrative {
     /**
      * Represents the code for the update messages internal comments.
      */
-    public static final String INTERNAL_NARRATIVE_CODE = "SINT";
+    private static final String INTERNAL_NARRATIVE_CODE = "SINT";
     
     private Integer numberOfNarratives;
     private String narrativeCode1;

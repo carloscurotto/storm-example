@@ -57,7 +57,7 @@ public class GlossMessageMarshaller {
      *         properly.
      */
     public String marshal(final TradeMessage theMessage) {
-        Validate.notNull(theMessage, "message cannot be null");
+        Validate.notNull(theMessage, "the message cannot be null");
 
         String result = null;
         StringWriter writer = new StringWriter();
