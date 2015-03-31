@@ -55,17 +55,29 @@ public class QueryBuilder implements Serializable {
      * UPSERT INTO tableTarget(col1, col2) SELECT col3, col4 FROM tableSource WHERE col5 < 100
      */
     
-    private String createSelectStatement(String theTableName, List<String> theColumnNames, List<String> theColumnValues, Set<Entry<String, Object>> theKeyColumnEntries) {
+    private String createSelectMainStatement(String theTableName, List<String> theColumnNames, List<String> theColumnValues, final UpdateRow theUpdateRow) {
 	StringBuilder builder = new StringBuilder();
-	builder.append(" SELECT ").append(collectionToDelimitedString(theColumnNames, ", ")).append(" FROM ").append(theTableName);
-	builder.append(" WHERE ").append(createAndSeparatedCondition(theKeyColumnEntries));
+	String primaryKeyColumnName = "record_no";
+	builder.append(" SELECT ").append(collectionToDelimitedString(theColumnValues, ", ")).append(" FROM ").append(theTableName);
+	builder.append(" WHERE ").append(primaryKeyColumnName).append(" NOT IN ( ").append(createSelectInternalStatement(theTableName, primaryKeyColumnName, theUpdateRow.getKeyColumnEntries())).append(" )");
 	return builder.toString();
+    }
+
+    private String createSelectInternalStatement(String theTableName, String primaryKeyColumnName, Set<Entry<String, Object>> theKeyColumnEntries) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(" SELECT ").append(primaryKeyColumnName).append(" FROM ").append(theTableName);
+        builder.append(" WHERE ").append(createAndSeparatedCondition(theKeyColumnEntries));
+        return builder.toString();
     }
 
     private String createAndSeparatedCondition(Set<Entry<String,Object>> theKeyColumnEntries) {
         List<String> keyValueConditions = new ArrayList<String>();
         for (Entry<String, Object> keyColumnEntry : theKeyColumnEntries) {
-            keyValueConditions.add(keyColumnEntry.getKey() + " = " + valueFormatter(keyColumnEntry.getValue()));
+            if (!keyColumnEntry.getKey().equalsIgnoreCase("TimeStamp")) {
+                keyValueConditions.add(keyColumnEntry.getKey() + " = " + valueFormatter(keyColumnEntry.getValue()));
+            } else {
+                keyValueConditions.add(keyColumnEntry.getKey() + " >= " + valueFormatter(keyColumnEntry.getValue()));
+            }
         }
         return collectionToDelimitedString(keyValueConditions, " AND ");
     }
@@ -81,7 +93,7 @@ public class QueryBuilder implements Serializable {
         StringBuilder builder = new StringBuilder();
         builder.append("UPSERT INTO ").append(theTableName).append(" ");
         builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
-        builder.append(createSelectStatement(theTableName, columnNames, columnValues, theUpdateRow.getKeyColumnEntries()));
+        builder.append(createSelectMainStatement(theTableName, columnNames, columnValues, theUpdateRow));
 //        builder.append(createValueClause(columnValues));
         return builder.toString();
     }
