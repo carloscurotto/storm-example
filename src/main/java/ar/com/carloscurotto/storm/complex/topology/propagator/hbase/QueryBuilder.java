@@ -35,32 +35,43 @@ public class QueryBuilder implements Serializable {
      */
     public String build(final UpdatePropagatorContext theUpdatePropagatorContext) {
         Validate.notNull(theUpdatePropagatorContext, "The update can not be null");
-        String query = generateUpsertQuery(theUpdatePropagatorContext.getTableName(), theUpdatePropagatorContext.getRow());
-        return query;
+        return generateUpsertQuery(theUpdatePropagatorContext.getTableName(), theUpdatePropagatorContext.getRow());
     }
 
-    //TODO Change the where part and use the primary key to check if a row already exists
     private String generateUpsertQuery(final String theTableName, final UpdateRow theUpdateRow) {
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theUpdateRow, "The update row can not be null.");
         StringBuilder upsertQuery = new StringBuilder();
         upsertQuery.append(createUpsertClause(theTableName, theUpdateRow));
-//        upsertQuery.append(" WHERE ").append(createWhereClause(theUpdateRow));
         return upsertQuery.toString();
     }
 
-    //TODO
-    /* This is just to guide writing the Query
-     * Delete it when not more necessary
-     * UPSERT INTO tableTarget(col1, col2) SELECT col3, col4 FROM tableSource WHERE col5 < 100
-     */
+    private String createUpsertClause(final String theTableName, final UpdateRow theUpdateRow) {
+        List<String> columnNames = new ArrayList<String>();
+        List<String> columnValues = new ArrayList<String>();
+        for (Entry<String, Object> updateColumnEntry : theUpdateRow.getUpdateColumnEntries()) {
+            columnNames.add(updateColumnEntry.getKey());
+            columnValues.add(valueFormatter(updateColumnEntry.getValue()));
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("UPSERT INTO ").append(theTableName).append(" ");
+        builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
+        builder.append(createSelectMainStatement(theTableName, columnNames, columnValues, theUpdateRow));
+        return builder.toString();
+    }
     
-    private String createSelectMainStatement(String theTableName, List<String> theColumnNames, List<String> theColumnValues, final UpdateRow theUpdateRow) {
-	StringBuilder builder = new StringBuilder();
-	String primaryKeyColumnName = "record_no";
-	builder.append(" SELECT ").append(collectionToDelimitedString(theColumnValues, ", ")).append(" FROM ").append(theTableName);
-	builder.append(" WHERE ").append(primaryKeyColumnName).append(" NOT IN ( ").append(createSelectInternalStatement(theTableName, primaryKeyColumnName, theUpdateRow.getKeyColumnEntries())).append(" )");
-	return builder.toString();
+    private String createSelectMainStatement(String theTableName, List<String> theColumnNames,
+            List<String> theColumnValues, final UpdateRow theUpdateRow) {
+        StringBuilder builder = new StringBuilder();
+        String primaryKeyColumnName = "record_no";
+        builder.append(" SELECT ").append(collectionToDelimitedString(theColumnValues, ", "))
+                .append(" FROM ").append(theTableName);
+        builder.append(" WHERE ")
+                .append(primaryKeyColumnName)
+                .append(" NOT IN (")
+                .append(createSelectInternalStatement(theTableName, primaryKeyColumnName,
+                        theUpdateRow.getKeyColumnEntries())).append(")");
+        return builder.toString();
     }
 
     private String createSelectInternalStatement(String theTableName, String primaryKeyColumnName, Set<Entry<String, Object>> theKeyColumnEntries) {
@@ -82,22 +93,6 @@ public class QueryBuilder implements Serializable {
         return collectionToDelimitedString(keyValueConditions, " AND ");
     }
 
-    private String createUpsertClause(String theTableName, UpdateRow theUpdateRow) {
-        List<String> columnNames = new ArrayList<String>();
-        List<String> columnValues = new ArrayList<String>();
-        for (Entry<String, Object> updateColumnEntry : theUpdateRow.getUpdateColumnEntries()) {
-            columnNames.add(updateColumnEntry.getKey());
-            Object value = updateColumnEntry.getValue();
-            columnValues.add(valueFormatter(value));
-        }
-        StringBuilder builder = new StringBuilder();
-        builder.append("UPSERT INTO ").append(theTableName).append(" ");
-        builder.append("(").append(collectionToDelimitedString(columnNames, ", ")).append(")");
-        builder.append(createSelectMainStatement(theTableName, columnNames, columnValues, theUpdateRow));
-//        builder.append(createValueClause(columnValues));
-        return builder.toString();
-    }
-    
     @SuppressWarnings("unused")
     private String createValueClause(List<String> theColumnValues) {
 	StringBuilder builder = new StringBuilder();

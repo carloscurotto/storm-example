@@ -12,58 +12,10 @@ public class PhoenixDriverNonCommit extends PhoenixTestDriver {
     public boolean acceptsURL(String url) throws SQLException {
         return url.contains("jdbc:losiiii");
     }
-    
+
     @Override
     public synchronized Connection connect(String url, Properties info) throws SQLException {
-        //Connection connection = super.connect("jdbc:phoenix:none;test=true", info);
         Connection connection = super.connect(url, info);
         return new NoCommitConnection(connection);
     }
-
-/*    
-    @Override
-    public synchronized ConnectionQueryServices getConnectionQueryServices(String url,
-            Properties info) throws SQLException {
-        Method method;
-        try {
-            method = ConnectionInfo.class.getMethod("create", String.class);
-            ConnectionInfo o = (ConnectionInfo) method.invoke(null, url);
-            return new ConnectionQueryServicesNonCommit(this.getQueryServices(), o);
-        } catch (Exception e) {
-        }
-        return null;
-    }
-
-    private class ConnectionQueryServicesNonCommit extends ConnectionlessQueryServicesImpl {
-
-        public ConnectionQueryServicesNonCommit(QueryServices queryServices, ConnectionInfo connInfo) {
-            super(queryServices, connInfo);
-        }
-
-        @Override
-        public PhoenixConnection connect(String url, Properties info) throws SQLException {
-            Object value = null;
-            try {
-                Field field = this.getClass().getDeclaredField("metaData");
-                field.setAccessible(true);
-                value = field.get(this);
-            } catch (Exception e) {
-            }
-            return new CommitlessConnection(this, url, info, (PMetaData) value);
-        }
-    }
-
-    private class CommitlessConnection extends PhoenixConnection {
-
-        public CommitlessConnection(ConnectionQueryServices services, String url, Properties info,
-                PMetaData metaData) throws SQLException {
-            super(services, url, info, metaData);
-        }
-
-        @Override
-        public void commit() throws SQLException {
-            System.out.println("Skipping commit");
-        }
-    }
-*/    
 }

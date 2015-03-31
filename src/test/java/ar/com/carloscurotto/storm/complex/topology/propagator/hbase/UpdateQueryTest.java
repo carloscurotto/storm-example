@@ -36,8 +36,8 @@ public class UpdateQueryTest {
         upsertQuery = new QueryBuilder();
         String upsertQueryParsed = upsertQuery.build(getUpdateWithColumnsAndParameters());
         //TODO Add timestamp restriction to where condition
-        String expected12 = "UPSERT INTO TRADE (column1, column2) VALUES ('value1', 'value2') WHERE condition1 = 'conditionValue1' AND condition2 = 'conditionValue2'";
-        String expected21 = "UPSERT INTO TRADE (column1, column2) VALUES ('value1', 'value2') WHERE condition2 = 'conditionValue2' AND condition1 = 'conditionValue1'";
+        String expected12 = "UPSERT INTO TRADE (column1, column2) SELECT 'value1', 'value2' FROM TRADE WHERE record_no NOT IN ( SELECT record_no FROM TRADE WHERE condition2 = 'conditionValue2' AND condition1 = 'conditionValue1')";
+        String expected21 = "UPSERT INTO TRADE (column1, column2) SELECT 'value1', 'value2' FROM TRADE WHERE record_no NOT IN ( SELECT record_no FROM TRADE WHERE condition1 = 'conditionValue1' AND condition2 = 'conditionValue2')";
         boolean condition = upsertQueryParsed.equals(expected12)
                 || upsertQueryParsed.equals(expected21);
         assertTrue(condition);

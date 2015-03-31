@@ -16,9 +16,9 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropa
  */
 public class HBaseUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorContext, UpdatePropagatorResult> {
     
-    static Logger logger = LoggerFactory.getLogger("ar.com.carloscurotto.storm.complex.topology.propagator.hbase.HBaseUpdatePropagator");
-
     private static final long serialVersionUID = 1L;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(HBaseUpdatePropagator.class);
 
     /**
      * The builder that creates the query.
@@ -50,10 +50,10 @@ public class HBaseUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorC
         Validate.notNull(theContext, "The Context cannot be null.");
         try {
             String upsertQuery = queryBuilder.build(theContext);
-            logger.debug("Executing queyr: " + upsertQuery);
+            LOGGER.debug("Executing query [" + upsertQuery + "]");
             queryExecutor.execute(upsertQuery);
             return UpdatePropagatorResult.createSuccess("Row succefully updated.");
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             return UpdatePropagatorResult.createFailure(e.getMessage());
         }
     }
@@ -65,4 +65,5 @@ public class HBaseUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorC
     @Override
     protected void doClose() {
     }
+    
 }
