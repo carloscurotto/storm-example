@@ -73,6 +73,8 @@ public class GlossUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorC
      *            the row to propagate. It cannot be null.
      */
     private void propagateRow(final Map<String, Object> theParameters, UpdateRow theUpdateRow) {
+        Validate.notNull(theParameters, "theParameters cannot be null.");
+        Validate.notNull(theUpdateRow, "theUpdateRow cannot be null.");
         List<TradeMessage> messages = messageBuilder.build(theParameters, theUpdateRow);
         messageSender.send(messages);
     }

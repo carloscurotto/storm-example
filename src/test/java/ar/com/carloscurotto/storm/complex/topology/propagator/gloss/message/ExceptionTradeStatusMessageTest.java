@@ -20,9 +20,6 @@ public class ExceptionTradeStatusMessageTest extends EasyMockSupport {
     @Mock
     private UpdateRow updateRowMock;
     
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-    
     @Test
     public void constructorShouldSucceed(){
         expect(updateRowMock.getUpdateColumnValue("tradeNo")).andReturn("a tradeNo");
