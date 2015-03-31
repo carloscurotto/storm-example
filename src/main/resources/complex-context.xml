@@ -118,4 +118,7 @@
 	</bean>
 	<bean id="messageBuilder"
 		class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.MessageBuilder" />
+		
+	<bean id="consolePrintMessageProducer"
+		class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.ConsolePrintMessageProducer" />		
 </beans>
