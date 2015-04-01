@@ -88,5 +88,4 @@ public class TradeTableBuilder {
     public static String selectAllTradeTable() {
         return "SELECT * FROM TRADE";
     }
-    
 }

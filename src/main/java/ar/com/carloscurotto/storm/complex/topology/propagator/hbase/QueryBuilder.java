@@ -38,6 +38,7 @@ public class QueryBuilder implements Serializable {
         return generateUpsertQuery(theUpdatePropagatorContext.getTableName(), theUpdatePropagatorContext.getRow());
     }
 
+    //TODO Change the where part and use the primary key to check if a row already exists
     private String generateUpsertQuery(final String theTableName, final UpdateRow theUpdateRow) {
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theUpdateRow, "The update row can not be null.");

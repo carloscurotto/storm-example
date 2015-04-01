@@ -53,7 +53,7 @@ public class HBaseUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorC
             LOGGER.debug("Executing query [" + upsertQuery + "]");
             queryExecutor.execute(upsertQuery);
             return UpdatePropagatorResult.createSuccess("Row succefully updated.");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return UpdatePropagatorResult.createFailure(e.getMessage());
         }
     }
