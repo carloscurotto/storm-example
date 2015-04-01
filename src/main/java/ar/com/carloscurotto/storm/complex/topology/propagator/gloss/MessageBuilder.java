@@ -75,6 +75,7 @@ public class MessageBuilder {
         TradeMessage result = null;
 
         Boolean exceptionTrade = (Boolean) theParameters.get("exceptionTrade");
+        Validate.notNull(exceptionTrade, "exceptionTrade cannot be null.");
         if (exceptionTrade) {
             result = new ExceptionTradeStatusMessage(theUpdateRow);
         } else {
