@@ -46,7 +46,7 @@ public class MessageBuilderTest extends EasyMockSupport {
         theParameters.put("updateInternalComment", false);
         
         replayAll();
-        List<TradeMessage> messages = new MessageBuilder().build(theParameters, updateRowMock);
+        List<TradeMessage> messages = new GlossMessageBuilder().build(theParameters, updateRowMock);
         verifyAll();
         
         assertNotNull(messages);
@@ -74,7 +74,7 @@ public class MessageBuilderTest extends EasyMockSupport {
         expect(updateRowMock.getUpdateColumnValue("internalComments")).andReturn("an internal comments");
         
         replayAll();
-        List<TradeMessage> messages = new MessageBuilder().build(theParameters, updateRowMock);
+        List<TradeMessage> messages = new GlossMessageBuilder().build(theParameters, updateRowMock);
         verifyAll();
         
         assertNotNull(messages);
@@ -101,7 +101,7 @@ public class MessageBuilderTest extends EasyMockSupport {
         theParameters.put("updateInternalComment", false);
         
         replayAll();
-        List<TradeMessage> messages = new MessageBuilder().build(theParameters, updateRowMock);
+        List<TradeMessage> messages = new GlossMessageBuilder().build(theParameters, updateRowMock);
         verifyAll();
         
         assertNotNull(messages);
@@ -127,7 +127,7 @@ public class MessageBuilderTest extends EasyMockSupport {
         expect(updateRowMock.getUpdateColumnValue("internalComments")).andReturn("an internal comments");
         
         replayAll();
-        List<TradeMessage> messages = new MessageBuilder().build(theParameters, updateRowMock);
+        List<TradeMessage> messages = new GlossMessageBuilder().build(theParameters, updateRowMock);
         verifyAll();
                 
         assertNotNull(messages);
@@ -145,7 +145,7 @@ public class MessageBuilderTest extends EasyMockSupport {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("The parameters map cannot be null.");
         
-        new MessageBuilder().build(null, updateRowMock);
+        new GlossMessageBuilder().build(null, updateRowMock);
     }
     
     @Test
@@ -153,7 +153,7 @@ public class MessageBuilderTest extends EasyMockSupport {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("The updateRow cannot be null.");
         
-        new MessageBuilder().build(new HashMap<String, Object>(), null);
+        new GlossMessageBuilder().build(new HashMap<String, Object>(), null);
     }
     
     @Test
@@ -164,7 +164,7 @@ public class MessageBuilderTest extends EasyMockSupport {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("updateStatus cannot be null.");
         
-        new MessageBuilder().build(theParameters, updateRowMock);
+        new GlossMessageBuilder().build(theParameters, updateRowMock);
     }
     
     @Test
@@ -176,6 +176,6 @@ public class MessageBuilderTest extends EasyMockSupport {
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("exceptionTrade cannot be null.");
         
-        new MessageBuilder().build(theParameters, updateRowMock);
+        new GlossMessageBuilder().build(theParameters, updateRowMock);
     }
 }

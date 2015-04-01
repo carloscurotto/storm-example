@@ -34,7 +34,7 @@ public class GlossUpdatePropagatorTest extends EasyMockSupport {
     private GlossMessageProducer glossMessageProducerMock;
     
     @Mock
-    private MessageBuilder messageBuilderMock;
+    private GlossMessageBuilder messageBuilderMock;
     
     @Mock
     private UpdatePropagatorContext updatePropagatorContext;

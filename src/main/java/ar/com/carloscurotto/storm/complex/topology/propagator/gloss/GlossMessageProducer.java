@@ -48,7 +48,7 @@ public class GlossMessageProducer extends OpenAwareProducer<List<TradeMessage>> 
      * Sends the given message as XML to the internal consumer.
      *
      * @param theMessages
-     *            a {@link List<TradeMessage>} with the messages to be sent. It cannot be empty.
+     *            a {@link List<TradeMessage>} with the messages to be sent. It cannot be null.
      */
     @Override
     protected void doSend(List<TradeMessage> theMessages) {
@@ -60,7 +60,7 @@ public class GlossMessageProducer extends OpenAwareProducer<List<TradeMessage>> 
 
     /**
      * Marshals theMessage to an xml string and sends the string to the destination of the messageProducer
-     * 
+     *
      * @param theMessage
      *            a {@link TradeMessage} to be sent. It cannot be null. It must be able to be marshalled to xml with
      *            JAXB.
@@ -69,4 +69,5 @@ public class GlossMessageProducer extends OpenAwareProducer<List<TradeMessage>> 
         Validate.notNull(theMessage, "The message cannot be null");
         messageProducer.send(messageMarshaller.marshal(theMessage));
     }
+
 }
