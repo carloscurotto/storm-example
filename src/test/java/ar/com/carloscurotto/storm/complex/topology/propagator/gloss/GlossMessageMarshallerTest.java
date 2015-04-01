@@ -53,6 +53,7 @@ public class GlossMessageMarshallerTest extends EasyMockSupport {
         classes = new ArrayList<Class<? extends TradeMessage>>();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void constructorWithMessageClasses() {
         classes.add(ExceptionTradeStatusMessage.class);

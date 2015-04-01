@@ -7,9 +7,7 @@ import static org.junit.Assert.assertNotNull;
 import org.easymock.EasyMockRunner;
 import org.easymock.EasyMockSupport;
 import org.easymock.Mock;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
