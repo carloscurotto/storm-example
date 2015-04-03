@@ -11,54 +11,44 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropa
  *
  * @author D540601
  */
-public class GlossUpdatePropagator extends
-        OpenAwarePropagator<UpdatePropagatorContext, UpdatePropagatorResult> {
+public class GlossUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorContext, UpdatePropagatorResult> {
 
-    /**
-     * serial version id.
-     */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Builds the xml string that compose the messages that are going to be sent to the Gloss external system.
+     * Creates the XML strings with the messages that are going to be sent to the Gloss external system.
      */
-    private GlossMessageBuilder messageBuilder;
+    private GlossMessagesFactory messageFactory;
 
     /**
      * Sends the strings that composes the messages to the gloss external system.
      */
-    private GlossMessageProducer messageSender;
+    private GlossMessageProducer messageProducer;
 
     /**
-     * Creates a {@link GlossUpdatePropagator} for the given message sender and builder.
+     * Creates a {@link GlossUpdatePropagator} for the given message sender and factory.
      *
-     * @param theMessageSender
-     *            the given message sender. It can not be null.
-     * @param theMessageBuilder
-     *            the given message builder. It can not be null.
+     * @param theMessageProducer
+     *            the given message producer. It can not be null.
+     * @param theMessageFactory
+     *            the given message factory. It can not be null.
      */
-    public GlossUpdatePropagator(final GlossMessageProducer theMessageSender,
-            final GlossMessageBuilder theMessageBuilder) {
-        Validate.notNull(theMessageSender, "The message sender can not be null.");
-        Validate.notNull(theMessageBuilder, "The message builder can not be null.");
-        messageSender = theMessageSender;
-        messageBuilder = theMessageBuilder;
+    public GlossUpdatePropagator(final GlossMessageProducer theMessageProducer,
+            final GlossMessagesFactory theMessageFactory) {
+        Validate.notNull(theMessageProducer, "The message producer can not be null.");
+        Validate.notNull(theMessageFactory, "The message factory can not be null.");
+        messageProducer = theMessageProducer;
+        messageFactory = theMessageFactory;
     }
 
-    /**
-     * See {@link com.jpmc.cib.csw.adp.update.service.Openable#open()}
-     */
     @Override
     protected void doOpen() {
-        messageSender.open();
+        messageProducer.open();
     }
 
-    /**
-     * See {@link com.jpmc.cib.csw.adp.update.service.Closeable#close()}
-     */
     @Override
     protected void doClose() {
-        messageSender.close();
+        messageProducer.close();
     }
 
     /**
@@ -73,7 +63,7 @@ public class GlossUpdatePropagator extends
     protected UpdatePropagatorResult doPropagate(UpdatePropagatorContext theContext) {
         Validate.notNull(theContext, "The context cannot be null.");
         try {
-            messageSender.send(messageBuilder.build(theContext));
+            messageProducer.send(messageFactory.create(theContext));
             return UpdatePropagatorResult.createSuccess("SUCCESS");
         } catch (Exception e) {
             return UpdatePropagatorResult.createFailure(e.getMessage());

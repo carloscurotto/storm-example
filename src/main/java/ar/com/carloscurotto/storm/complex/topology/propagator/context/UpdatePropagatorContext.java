@@ -30,9 +30,12 @@ public class UpdatePropagatorContext {
         return row;
     }
 
+    public boolean hasParameters() {
+        return !parameters.isEmpty();
+    }
+
     public Object getValueForParameter(final String theParameterName) {
         Validate.notBlank(theParameterName, "The parameter name cannot be blank.");
         return parameters.get(theParameterName);
     }
-
 }

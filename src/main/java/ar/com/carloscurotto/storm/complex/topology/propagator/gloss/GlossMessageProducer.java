@@ -5,14 +5,14 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.service.OpenAwareProducer;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
+import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.GlossMessage;
 
 /**
  * Sends the message into the queue. Knows what queue to use and knows how to marshall the messages.
  *
  * @author D540601
  */
-public class GlossMessageProducer extends OpenAwareProducer<List<TradeMessage>> {
+public class GlossMessageProducer extends OpenAwareProducer<List<GlossMessage>> {
 
     private OpenAwareProducer<String> messageProducer;
     private GlossMessageMarshaller messageMarshaller;
@@ -48,26 +48,17 @@ public class GlossMessageProducer extends OpenAwareProducer<List<TradeMessage>> 
      * Sends the given message as XML to the internal consumer.
      *
      * @param theMessages
-     *            a {@link List<TradeMessage>} with the messages to be sent. It cannot be null.
+     *            a {@link List<GlossMessage>} with the messages to be sent. It cannot be null.
      */
     @Override
-    protected void doSend(List<TradeMessage> theMessages) {
+    protected void doSend(List<GlossMessage> theMessages) {
         Validate.notNull(theMessages, "The messages cannot be null.");
-        for (TradeMessage message : theMessages) {
+        for (GlossMessage message : theMessages) {
             send(message);
         }
     }
 
-    /**
-     * Marshals theMessage to an xml string and sends the string to the destination of the messageProducer
-     *
-     * @param theMessage
-     *            a {@link TradeMessage} to be sent. It cannot be null. It must be able to be marshalled to xml with
-     *            JAXB.
-     */
-    private void send(TradeMessage theMessage) {
-        Validate.notNull(theMessage, "The message cannot be null");
+    private void send(GlossMessage theMessage) {
         messageProducer.send(messageMarshaller.marshal(theMessage));
     }
-
 }
