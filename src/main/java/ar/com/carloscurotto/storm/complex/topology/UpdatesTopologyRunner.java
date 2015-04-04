@@ -1,19 +1,15 @@
 package ar.com.carloscurotto.storm.complex.topology;
 
+import org.apache.commons.lang.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import storm.trident.Stream;
-import storm.trident.TridentTopology;
-import ar.com.carloscurotto.storm.complex.topology.propagator.executor.ExternalUpdatePropagatorExecutor;
-import ar.com.carloscurotto.storm.complex.topology.propagator.executor.InternalUpdatePropagatorExecutor;
-import ar.com.carloscurotto.storm.complex.topology.propagator.executor.ResultUpdatePropagatorExecutor;
-import ar.com.carloscurotto.storm.complex.topology.spout.UpdatesSpoutFactory;
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.StormTopology;
-import backtype.storm.tuple.Fields;
 
 /**
  * This is the main class that knows how to submit our topology.
@@ -24,67 +20,50 @@ public class UpdatesTopologyRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdatesTopologyRunner.class);
 
+    @Autowired
+    private UpdateTopologyConfiguration updateTopologyConfiguration;
+
+    /**
+     * Constructor for spring only purposes.
+     */
+    @Deprecated
+    public UpdatesTopologyRunner() {
+    }
+
+    public UpdatesTopologyRunner(final UpdateTopologyConfiguration theUpdateTopologyConfiguration) {
+        Validate.notNull(theUpdateTopologyConfiguration, "The updates topology configuration cannot be null.");
+        updateTopologyConfiguration = theUpdateTopologyConfiguration;
+    }
+
     /**
      * Submits our topology to the cluster.
      *
-     * @param args
-     *            the given arguments.
      */
     public static void main(String[] args) throws Exception {
 
-    	LOGGER.debug("Loading configuration...");
+        LOGGER.debug("Running the topology...");
 
-    	UpdatesTopologyConfiguration configuration = new UpdatesTopologyConfiguration();
-
-    	LOGGER.debug("Getting beans...");
-
-    	UpdatesSpoutFactory spoutFactory = configuration.getUpdatesSpoutFactory();
-    	ExternalUpdatePropagatorExecutor externalPropagator = configuration.getExternalUpdatePropagatorExecutor();
-    	InternalUpdatePropagatorExecutor internalPropagator = configuration.getInternalUpdatePropagatorExecutor();
-    	ResultUpdatePropagatorExecutor resultPropagator = configuration.getResultUpdatePropagatorExecutor();
-
-    	LOGGER.debug("Creating topology...");
-
-        TridentTopology trident = new TridentTopology();
-
-        Stream updatesStream = trident.newStream("updates-spout", spoutFactory.create()).parallelismHint(1).shuffle();
-        updatesStream =
-                updatesStream.each(new Fields("update"), externalPropagator, new Fields("external-result"))
-                        .parallelismHint(1).partitionBy(new Fields("update"));
-        updatesStream =
-                updatesStream
-                        .each(new Fields("update", "external-result"), internalPropagator,
-                                new Fields("internal-result")).parallelismHint(1)
-                        .partitionBy(new Fields("update"));
-        updatesStream.each(new Fields("update", "external-result", "internal-result"), resultPropagator,
-                new Fields("final-result")).parallelismHint(1);
-        updatesStream.name("external-internal-updates");
-
-        LOGGER.debug("Building topology...");
-
-        StormTopology topology = trident.build();
+        @SuppressWarnings("resource")
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("complex-context.xml");
+        UpdatesTopologyRunner topologyRunner = applicationContext.getBean(UpdatesTopologyRunner.class);
+        StormTopology topology = topologyRunner.updateTopologyConfiguration.getStormTopology();
 
         Config config = new Config();
         config.setDebug(false);
 
-        if (args != null && args.length > 0) {
-            LOGGER.debug("Deploying topology remotely...");
+        LOGGER.debug("Deploying topology remotely...");
 
-            StormSubmitter.submitTopologyWithProgressBar("complex-updates", config, topology);
-        } else {
-            LOGGER.debug("Deploying topology locally...");
-
-            LocalCluster cluster = new LocalCluster();
-            cluster.submitTopology("complex-updates", config, topology);
-            
-            LOGGER.debug("Press any key to stop processing...");
-            System.in.read();
-
-            cluster.killTopology("complex-updates");
-
-            cluster.shutdown();
-        }
-
+        StormSubmitter.submitTopologyWithProgressBar("complex-updates", config, topology);
+        // LOGGER.debug("Deploying topology locally...");
+        //
+        // LocalCluster cluster = new LocalCluster();
+        // cluster.submitTopology("complex-updates", config, topology);
+        //
+        // LOGGER.debug("Press any key to stop processing...");
+        // System.in.read();
+        //
+        // cluster.killTopology("complex-updates");
+        //
+        // cluster.shutdown();
     }
-    
 }
