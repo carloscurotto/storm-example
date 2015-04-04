@@ -8,10 +8,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
-import ar.com.carloscurotto.storm.complex.topology.UpdatesTopologyConfiguration;
 
 public class UpdateServiceRunner {
 
@@ -19,22 +17,22 @@ public class UpdateServiceRunner {
 
     public static void main(String[] args) {
 
-        UpdatesTopologyConfiguration configuration = new UpdatesTopologyConfiguration();
-
-        UpdateService service = configuration.getUpdateService();
-        service.open();
-
-        Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
-        Result firstResult = service.submit(firstUpdate);
-
-        LOGGER.info("First result: " + firstResult);
-
-        Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");
-        Result secondResult = service.submit(secondUpdate);
-
-        LOGGER.info("Second result: " + secondResult);
-
-        service.close();
+//        UpdatesTopologyConfiguration configuration = new UpdatesTopologyConfiguration();
+//
+//        UpdateService service = configuration.getUpdateService();
+//        service.open();
+//
+//        Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
+//        Result firstResult = service.submit(firstUpdate);
+//
+//        LOGGER.info("First result: " + firstResult);
+//
+//        Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");
+//        Result secondResult = service.submit(secondUpdate);
+//
+//        LOGGER.info("Second result: " + secondResult);
+//
+//        service.close();
 
     }
 
