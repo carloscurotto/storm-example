@@ -20,6 +20,7 @@ import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.service.UpdateService;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.utils.Utils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/app-config.xml" })
@@ -54,6 +55,7 @@ public class LocalStormTopologyIT {
         localCluster.submitTopology("complex-updates", config, updateTopologyConfiguration.getStormTopology());
         updateService.open();
 
+        Utils.sleep(5000);
         Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
         Result firstResult = updateService.submit(firstUpdate);
 
@@ -85,9 +87,9 @@ public class LocalStormTopologyIT {
 
     @After
     public void after() throws Exception {
-        brokerService.stop();
-        updateService.close();
         localCluster.killTopology("complex-updates");
         localCluster.shutdown();
+        brokerService.stop();
+        updateService.close();
     }
 }
