@@ -40,11 +40,10 @@ public class UpdatesTopologyRunner {
      *
      */
     public static void main(String[] args) throws Exception {
-
         LOGGER.debug("Running the topology...");
 
         @SuppressWarnings("resource")
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("complex-context.xml");
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("app-config.xml");
         UpdatesTopologyRunner topologyRunner = applicationContext.getBean(UpdatesTopologyRunner.class);
         StormTopology topology = topologyRunner.updateTopologyConfiguration.getStormTopology();
 
@@ -52,18 +51,6 @@ public class UpdatesTopologyRunner {
         config.setDebug(false);
 
         LOGGER.debug("Deploying topology remotely...");
-
         StormSubmitter.submitTopologyWithProgressBar("complex-updates", config, topology);
-        // LOGGER.debug("Deploying topology locally...");
-        //
-        // LocalCluster cluster = new LocalCluster();
-        // cluster.submitTopology("complex-updates", config, topology);
-        //
-        // LOGGER.debug("Press any key to stop processing...");
-        // System.in.read();
-        //
-        // cluster.killTopology("complex-updates");
-        //
-        // cluster.shutdown();
     }
 }
