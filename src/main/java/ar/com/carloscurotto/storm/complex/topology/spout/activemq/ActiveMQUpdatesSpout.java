@@ -28,7 +28,7 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
     private SpoutOutputCollector collector;
     private ActiveMQConfiguration activeMQConfiguration;
     private Session session;
-    private Destination requestTopic;
+    private Destination requestQueue;
     private MessageConsumer consumer;
 
     public ActiveMQUpdatesSpout(final ActiveMQConfiguration theActiveMQConfiguration) {
@@ -42,8 +42,8 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
         try {
             activeMQConfiguration.open();
             session = activeMQConfiguration.getSession();
-            requestTopic = session.createTopic("updates");
-            consumer = session.createConsumer(requestTopic);
+            requestQueue = session.createQueue("updates");
+            consumer = session.createConsumer(requestQueue);
             collector = theCollector;
         } catch (Exception e) {
             close();
@@ -68,6 +68,7 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
+        System.out.println("nextTuple called");
         try {
             BytesMessage request = (BytesMessage) consumer.receiveNoWait();
             if (request != null) {

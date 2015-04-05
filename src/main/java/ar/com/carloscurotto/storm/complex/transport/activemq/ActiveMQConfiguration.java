@@ -61,9 +61,10 @@ public class ActiveMQConfiguration extends OpenAwareBean implements Serializable
             }
         }
     }
-
+    
     public Session getSession() {
         Preconditions.checkState(isOpen(), "The session couldn't be created. Try calling open()");
         return session;
     }
+    
 }

@@ -3,7 +3,6 @@ package ar.com.carloscurotto.storm.complex.transport.activemq;
 import java.io.Serializable;
 
 import javax.jms.BytesMessage;
-import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
@@ -21,7 +20,7 @@ public class ActiveMQResultProducer extends OpenAwareProducer<Result> implements
 
     private ActiveMQConfiguration activeMQConfiguration;
     private Session session;
-    private Destination replyTopic;
+    private Destination replyQueue;
     private MessageProducer producer;
 
     public ActiveMQResultProducer(final ActiveMQConfiguration theActiveMQConfiguration) {
@@ -34,9 +33,8 @@ public class ActiveMQResultProducer extends OpenAwareProducer<Result> implements
         try {
             activeMQConfiguration.open();
             session = activeMQConfiguration.getSession();
-            replyTopic = session.createTopic("results");
-            producer = session.createProducer(replyTopic);
-            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+            replyQueue = session.createQueue("results");
+            producer = session.createProducer(replyQueue);
         } catch (Exception e) {
             close();
             throw new RuntimeException("Error creating active mq producer.", e);
