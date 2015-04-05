@@ -50,6 +50,11 @@ public class LocalStormTopologyIT {
         brokerService.start();
     }
 
+    /**
+     * Encontre que Nathan hace referencia a testear la topology basandose en los siguientes ejemplos:
+     * https://github.com/xumingming/storm-lib/blob/master/src/jvm/storm/TestingApiDemo.java
+     *
+     */
     @Test
     public void test() {
         MkClusterParam mkClusterParam = new MkClusterParam();
@@ -62,6 +67,7 @@ public class LocalStormTopologyIT {
             public void run(final ILocalCluster cluster) throws AlreadyAliveException, InvalidTopologyException {
                 cluster.submitTopology("complex-updates", daemonConf, updateTopologyConfiguration.getStormTopology());
                 Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
+                //El sleep se debe a que hay un race condition entre el submit del mensaje y la topology que no termina de levantar
                 Utils.sleep(5000);
                 updateService.open();
                 Result firstResult = updateService.submit(firstUpdate);
