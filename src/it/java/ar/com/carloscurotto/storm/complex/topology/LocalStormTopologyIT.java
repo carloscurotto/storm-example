@@ -19,7 +19,12 @@ import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.service.UpdateService;
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
+import backtype.storm.ILocalCluster;
+import backtype.storm.Testing;
+import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.InvalidTopologyException;
+import backtype.storm.testing.MkClusterParam;
+import backtype.storm.testing.TestJob;
 import backtype.storm.utils.Utils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -29,7 +34,6 @@ public class LocalStormTopologyIT {
     private static final String BROKER_URL = "tcp://localhost:61616";
 
     private BrokerService brokerService;
-    private LocalCluster localCluster;
 
     @Autowired
     private UpdateService updateService;
@@ -48,22 +52,25 @@ public class LocalStormTopologyIT {
 
     @Test
     public void test() {
+        MkClusterParam mkClusterParam = new MkClusterParam();
+        mkClusterParam.setSupervisors(2);
+        mkClusterParam.setPortsPerSupervisor(5);
+        final Config daemonConf = new Config();
 
-        Config config = new Config();
-        config.setDebug(false);
-        localCluster = new LocalCluster();
-        localCluster.submitTopology("complex-updates", config, updateTopologyConfiguration.getStormTopology());
-        updateService.open();
-
-        Utils.sleep(5000);
-        Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
-        Result firstResult = updateService.submit(firstUpdate);
-
-        System.out.println("First result: " + firstResult);
-        Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");
-        Result secondResult = updateService.submit(secondUpdate);
-        System.out.println("Second result: " + secondResult);
-
+        Testing.withLocalCluster(mkClusterParam, new TestJob() {
+            @Override
+            public void run(final ILocalCluster cluster) throws AlreadyAliveException, InvalidTopologyException {
+                cluster.submitTopology("complex-updates", daemonConf, updateTopologyConfiguration.getStormTopology());
+                Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
+                Utils.sleep(5000);
+                updateService.open();
+                Result firstResult = updateService.submit(firstUpdate);
+                System.out.println("First result: " + firstResult);
+                Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");
+                Result secondResult = updateService.submit(secondUpdate);
+                System.out.println("Second result: " + secondResult);
+            }
+        });
     }
 
     // TODO move this method somewhere else, it is repeated with FixedUpdatesSpout
@@ -87,8 +94,6 @@ public class LocalStormTopologyIT {
 
     @After
     public void after() throws Exception {
-        localCluster.killTopology("complex-updates");
-        localCluster.shutdown();
         brokerService.stop();
         updateService.close();
     }
