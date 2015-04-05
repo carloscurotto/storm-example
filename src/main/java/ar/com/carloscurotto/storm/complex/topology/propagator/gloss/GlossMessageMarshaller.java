@@ -13,21 +13,14 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
+import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.GlossMessage;
 
 public class GlossMessageMarshaller {
 
-    private Map<Class<? extends TradeMessage>, Marshaller> marshallers = new HashMap<Class<? extends TradeMessage>, Marshaller>();
-    private List<Class<? extends TradeMessage>> messageClasses;
+    private Map<Class<? extends GlossMessage>, Marshaller> marshallers = new HashMap<Class<? extends GlossMessage>, Marshaller>();
+    private List<Class<? extends GlossMessage>> messageClasses;
 
-    /**
-     * Constructs the GlossMessageMarshaller with the given list of message classes.
-     *
-     * @param theMessageClasses
-     *            a {@link List<Class<? extends TradeMessage>>} with the classes (.class) whose data this message sender
-     *            will send. It cannot be null nor empty.
-     */
-    public GlossMessageMarshaller(final List<Class<? extends TradeMessage>> theMessageClasses) {
+    public GlossMessageMarshaller(final List<Class<? extends GlossMessage>> theMessageClasses) {
         Validate.notEmpty(theMessageClasses, "The message classes list cannot be empty");
         messageClasses = theMessageClasses;
         initializeMarshallers();
@@ -35,7 +28,7 @@ public class GlossMessageMarshaller {
 
     private void initializeMarshallers() {
         try {
-            for (Class<? extends TradeMessage> clazz : messageClasses) {
+            for (Class<? extends GlossMessage> clazz : messageClasses) {
                 marshallers.put(clazz, JAXBContext.newInstance(clazz).createMarshaller());
             }
         } catch (JAXBException e) {
@@ -44,20 +37,8 @@ public class GlossMessageMarshaller {
         }
     }
 
-    /**
-     * Returns a string representing the message parameter.
-     *
-     * @param theMessage
-     *            the message to marshal to a string. It cannot be null.
-     * @return the marshalled string representation of the message parameter.
-     * @throws {@link RuntimeException} when there is not a marshaller configured for theMessage.class.
-     * @throws {@link RuntimeException} when theMessage class marshaller can't marshal theMessage into a
-     *         {@link StreamResult}.
-     * @throws {@link RuntimeException} when the {@link StringWriter} used to retrieve the marshalled string can't close
-     *         properly.
-     */
-    public String marshal(final TradeMessage theMessage) {
-        Validate.notNull(theMessage, "message cannot be null");
+    public String marshal(final GlossMessage theMessage) {
+        Validate.notNull(theMessage, "The message cannot be null");
 
         String result = null;
         StringWriter writer = new StringWriter();

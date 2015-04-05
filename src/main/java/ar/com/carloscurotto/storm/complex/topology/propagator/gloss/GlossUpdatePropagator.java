@@ -1,14 +1,9 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.service.OpenAwarePropagator;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
-import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropagatorResult;
 
 /**
@@ -18,82 +13,61 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropa
  */
 public class GlossUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorContext, UpdatePropagatorResult> {
 
-    /**
-     * serial version id.
-     */
     private static final long serialVersionUID = 1L;
 
     /**
-     * Builds the xml string that compose the messages that are going to be sent to the Gloss external system.
+     * Creates the XML strings with the messages that are going to be sent to the Gloss external system.
      */
-    private MessageBuilder messageBuilder;
+    private GlossMessagesFactory messageFactory;
 
     /**
      * Sends the strings that composes the messages to the gloss external system.
      */
-    private GlossMessageProducer messageSender;
+    private GlossMessageProducer messageProducer;
 
     /**
-     * Creates a {@link GlossUpdatePropagator} for the given message sender and builder.
+     * Creates a {@link GlossUpdatePropagator} for the given message sender and factory.
      *
-     * @param theMessageSender
-     *            the given message sender. It can not be null.
-     * @param theMessageBuilder
-     *            the given message builder. It can not be null.
+     * @param theMessageProducer
+     *            the given message producer. It can not be null.
+     * @param theMessageFactory
+     *            the given message factory. It can not be null.
      */
-    public GlossUpdatePropagator(final GlossMessageProducer theMessageSender, final MessageBuilder theMessageBuilder) {
-        Validate.notNull(theMessageSender, "The message sender can not be null.");
-        Validate.notNull(theMessageBuilder, "The message builder can not be null.");
-        messageSender = theMessageSender;
-        messageBuilder = theMessageBuilder;
+    public GlossUpdatePropagator(final GlossMessageProducer theMessageProducer,
+            final GlossMessagesFactory theMessageFactory) {
+        Validate.notNull(theMessageProducer, "The message producer can not be null.");
+        Validate.notNull(theMessageFactory, "The message factory can not be null.");
+        messageProducer = theMessageProducer;
+        messageFactory = theMessageFactory;
     }
 
-    /**
-     * See {@link com.jpmc.cib.csw.adp.update.service.Openable#open()}
-     */
     @Override
     protected void doOpen() {
-        messageSender.open();
+        messageProducer.open();
     }
 
-    /**
-     * See {@link com.jpmc.cib.csw.adp.update.service.Closeable#close()}
-     */
     @Override
     protected void doClose() {
-        messageSender.close();
-    }
-
-    /**
-     * Propagates the changes in the row to the Gloss system.
-     *
-     * @param theParameters
-     *            the parameters for this update. It cannot be null.
-     * @param theUpdateRow
-     *            the row to propagate. It cannot be null.
-     */
-    private void propagateRow(final Map<String, Object> theParameters, UpdateRow theUpdateRow) {
-        List<TradeMessage> messages = messageBuilder.build(theParameters, theUpdateRow);
-        messageSender.send(messages);
+        messageProducer.close();
     }
 
     /**
      * Propagates the changes in the update object to the Gloss system.
      *
      * @param theContext
-     *            a {@link UpdatePropagatorContext} the context for this method. Provides the execution context and the
-     *            parameters for this method. {@link UpdatePropagatorContext#getParameters()} and
-     *            {@link UpdatePropagatorContext#getRow()} are used to create the messages to propagate. This parameter
-     *            cannot be null.
+     *            the execution context that contains the necessary information to propagate gloss messages. It cannot
+     *            be null.
+     * @return the result of the updates propagation. It is never null.
      */
     @Override
     protected UpdatePropagatorResult doPropagate(UpdatePropagatorContext theContext) {
-        Validate.notNull(theContext, "The update cannot be null.");
+        Validate.notNull(theContext, "The context cannot be null.");
         try {
-            propagateRow(theContext.getParameters(), theContext.getRow());
+            messageProducer.send(messageFactory.create(theContext));
             return UpdatePropagatorResult.createSuccess("SUCCESS");
         } catch (Exception e) {
             return UpdatePropagatorResult.createFailure(e.getMessage());
         }
     }
+
 }

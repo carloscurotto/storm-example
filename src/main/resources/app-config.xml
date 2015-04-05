@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.1.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+    <context:annotation-config />
+    <bean
+        id="updatesTopologyRunner"
+        class="ar.com.carloscurotto.storm.complex.topology.UpdatesTopologyRunner" />
+    <!-- Update topology beans -->
+    <bean
+        id="updateTopologyConfiguration"
+        class="ar.com.carloscurotto.storm.complex.topology.UpdateTopologyConfiguration" />
+    <bean
+        id="updatesSpoutFactory"
+        class="ar.com.carloscurotto.storm.complex.topology.spout.activemq.ActiveMQUpdatesSpoutFactory">
+        <constructor-arg ref="activeMQConfiguration" />
+    </bean>
+    <bean
+        id="externalUpdatePropagatorExecutor"
+        class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.ExternalUpdatePropagatorExecutor">
+        <constructor-arg>
+            <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider">
+                <constructor-arg>
+                    <map>
+                        <entry
+                            key="SEMS"
+                            value-ref="externalSemsUpdatePropagator"></entry>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <set>
+                <value>ANOTHER</value>
+            </set>
+        </constructor-arg>
+    </bean>
+    <bean
+        id="internalUpdatePropagatorExecutor"
+        class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.InternalUpdatePropagatorExecutor">
+        <constructor-arg>
+            <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.provider.UpdatePropagatorProvider">
+                <constructor-arg>
+                    <map>
+                        <entry
+                            key="SEMS"
+                            value-ref="internalSemsUpdatePropagator"></entry>
+                        <entry
+                            key="ANOTHER"
+                            value-ref="internalAnotherUpdatePropagator"></entry>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+    </bean>
+    <bean
+        id="resultUpdatePropagatorExecutor"
+        class="ar.com.carloscurotto.storm.complex.topology.propagator.executor.ResultUpdatePropagatorExecutor">
+        <constructor-arg>
+            <bean class="ar.com.carloscurotto.storm.complex.transport.activemq.ActiveMQResultProducer">
+                <constructor-arg ref="activeMQConfiguration" />
+            </bean>
+        </constructor-arg>
+    </bean>
+    <bean
+        id="updateService"
+        class="ar.com.carloscurotto.storm.complex.service.UpdateService">
+        <constructor-arg>
+            <bean class="ar.com.carloscurotto.storm.complex.transport.activemq.ActiveMQUpdateSubmitter">
+                <constructor-arg ref="activeMQConfiguration" />
+            </bean>
+        </constructor-arg>
+    </bean>
+    <!-- Propagators -->
+    <bean
+        id="externalSemsUpdatePropagator"
+        class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
+    <bean
+        id="internalSemsUpdatePropagator"
+        class="ar.com.carloscurotto.storm.complex.topology.propagator.hbase.HBaseUpdatePropagator">
+        <constructor-arg>
+            <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.hbase.QueryBuilder" />
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.hbase.PrintQueryExecutor" />
+        </constructor-arg>
+    </bean>
+    <bean
+        id="internalAnotherUpdatePropagator"
+        class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
+    <bean
+        id="activeMQConfiguration"
+        class="ar.com.carloscurotto.storm.complex.transport.activemq.ActiveMQConfiguration"
+        scope="prototype">
+        <constructor-arg
+            type="java.lang.String"
+            value="tcp://localhost:61616" />
+    </bean>
+    <!-- GLOSS SUBMODULE CONFIGURATION <bean id="GlossUpdatePropagator" class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.GlossUpdatePropagator"> 
+        <constructor-arg ref="messageSender" /> <constructor-arg ref="messageBuilder" /> </bean> <bean id="messageSender" class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.MessageSender"> 
+        <constructor-arg ref="glossDestination" /> <constructor-arg> <list> <value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExceptionTradeNarrative 
+        </value> <value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExcpTradeStatusMessage </value> <value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.NormalTradeNarrative 
+        </value> <value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.NormalTradeStatusMessage </value> <value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.TradeCommentsMessage 
+        </value> </list> </constructor-arg> </bean> <bean id="messageBuilder" class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.MessageBuilder" 
+        /> <bean id="consolePrintMessageProducer" class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.ConsolePrintMessageProducer" 
+        /> -->
+</beans>

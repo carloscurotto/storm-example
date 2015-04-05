@@ -31,8 +31,11 @@ public class UpdatePropagatorContext {
         return row;
     }
 
+    public boolean hasParameters() {
+        return !parameters.isEmpty();
+    }
+
     public Map<String, Object> getParameters() {
         return Collections.unmodifiableMap(parameters);
     }
-
 }

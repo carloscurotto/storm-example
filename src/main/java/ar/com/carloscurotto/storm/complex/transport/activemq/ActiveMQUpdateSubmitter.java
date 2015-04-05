@@ -19,7 +19,7 @@ import ar.com.carloscurotto.storm.complex.service.OpenAwareSubmitter;
 
 public class ActiveMQUpdateSubmitter extends OpenAwareSubmitter<Update, Result> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ActiveMQBrokerRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActiveMQUpdateSubmitter.class);
 
     private ActiveMQConfiguration activeMQConfiguration;
     private Session session;
