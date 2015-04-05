@@ -65,8 +65,6 @@ public class LocalStormTopologyIT {
             @Override
             public void run(final ILocalCluster cluster) throws AlreadyAliveException, InvalidTopologyException {
                 cluster.submitTopology("complex-updates", daemonConf, updateTopologyConfiguration.getStormTopology());
-                //El sleep se debe a que hay un race condition entre el submit del mensaje y la topology que no termina de levantar
-                //Utils.sleep(5000);
                 updateService.open();
                 Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
                 Result firstResult = updateService.submit(firstUpdate);

@@ -68,7 +68,6 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
 
     @Override
     public void nextTuple() {
-        System.out.println("nextTuple called");
         try {
             BytesMessage request = (BytesMessage) consumer.receiveNoWait();
             if (request != null) {
