@@ -1,5 +1,6 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.context;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
@@ -34,8 +35,7 @@ public class UpdatePropagatorContext {
         return !parameters.isEmpty();
     }
 
-    public Object getValueForParameter(final String theParameterName) {
-        Validate.notBlank(theParameterName, "The parameter name cannot be blank.");
-        return parameters.get(theParameterName);
+    public Map<String, Object> getParameters() {
+        return Collections.unmodifiableMap(parameters);
     }
 }

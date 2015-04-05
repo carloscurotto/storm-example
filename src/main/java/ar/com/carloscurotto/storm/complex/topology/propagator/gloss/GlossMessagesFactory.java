@@ -2,11 +2,10 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.gloss;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.Validate;
 
-import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.context.UpdatePropagatorContext;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.GlossMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.builder.GlossMessageBuilder;
@@ -19,17 +18,17 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.buil
  */
 public class GlossMessagesFactory {
 
-    private Map<String, GlossMessageBuilder> builders;
+    private List<GlossMessageBuilder> builders;
 
     /**
-     * Constructs a factory of {@link GlossMessage}s with the given map of builders.
+     * Constructs a factory of {@link GlossMessage}s with the given list of builders.
      *
      * @param theBuilders
      *            the builders that will be used for creating a list of {@link GlossMessage}s.
      *
      */
-    public GlossMessagesFactory(final Map<String, GlossMessageBuilder> theBuilders) {
-        Validate.notEmpty(theBuilders, "The gloss message builders map cannot be null nor empty.");
+    public GlossMessagesFactory(final List<GlossMessageBuilder> theBuilders) {
+        Validate.notEmpty(theBuilders, "The gloss message builders list cannot be null nor empty.");
         builders = theBuilders;
     }
 
@@ -51,35 +50,9 @@ public class GlossMessagesFactory {
 
     private List<GlossMessage> buildMessages(final UpdatePropagatorContext theContext) {
         List<GlossMessage> glossMessages = new LinkedList<GlossMessage>();
-        UpdateRow updateRow = theContext.getRow();
-        if (isUpdateMessage(theContext)) {
-            glossMessages.add(builders.get("update").build(updateRow));
-        } else if (isExceptionMessage(theContext)) {
-            glossMessages.add(builders.get("exception").build(updateRow));
-        }
-        if (isCommentMessage(theContext)) {
-            glossMessages.add(builders.get("comment").build(updateRow));
+        for (GlossMessageBuilder builder : builders) {
+            CollectionUtils.addIgnoreNull(glossMessages, builder.build(theContext));
         }
         return glossMessages;
-    }
-
-    private boolean isUpdateMessage(final UpdatePropagatorContext theContext) {
-        return isParameterValueTrue(theContext, "update") && !isParameterValueTrue(theContext, "exceptionTrade");
-    }
-
-    private boolean isExceptionMessage(final UpdatePropagatorContext theContext) {
-        return isParameterValueTrue(theContext, "update") && isParameterValueTrue(theContext, "exceptionTrade");
-    }
-
-    private boolean isCommentMessage(final UpdatePropagatorContext theContext) {
-        return isParameterValueTrue(theContext, "updateInternalComment");
-    }
-
-    private Boolean isParameterValueTrue(final UpdatePropagatorContext theContext, final String theParameterName) {
-        Object value = theContext.getValueForParameter(theParameterName);
-        Validate.notNull(value, "The value for the parameter: " + theParameterName + " cannot be null.");
-        Validate.isTrue(Boolean.class.isInstance(value), "The value for the parameter: " + theParameterName
-                + " is not Boolean");
-        return ((Boolean) value);
     }
 }

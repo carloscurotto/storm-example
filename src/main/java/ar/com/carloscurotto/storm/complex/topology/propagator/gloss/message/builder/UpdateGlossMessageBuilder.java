@@ -1,15 +1,17 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.builder;
 
+import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.GlossMessage;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.UpdateGlossMessage;
 
-public class UpdateGlossMessageBuilder implements GlossMessageBuilder {
+public class UpdateGlossMessageBuilder extends GlossMessageBuilder {
 
     @Override
-    public GlossMessage build(UpdateRow theUpdateRow) {
+    protected GlossMessage doBuild(UpdateRow theUpdateRow) {
         Validate.notNull(theUpdateRow, "The update row cannot be null.");
         Long theInstNumber = (Long) theUpdateRow.getUpdateColumnValue("instNumber");
         String theStatusCode = (String) theUpdateRow.getUpdateColumnValue("statusCode");
@@ -20,5 +22,10 @@ public class UpdateGlossMessageBuilder implements GlossMessageBuilder {
 
         return new UpdateGlossMessage(theInstNumber, theStatusCode, theService, theExternalComments, theUserId,
                 theTradeNumber);
+    }
+
+    @Override
+    protected boolean shouldBuild(Map<String, Object> parameters) {
+        return isParameterValueTrue(parameters, "update") && !isParameterValueTrue(parameters, "exceptionTrade");
     }
 }
