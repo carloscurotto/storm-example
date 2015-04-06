@@ -10,6 +10,7 @@ import org.apache.commons.lang3.Validate;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 public class Result implements Serializable {
 
@@ -28,6 +29,7 @@ public class Result implements Serializable {
     public Result(final String theId, final Collection<ResultRow> theRows) {
         Validate.notBlank(theId, "The id can not be blank.");
         Validate.notNull(theRows, "The rows can not be null.");
+        Validate.notEmpty(theRows, "The rows can not be empty.");
         id = theId;
         for (ResultRow theRow : theRows) {
             rows.put(theRow.getId(), theRow);
@@ -43,8 +45,10 @@ public class Result implements Serializable {
     }
 
     public ResultRow getRow(final String theId) {
-        Validate.notBlank(theId, "The id can not be blank");
-        return rows.get(theId);
+        Validate.notBlank(theId, "The id can not be blank.");
+        ResultRow row = rows.get(theId);
+        Preconditions.checkState(row != null, "Can not find a row with id [" + theId + "].");
+        return row;
     }
 
     @Override
