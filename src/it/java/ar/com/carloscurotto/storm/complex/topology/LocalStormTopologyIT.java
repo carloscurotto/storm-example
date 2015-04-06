@@ -1,12 +1,9 @@
 package ar.com.carloscurotto.storm.complex.topology;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+
+import java.util.Collection;
 
 import org.apache.activemq.broker.BrokerService;
 import org.junit.After;
@@ -59,7 +56,6 @@ public class LocalStormTopologyIT {
     /**
      * Encontre que Nathan hace referencia a testear la topology basandose en los siguientes ejemplos:
      * https://github.com/xumingming/storm-lib/blob/master/src/jvm/storm/TestingApiDemo.java
-     *
      */
     @Test
     public void test() {
@@ -72,10 +68,10 @@ public class LocalStormTopologyIT {
             @Override
             public void run(final ILocalCluster cluster) throws AlreadyAliveException, InvalidTopologyException {
                 cluster.submitTopology("complex-updates", daemonConf, updateTopologyConfiguration.getStormTopology());
-                Update firstUpdate = createUpdateFor("SEMS", "row-1");
+                Update firstUpdate = UpdateFixture.createUpdateFor("SEMS", "row-1");
                 Result firstResult = updateService.submit(firstUpdate);
                 assertSuccessfullResult(firstUpdate, firstResult);
-                Update secondUpdate = createUpdateFor("ANOTHER", "row-2");
+                Update secondUpdate = UpdateFixture.createUpdateFor("ANOTHER", "row-2");
                 Result secondResult = updateService.submit(secondUpdate);
                 assertSuccessfullResult(secondUpdate, secondResult);
             }
@@ -91,33 +87,6 @@ public class LocalStormTopologyIT {
             assertThat("An update row id does not match its result row id.", updateRow.getId(), equalTo(resultRow.getId()));
             assertThat("An update row was not successfull.", resultRow.isSuccessful(), equalTo(Boolean.TRUE));
         }
-    }
-
-    // TODO move this method somewhere else, it is repeated with FixedUpdatesSpout
-    private static Update createUpdateFor(final String theSystemId, final String theRowId) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("updateInternalComment", true);
-        parameters.put("update", true);
-        parameters.put("exceptionTrade", true);
-
-        Collection<UpdateRow> rows = new ArrayList<UpdateRow>();
-
-        Map<String, Object> keyColumns = new HashMap<String, Object>();
-        keyColumns.put("key-column1", "key-value1");
-
-        Map<String, Object> updateColumns = new HashMap<String, Object>();
-        updateColumns.put("internalComments", "test internal comments");
-        updateColumns.put("userId", "O605461");
-        updateColumns.put("tradeNo", "12554654");
-        updateColumns.put("externalComments", "test external comments");
-        updateColumns.put("statusCode", "200");
-        updateColumns.put("instNumber", "123554");
-        updateColumns.put("service", "test service");
-
-        UpdateRow row = new UpdateRow(theRowId, System.currentTimeMillis(), keyColumns, updateColumns);
-        rows.add(row);
-
-        return new Update(theSystemId, "table", parameters, rows);
     }
 
     @After
