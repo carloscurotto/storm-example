@@ -1,13 +1,14 @@
-package ar.com.carloscurotto.storm.complex.model;
+package ar.com.carloscurotto.storm.complex.topology.propagator.executor;
 
 import org.apache.commons.lang.Validate;
 
-public class ResultRowMessageResolver {
+import ar.com.carloscurotto.storm.complex.model.ResultRow;
+
+public class ResultUpdatePropagationMessageResolver {
 
     public static String getMessage(final ResultRow theExternalResult, final ResultRow theInternalResult) {
         Validate.notNull(theExternalResult, "The external result cannot be null");
         Validate.notNull(theInternalResult, "The internal result cannot be null");
-
         String externalResultMessage = getStatusMessage(theExternalResult, "external");
         String internalResultMessage = getStatusMessage(theInternalResult, "internal");
         StringBuilder finalResultMessage = new StringBuilder();
@@ -23,7 +24,7 @@ public class ResultRowMessageResolver {
         if (theResult.isSuccessful()) {
             return theResultOriginName + " result was successful";
         } else if (theResult.isFailure()) {
-            return theResultOriginName + " failed";
+            return theResultOriginName + " failed with cause [" + theResult.getMessage() + "]";
         }
         return theResultOriginName + " was skipped";
     }

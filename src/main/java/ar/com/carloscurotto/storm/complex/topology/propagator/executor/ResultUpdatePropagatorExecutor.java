@@ -14,7 +14,6 @@ import storm.trident.operation.TridentOperationContext;
 import storm.trident.tuple.TridentTuple;
 import ar.com.carloscurotto.storm.complex.model.Result;
 import ar.com.carloscurotto.storm.complex.model.ResultRow;
-import ar.com.carloscurotto.storm.complex.model.ResultRowMessageResolver;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.service.OpenAwareProducer;
 
@@ -54,7 +53,6 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
         Update update = (Update) theTuple.getValueByField("update");
         Result externalResult = (Result) theTuple.getValueByField("external-result");
         Result internalResult = (Result) theTuple.getValueByField("internal-result");
-
         return createFinalResult(update, externalResult, internalResult);
     }
 
@@ -72,11 +70,10 @@ public class ResultUpdatePropagatorExecutor extends BaseFunction {
     }
 
     private ResultRow createResult(final ResultRow theExternalResultRow, final ResultRow theInternalResultRow) {
-        String message = ResultRowMessageResolver.getMessage(theExternalResultRow, theInternalResultRow);
+        String message = ResultUpdatePropagationMessageResolver.getMessage(theExternalResultRow, theInternalResultRow);
         if (isFailure(theExternalResultRow, theInternalResultRow)) {
             return ResultRow.failure(theExternalResultRow.getId(), message);
         }
-
         return ResultRow.success(theExternalResultRow.getId(), message);
     }
 
