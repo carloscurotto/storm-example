@@ -28,17 +28,16 @@ public class GlossUpdatePropagator extends OpenAwarePropagator<UpdatePropagatorC
     /**
      * Creates a {@link GlossUpdatePropagator} for the given message sender and factory.
      *
-     * @param theMessageProducer
-     *            the given message producer. It can not be null.
      * @param theMessageFactory
      *            the given message factory. It can not be null.
+     * @param theMessageProducer
+     *            the given message producer. It can not be null.
      */
-    public GlossUpdatePropagator(final GlossMessageProducer theMessageProducer,
-            final GlossMessagesFactory theMessageFactory) {
-        Validate.notNull(theMessageProducer, "The message producer can not be null.");
+    public GlossUpdatePropagator(final GlossMessagesFactory theMessageFactory, final GlossMessageProducer theMessageProducer) {
         Validate.notNull(theMessageFactory, "The message factory can not be null.");
-        messageProducer = theMessageProducer;
+        Validate.notNull(theMessageProducer, "The message producer can not be null.");
         messageFactory = theMessageFactory;
+        messageProducer = theMessageProducer;
     }
 
     @Override

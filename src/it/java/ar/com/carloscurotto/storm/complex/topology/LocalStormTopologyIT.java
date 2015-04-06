@@ -94,15 +94,23 @@ public class LocalStormTopologyIT {
     // TODO move this method somewhere else, it is repeated with FixedUpdatesSpout
     private static Update createUpdateFor(final String theId, final String theSystemId, final String theRowId) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("parameter-key1", "parameter-value1");
+        parameters.put("updateInternalComment", true);
+        parameters.put("update", true);
+        parameters.put("exceptionTrade", true);
 
         Collection<UpdateRow> rows = new ArrayList<UpdateRow>();
+
         Map<String, Object> keyColumns = new HashMap<String, Object>();
-
         keyColumns.put("key-column1", "key-value1");
-        Map<String, Object> updateColumns = new HashMap<String, Object>();
 
-        updateColumns.put("update-column1", "update-value1");
+        Map<String, Object> updateColumns = new HashMap<String, Object>();
+        updateColumns.put("internalComments", "test internal comments");
+        updateColumns.put("userId", "O605461");
+        updateColumns.put("tradeNo", "12554654");
+        updateColumns.put("externalComments", "test external comments");
+        updateColumns.put("statusCode", "200");
+        updateColumns.put("instNumber", "123554");
+        updateColumns.put("service", "test service");
 
         UpdateRow row = new UpdateRow(theRowId, keyColumns, updateColumns);
         rows.add(row);

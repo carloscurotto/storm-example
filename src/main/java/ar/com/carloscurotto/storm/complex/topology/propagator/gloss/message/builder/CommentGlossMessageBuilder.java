@@ -10,6 +10,8 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.Glos
 
 public class CommentGlossMessageBuilder extends GlossMessageBuilder {
 
+    private static final long serialVersionUID = 1L;
+
     @Override
     public GlossMessage doBuild(UpdateRow theUpdateRow) {
         Validate.notNull(theUpdateRow, "The update row cannot be null.");

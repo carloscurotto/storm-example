@@ -1,5 +1,6 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.builder;
 
+import java.io.Serializable;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
@@ -13,7 +14,9 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.Glos
  *
  * @author D540601
  */
-public abstract class GlossMessageBuilder {
+public abstract class GlossMessageBuilder implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected Boolean isParameterValueTrue(final Map<String, Object> parameters, final String theParameterName) {
         Object value = parameters.get(theParameterName);

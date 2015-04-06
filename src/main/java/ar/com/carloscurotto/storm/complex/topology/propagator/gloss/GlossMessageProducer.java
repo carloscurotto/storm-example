@@ -1,5 +1,6 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
@@ -12,36 +13,39 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.Glos
  *
  * @author D540601
  */
-public class GlossMessageProducer extends OpenAwareProducer<List<GlossMessage>> {
+public class GlossMessageProducer extends OpenAwareProducer<List<GlossMessage>> implements Serializable {
 
-    private OpenAwareProducer<String> messageProducer;
+    private static final long serialVersionUID = 1L;
+
     private GlossMessageMarshaller messageMarshaller;
+    private OpenAwareProducer<String> messageProducer;
 
     /**
      * Constructs the GlossMessageProducer with the given message producer and a message marshaller.
      *
+     * @param theMessageMarshaller
+     *            the marshaller used for creating the xml that will be send to the transport layer. It cannot be null.
      * @param theMessageProducer
      *            a {@link Producer<String>} that will be used to send messages to the transport layer. It cannot be
      *            null.
-     * @param theMessageMarshaller
-     *            the marshaller used for creating the xml that will be send to the transport layer. It cannot be null.
      */
-    public GlossMessageProducer(final OpenAwareProducer<String> theMessageProducer,
-            final GlossMessageMarshaller theMessageMarshaller) {
-        Validate.notNull(theMessageProducer, "The message producer cannot be null");
+    public GlossMessageProducer(final GlossMessageMarshaller theMessageMarshaller, final OpenAwareProducer<String> theMessageProducer) {
         Validate.notNull(theMessageMarshaller, "The message marshaller cannot be null");
-        messageProducer = theMessageProducer;
+        Validate.notNull(theMessageProducer, "The message producer cannot be null");
         messageMarshaller = theMessageMarshaller;
+        messageProducer = theMessageProducer;
     }
 
     @Override
     protected void doOpen() {
+        messageMarshaller.open();
         messageProducer.open();
     }
 
     @Override
     protected void doClose() {
         messageProducer.close();
+        messageMarshaller.close();
     }
 
     /**

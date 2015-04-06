@@ -14,6 +14,8 @@ import org.apache.commons.lang3.Validate;
 @XmlRootElement(name = "IBOMsg")
 public class CommentGlossMessage implements GlossMessage {
 
+    private static final long serialVersionUID = 1L;
+
     /**
      * Message type for this trade message.
      */

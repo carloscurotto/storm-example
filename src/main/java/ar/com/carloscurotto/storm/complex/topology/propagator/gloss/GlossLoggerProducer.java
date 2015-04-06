@@ -1,5 +1,7 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss;
 
+import java.io.Serializable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +12,9 @@ import ar.com.carloscurotto.storm.complex.service.OpenAwareProducer;
  *
  * @author d540601
  */
-public class GlossLoggerProducer extends OpenAwareProducer<String> {
+public class GlossLoggerProducer extends OpenAwareProducer<String> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlossLoggerProducer.class);
 
@@ -22,7 +26,7 @@ public class GlossLoggerProducer extends OpenAwareProducer<String> {
      */
     @Override
     protected void doSend(String theMessage) {
-        LOGGER.info(theMessage);
+        LOGGER.info("Sending gloss message [" + theMessage + "]...");
     }
 
     @Override
