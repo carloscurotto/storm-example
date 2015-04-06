@@ -16,9 +16,9 @@ import backtype.storm.generated.StormTopology;
  *
  * @author O605461
  */
-public class UpdatesTopologyRunner {
+public class UpdateTopologyRunner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UpdatesTopologyRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UpdateTopologyRunner.class);
 
     @Autowired
     private UpdateTopologyConfiguration updateTopologyConfiguration;
@@ -27,10 +27,10 @@ public class UpdatesTopologyRunner {
      * Constructor for spring only purposes.
      */
     @Deprecated
-    public UpdatesTopologyRunner() {
+    public UpdateTopologyRunner() {
     }
 
-    public UpdatesTopologyRunner(final UpdateTopologyConfiguration theUpdateTopologyConfiguration) {
+    public UpdateTopologyRunner(final UpdateTopologyConfiguration theUpdateTopologyConfiguration) {
         Validate.notNull(theUpdateTopologyConfiguration, "The updates topology configuration cannot be null.");
         updateTopologyConfiguration = theUpdateTopologyConfiguration;
     }
@@ -44,7 +44,7 @@ public class UpdatesTopologyRunner {
 
         @SuppressWarnings("resource")
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("app-config.xml");
-        UpdatesTopologyRunner topologyRunner = applicationContext.getBean(UpdatesTopologyRunner.class);
+        UpdateTopologyRunner topologyRunner = applicationContext.getBean(UpdateTopologyRunner.class);
         StormTopology topology = topologyRunner.updateTopologyConfiguration.getStormTopology();
 
         Config config = new Config();

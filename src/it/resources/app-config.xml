@@ -11,8 +11,8 @@
     
     <!-- Update topology runner -->
     <bean
-        id="updatesTopologyRunner"
-        class="ar.com.carloscurotto.storm.complex.topology.UpdatesTopologyRunner" />
+        id="updateTopologyRunner"
+        class="ar.com.carloscurotto.storm.complex.topology.UpdateTopologyRunner" />
         
     <!-- Update topology beans -->
     <bean
