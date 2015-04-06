@@ -36,7 +36,7 @@ public class ActiveMQResultProducer extends OpenAwareProducer<Result> implements
             session = activeMQConfiguration.getSession();
             replyTopic = session.createTopic("results");
             producer = session.createProducer(replyTopic);
-            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+            producer.setDeliveryMode(DeliveryMode.PERSISTENT);
         } catch (Exception e) {
             close();
             throw new RuntimeException("Error creating active mq producer.", e);

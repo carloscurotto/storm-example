@@ -25,7 +25,6 @@ import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.testing.MkClusterParam;
 import backtype.storm.testing.TestJob;
-import backtype.storm.utils.Utils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/app-config.xml" })
@@ -66,10 +65,8 @@ public class LocalStormTopologyIT {
             @Override
             public void run(final ILocalCluster cluster) throws AlreadyAliveException, InvalidTopologyException {
                 cluster.submitTopology("complex-updates", daemonConf, updateTopologyConfiguration.getStormTopology());
-                Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
-                //El sleep se debe a que hay un race condition entre el submit del mensaje y la topology que no termina de levantar
-                Utils.sleep(5000);
                 updateService.open();
+                Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
                 Result firstResult = updateService.submit(firstUpdate);
                 System.out.println("First result: " + firstResult);
                 Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");

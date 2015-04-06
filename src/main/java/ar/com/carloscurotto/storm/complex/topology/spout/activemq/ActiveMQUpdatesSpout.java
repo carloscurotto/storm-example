@@ -42,7 +42,7 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
         try {
             activeMQConfiguration.open();
             session = activeMQConfiguration.getSession();
-            requestTopic = session.createTopic("updates");
+            requestTopic = session.createTopic("updates?consumer.retroactive=true");
             consumer = session.createConsumer(requestTopic);
             collector = theCollector;
         } catch (Exception e) {

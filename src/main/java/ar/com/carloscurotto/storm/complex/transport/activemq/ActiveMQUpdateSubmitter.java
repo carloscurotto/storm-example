@@ -38,9 +38,9 @@ public class ActiveMQUpdateSubmitter extends OpenAwareSubmitter<Update, Result> 
             activeMQConfiguration.open();
             session = activeMQConfiguration.getSession();
             requestTopic = session.createTopic("updates");
-            replyTopic = session.createTopic("results");
+            replyTopic = session.createTopic("results?consumer.retroactive=true");
             producer = session.createProducer(requestTopic);
-            producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+            producer.setDeliveryMode(DeliveryMode.PERSISTENT);
         } catch (Exception e) {
             close();
             throw new RuntimeException("Error creating active mq update submitter.", e);
