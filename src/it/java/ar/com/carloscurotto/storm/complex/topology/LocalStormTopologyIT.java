@@ -51,6 +51,9 @@ public class LocalStormTopologyIT {
         brokerService.setUseJmx(false);
         brokerService.addConnector(BROKER_URL);
         brokerService.start();
+        //TODO see if we can remove this sleep by making the broker servie start synchronous.
+        Thread.sleep(2000);
+        updateService.open();
     }
 
     /**
@@ -69,11 +72,10 @@ public class LocalStormTopologyIT {
             @Override
             public void run(final ILocalCluster cluster) throws AlreadyAliveException, InvalidTopologyException {
                 cluster.submitTopology("complex-updates", daemonConf, updateTopologyConfiguration.getStormTopology());
-                updateService.open();
-                Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
+                Update firstUpdate = createUpdateFor("SEMS", "row-1");
                 Result firstResult = updateService.submit(firstUpdate);
                 assertSuccessfullResult(firstUpdate, firstResult);
-                Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");
+                Update secondUpdate = createUpdateFor("ANOTHER", "row-2");
                 Result secondResult = updateService.submit(secondUpdate);
                 assertSuccessfullResult(secondUpdate, secondResult);
             }
@@ -92,7 +94,7 @@ public class LocalStormTopologyIT {
     }
 
     // TODO move this method somewhere else, it is repeated with FixedUpdatesSpout
-    private static Update createUpdateFor(final String theId, final String theSystemId, final String theRowId) {
+    private static Update createUpdateFor(final String theSystemId, final String theRowId) {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("updateInternalComment", true);
         parameters.put("update", true);
@@ -115,12 +117,12 @@ public class LocalStormTopologyIT {
         UpdateRow row = new UpdateRow(theRowId, System.currentTimeMillis(), keyColumns, updateColumns);
         rows.add(row);
 
-        return new Update(theId, theSystemId, "table", parameters, rows);
+        return new Update(theSystemId, "table", parameters, rows);
     }
 
     @After
     public void after() throws Exception {
-        brokerService.stop();
         updateService.close();
+        brokerService.stop();
     }
 }
