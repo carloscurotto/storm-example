@@ -76,18 +76,18 @@
         <dependency>
                 <groupId>org.apache.phoenix</groupId>
                 <artifactId>phoenix</artifactId>
-                <version>4.2.2</version>
+                <version>4.1.0</version>
                 <type>pom</type>
         </dependency>
         <dependency>
                 <groupId>org.apache.phoenix</groupId>
                 <artifactId>phoenix-core</artifactId>
-                <version>4.2.2</version>
+                <version>4.1.0</version>
         </dependency>
         <dependency>
                 <groupId>org.apache.phoenix</groupId>
                 <artifactId>phoenix-core</artifactId>
-                <version>4.2.2</version>
+                <version>4.1.0</version>
                 <type>test-jar</type>
                 <scope>test</scope>
                 <optional>true</optional>
@@ -96,12 +96,12 @@
         <dependency>
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-server</artifactId>
-                <version>0.98.9-hadoop2</version>
+                <version>0.98.4-hadoop2</version>
         </dependency>
         <dependency>
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-it</artifactId>
-                <version>0.98.9-hadoop2</version>
+                <version>0.98.4-hadoop2</version>
                 <type>test-jar</type>
                 <scope>test</scope>
         </dependency>
