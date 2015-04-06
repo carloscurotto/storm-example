@@ -2,7 +2,6 @@ package ar.com.carloscurotto.storm.complex.topology.propagator.result;
 
 import org.apache.commons.lang3.Validate;
 
-import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.ResultStatus;
 
 public class UpdatePropagatorResult {
@@ -16,10 +15,6 @@ public class UpdatePropagatorResult {
         Validate.notBlank(theMessage, "The message cannot be blank");
         status = theStatus;
         message = theMessage;
-    }
-
-    public ResultRow toResultRow() {
-        return new ResultRow(getStatus(), getMessage());
     }
 
     public static UpdatePropagatorResult createSuccess(final String theMessage) {
