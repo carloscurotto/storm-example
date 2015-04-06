@@ -112,7 +112,7 @@ public class LocalStormTopologyIT {
         updateColumns.put("instNumber", "123554");
         updateColumns.put("service", "test service");
 
-        UpdateRow row = new UpdateRow(theRowId, keyColumns, updateColumns);
+        UpdateRow row = new UpdateRow(theRowId, System.currentTimeMillis(), keyColumns, updateColumns);
         rows.add(row);
 
         return new Update(theId, theSystemId, "table", parameters, rows);

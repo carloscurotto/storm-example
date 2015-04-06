@@ -29,6 +29,11 @@ public class UpdateRow implements Serializable {
     private String id;
 
     /**
+     * The update timestamp in millis.
+     */
+    private long timestamp;
+
+    /**
      * The column pairs (name, value) that are part of the primary key of the table this update applies to.
      */
     private Map<String, Object> keyColumns;
@@ -50,18 +55,22 @@ public class UpdateRow implements Serializable {
      *
      * @param theId
      *            the row id. It can not be blank.
+     * @param theTimestamp
+     *            the timestamp in millis. It can not be negative.
      * @param theKeyColumns
      *            the column (name, value) pairs that defines the row unique key. It can not be null.
      * @param theUpdateColumns
      *            the column (name, value) paris that defines the columns to be updated for a given update. It can not
      *            be null.
      */
-    public UpdateRow(final String theId, final Map<String, Object> theKeyColumns,
+    public UpdateRow(final String theId, final long theTimestamp, final Map<String, Object> theKeyColumns,
             final Map<String, Object> theUpdateColumns) {
         Validate.notBlank(theId, "The id can not be blank");
         Validate.notNull(theKeyColumns, "The key columns cannot be null.");
         Validate.notNull(theUpdateColumns, "The update columns cannot be null.");
+        Validate.isTrue(theTimestamp >= 0, "The timestamp must be greater or equal to 0.");
         id = theId;
+        timestamp = theTimestamp;
         keyColumns = new HashMap<String, Object>(theKeyColumns);
         updateColumns = new HashMap<String, Object>(theUpdateColumns);
     }
@@ -73,6 +82,15 @@ public class UpdateRow implements Serializable {
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * Gets the update's timestamp in millis.
+     *
+     * @return the update's timestamp in millis. It can not be negative.
+     */
+    public long getTimestamp() {
+        return timestamp;
     }
 
     /**

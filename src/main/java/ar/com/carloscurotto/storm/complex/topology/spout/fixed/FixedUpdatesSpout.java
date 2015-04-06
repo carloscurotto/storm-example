@@ -42,7 +42,7 @@ public class FixedUpdatesSpout extends BaseRichSpout {
 
         updateColumns.put("update-column1", "update-value1");
 
-        UpdateRow row = new UpdateRow(theRowId, keyColumns, updateColumns);
+        UpdateRow row = new UpdateRow(theRowId, System.currentTimeMillis(), keyColumns, updateColumns);
         rows.add(row);
 
         return new Update(theId, theSystemId, "table", parameters, rows);
