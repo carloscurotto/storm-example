@@ -58,7 +58,7 @@ public class UpdateQueryTest {
         updateColumns.put("column1", "value1");
         updateColumns.put("column2", "value2");
 
-        UpdateRow theRow = new UpdateRow("theSystemId", keyColumns, updateColumns);
+        UpdateRow theRow = new UpdateRow("theSystemId", System.currentTimeMillis(), keyColumns, updateColumns);
 
         UpdatePropagatorContext updatePropagatorContext = new UpdatePropagatorContext("TRADE",
                 theRow, theParameters);

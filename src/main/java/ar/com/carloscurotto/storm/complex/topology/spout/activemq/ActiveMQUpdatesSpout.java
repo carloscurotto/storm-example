@@ -28,7 +28,7 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
     private SpoutOutputCollector collector;
     private ActiveMQConfiguration activeMQConfiguration;
     private Session session;
-    private Destination requestTopic;
+    private Destination requestQueue;
     private MessageConsumer consumer;
 
     public ActiveMQUpdatesSpout(final ActiveMQConfiguration theActiveMQConfiguration) {
@@ -42,8 +42,8 @@ public class ActiveMQUpdatesSpout extends BaseRichSpout {
         try {
             activeMQConfiguration.open();
             session = activeMQConfiguration.getSession();
-            requestTopic = session.createTopic("updates?consumer.retroactive=true");
-            consumer = session.createConsumer(requestTopic);
+            requestQueue = session.createQueue("updates");
+            consumer = session.createConsumer(requestQueue);
             collector = theCollector;
         } catch (Exception e) {
             close();

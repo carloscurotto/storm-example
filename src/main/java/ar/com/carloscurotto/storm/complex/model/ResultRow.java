@@ -2,14 +2,12 @@ package ar.com.carloscurotto.storm.complex.model;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import ar.com.carloscurotto.storm.complex.topology.propagator.executor.AbstractUpdatePropagatorExecutor;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 
 /**
  * This class models a single result for a particular {@link UpdateRow} that is returned by the different
@@ -44,6 +42,7 @@ public class ResultRow implements Serializable {
     }
 
     private ResultRow(final String theId, final ResultStatus theStatus, final String theMessage) {
+        Validate.notBlank(theId, "The id can not be blank.");
         Validate.notNull(theStatus, "The status can not be null.");
         id = theId;
         message = theMessage;
@@ -51,15 +50,17 @@ public class ResultRow implements Serializable {
     }
 
     /**
-     * Constructs an instance with the given parameters. This result is not yet associated with any identifier.
+     * Creates an instance with the given parameters. This result is not yet associated with any identifier.
      *
+     * @param theId
+     *            the identifier for this result that is associated with its input data. It cannot be blank.
      * @param theStatus
      *            the {@link ResultStatus} for this result. It cannot be null.
      * @param theMessage
      *            the message for this result. It may be null or empty.
      */
-    public ResultRow(final ResultStatus theStatus, final String theMessage) {
-        this(null, theStatus, theMessage);
+    public static ResultRow create(final String theId, final ResultStatus theStatus, final String theMessage) {
+        return new ResultRow(theId, theStatus, theMessage);
     }
 
     /**
@@ -70,7 +71,6 @@ public class ResultRow implements Serializable {
      * @return a new instance of {@link ResultRow}. It is never null
      */
     public static ResultRow skip(final String theId) {
-        Validate.notBlank(theId, "The id can not be blank.");
         return new ResultRow(theId, ResultStatus.SKIPPED, null);
     }
 
@@ -84,7 +84,6 @@ public class ResultRow implements Serializable {
      * @return a new instance of {@link ResultRow}. It is never null
      */
     public static ResultRow success(final String theId, final String theMessage) {
-        Validate.notBlank(theId, "The id can not be blank.");
         Validate.notBlank(theMessage, "The message can not be blank.");
         return new ResultRow(theId, ResultStatus.SUCCESS, theMessage);
     }
@@ -99,7 +98,6 @@ public class ResultRow implements Serializable {
      * @return a new instance of {@link ResultRow}. It is never null
      */
     public static ResultRow failure(final String theId, final String theMessage) {
-        Validate.notBlank(theId, "The id can not be blank.");
         Validate.notBlank(theMessage, "The message can not be blank.");
         return new ResultRow(theId, ResultStatus.FAILURE, theMessage);
     }
@@ -147,19 +145,6 @@ public class ResultRow implements Serializable {
      */
     public boolean isSkipped() {
         return status == ResultStatus.SKIPPED;
-    }
-
-    /**
-     * Sets the identifier for this result.
-     *
-     * @param theId
-     *            the identifier for this result. It cannot be blank.
-     * @throws {@link IllegalStateException} if this result was already associated with an identifier.
-     */
-    public void setId(final String theId) {
-        Validate.notEmpty(theId, "The id cannot be blank");
-        Preconditions.checkState(StringUtils.isBlank(id), "The id for this result has been already set");
-        id = theId;
     }
 
     @Override

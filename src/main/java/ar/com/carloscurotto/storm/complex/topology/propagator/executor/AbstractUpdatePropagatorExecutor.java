@@ -19,7 +19,9 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.result.UpdatePropa
 public abstract class AbstractUpdatePropagatorExecutor extends BaseFunction {
 
     private static final long serialVersionUID = 1L;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractUpdatePropagatorExecutor.class);
+
     private UpdatePropagatorProvider propagatorProvider;
 
     public AbstractUpdatePropagatorExecutor(final UpdatePropagatorProvider thePropagatorProvider) {
@@ -32,9 +34,8 @@ public abstract class AbstractUpdatePropagatorExecutor extends BaseFunction {
                 .getPropagator(theUpdate.getSystemId());
         UpdatePropagatorResult updatePropagatorResult = propagator.propagate(new UpdatePropagatorContext(theUpdate
                 .getTableName(), theUpdateRow, theUpdate.getParameters()));
-        ResultRow resultRow = updatePropagatorResult.toResultRow();
-        resultRow.setId(theUpdateRow.getId());
-        return resultRow;
+        return ResultRow.create(theUpdateRow.getId(), updatePropagatorResult.getStatus(),
+                updatePropagatorResult.getMessage());
     }
 
     @SuppressWarnings("rawtypes")
@@ -49,4 +50,5 @@ public abstract class AbstractUpdatePropagatorExecutor extends BaseFunction {
         LOGGER.debug("Closing propagator: " + this.getClass().getName());
         propagatorProvider.close();
     }
+
 }

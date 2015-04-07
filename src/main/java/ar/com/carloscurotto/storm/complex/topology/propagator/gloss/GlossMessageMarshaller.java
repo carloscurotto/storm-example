@@ -1,5 +1,6 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss;
 
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +14,12 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 
+import ar.com.carloscurotto.storm.complex.service.OpenAwareBean;
 import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.GlossMessage;
 
-public class GlossMessageMarshaller {
+public class GlossMessageMarshaller extends OpenAwareBean implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Map<Class<? extends GlossMessage>, Marshaller> marshallers = new HashMap<Class<? extends GlossMessage>, Marshaller>();
     private List<Class<? extends GlossMessage>> messageClasses;
@@ -23,10 +27,10 @@ public class GlossMessageMarshaller {
     public GlossMessageMarshaller(final List<Class<? extends GlossMessage>> theMessageClasses) {
         Validate.notEmpty(theMessageClasses, "The message classes list cannot be empty");
         messageClasses = theMessageClasses;
-        initializeMarshallers();
     }
 
-    private void initializeMarshallers() {
+    @Override
+    protected void doOpen() {
         try {
             for (Class<? extends GlossMessage> clazz : messageClasses) {
                 marshallers.put(clazz, JAXBContext.newInstance(clazz).createMarshaller());
@@ -37,7 +41,13 @@ public class GlossMessageMarshaller {
         }
     }
 
+    @Override
+    protected void doClose() {
+        marshallers = null;
+    }
+
     public String marshal(final GlossMessage theMessage) {
+        validateIsOpened();
         Validate.notNull(theMessage, "The message cannot be null");
 
         String result = null;
@@ -61,4 +71,5 @@ public class GlossMessageMarshaller {
 
         return result;
     }
+
 }

@@ -34,9 +34,9 @@ public class PhoenixQueryGeneratedTest extends BaseConnectionlessQueryTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(PhoenixQueryGeneratedTest.class);
 
     private static final String URL_PHOENIX_DRIVER_TEST = "jdbc:losiiii:none;test=true";
-    
+
     private static ComboPooledDataSource dataSource;
-    
+
     @BeforeClass
     public static void setUp() {
         dataSource = createDataSource();
@@ -103,7 +103,7 @@ public class PhoenixQueryGeneratedTest extends BaseConnectionlessQueryTest {
         dataSource.close();
         dataSource = null;
     }
-    
+
     @Test
     public void queryResultSuccess() throws SQLException, ParseException {
         QueryExecutor theQueryExecutor = getMockQueryExecutor();
@@ -139,7 +139,7 @@ public class PhoenixQueryGeneratedTest extends BaseConnectionlessQueryTest {
         }
 
         HashMap<String, Object> theParameters = new HashMap<String, Object>();
-        UpdateRow theRow = new UpdateRow("theSystemId", keyColumns, updateColumns);
+        UpdateRow theRow = new UpdateRow("theSystemId", System.currentTimeMillis(), keyColumns, updateColumns);
 
         return new UpdatePropagatorContext("TRADE", theRow, theParameters);
     }

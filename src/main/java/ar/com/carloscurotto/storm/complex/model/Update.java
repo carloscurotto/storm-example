@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.Validate;
 
@@ -19,7 +20,7 @@ import com.google.common.base.Objects;
 public class Update implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     /**
      * The id that identifies this update.
      */
@@ -51,7 +52,6 @@ public class Update implements Serializable {
     /**
      * Constructor.
      *
-     * @param theId the id that identifies this update.
      * @param theSystemId
      *            the systems's id for this particular update. It can not be blank.
      * @param theTableName
@@ -61,14 +61,13 @@ public class Update implements Serializable {
      * @param theRows
      *            the rows updated. It can not be null nor empty.
      */
-    public Update(final String theId, final String theSystemId, final String theTableName,
+    public Update(final String theSystemId, final String theTableName,
             final Map<String, Object> theParameters, final Collection<UpdateRow> theRows) {
-        Validate.notBlank(theId, "The id can not be blank.");
         Validate.notBlank(theSystemId, "The system id can not be blank.");
         Validate.notBlank(theTableName, "The table name can not be blank.");
         Validate.notNull(theParameters, "The parameters can not be null.");
         Validate.notNull(theRows, "The rows can not be null.");
-        id = theId;
+        id = UUID.randomUUID().toString();
         systemId = theSystemId;
         tableName = theTableName;
         parameters.putAll(theParameters);
@@ -76,10 +75,10 @@ public class Update implements Serializable {
             rows.put(theRow.getId(), theRow);
         }
     }
-    
+
     /**
      * Gets the update's id.
-     * 
+     *
      * @return the update's id.
      */
     public String getId() {
@@ -151,7 +150,7 @@ public class Update implements Serializable {
     public Collection<UpdateRow> getRows() {
         return Collections.unmodifiableCollection(rows.values());
     }
-    
+
     /**
      * Gets all the ids of every row.
      *
@@ -159,7 +158,7 @@ public class Update implements Serializable {
      */
     public Collection<String> getRowsId() {
         return Collections.unmodifiableCollection(rows.keySet());
-    }    
+    }
 
     /**
      * Gets the row associated with the given id.

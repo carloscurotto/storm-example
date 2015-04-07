@@ -59,7 +59,7 @@ public class QueryBuilder implements Serializable {
         builder.append(createSelectMainStatement(theTableName, columnNames, columnValues, theUpdateRow));
         return builder.toString();
     }
-    
+
     private String createSelectMainStatement(String theTableName, List<String> theColumnNames,
             List<String> theColumnValues, final UpdateRow theUpdateRow) {
         StringBuilder builder = new StringBuilder();
@@ -95,9 +95,10 @@ public class QueryBuilder implements Serializable {
 
     @SuppressWarnings("unused")
     private String createValueClause(List<String> theColumnValues) {
-	StringBuilder builder = new StringBuilder();
-	builder.append(" VALUES ").append("(").append(collectionToDelimitedString(theColumnValues, ", ")).append(")");
-	return builder.toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append(" VALUES ").append("(")
+                .append(collectionToDelimitedString(theColumnValues, ", ")).append(")");
+        return builder.toString();
     }
 
     private String valueFormatter(Object value) {
@@ -105,7 +106,7 @@ public class QueryBuilder implements Serializable {
             return value.toString();
         } else if (value instanceof Date) {
             return "to_date('" + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(value) + "')";
-        } else { 
+        } else {
             return "'" + value.toString() + "'";
         }
     }

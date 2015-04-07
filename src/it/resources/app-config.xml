@@ -8,9 +8,12 @@
         http://www.springframework.org/schema/context/spring-context-4.1.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
     <context:annotation-config />
+    
+    <!-- Update topology runner -->
     <bean
-        id="updatesTopologyRunner"
-        class="ar.com.carloscurotto.storm.complex.topology.UpdatesTopologyRunner" />
+        id="updateTopologyRunner"
+        class="ar.com.carloscurotto.storm.complex.topology.UpdateTopologyRunner" />
+        
     <!-- Update topology beans -->
     <bean
         id="updateTopologyConfiguration"
@@ -76,10 +79,41 @@
             </bean>
         </constructor-arg>
     </bean>
+    
     <!-- Propagators -->
     <bean
         id="externalSemsUpdatePropagator"
-        class="ar.com.carloscurotto.storm.complex.topology.propagator.NullUpdatePropagator" />
+        class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.GlossUpdatePropagator">
+        <constructor-arg>
+          <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.GlossMessagesFactory">
+            <constructor-arg>
+              <list>
+                <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.builder.CommentGlossMessageBuilder" />
+                <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.builder.ExceptionGlossMessageBuilder" />
+                <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.builder.UpdateGlossMessageBuilder" />
+              </list>
+            </constructor-arg>
+          </bean>
+        </constructor-arg>
+        <constructor-arg>
+          <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.GlossMessageProducer">
+            <constructor-arg>
+              <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.GlossMessageMarshaller">
+                <constructor-arg>
+                  <list>
+                    <value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.CommentGlossMessage</value>
+                    <value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.ExceptionGlossMessage</value>
+                    <value>ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.UpdateGlossMessage</value>
+                  </list>
+                </constructor-arg>
+              </bean>
+            </constructor-arg>
+            <constructor-arg>
+              <bean class="ar.com.carloscurotto.storm.complex.topology.propagator.gloss.GlossLoggerProducer" />
+            </constructor-arg>
+          </bean>
+        </constructor-arg>  
+    </bean>
     <bean
         id="internalSemsUpdatePropagator"
         class="ar.com.carloscurotto.storm.complex.topology.propagator.hbase.HBaseUpdatePropagator">
@@ -101,4 +135,5 @@
             type="java.lang.String"
             value="tcp://localhost:61616" />
     </bean>
+    
 </beans>

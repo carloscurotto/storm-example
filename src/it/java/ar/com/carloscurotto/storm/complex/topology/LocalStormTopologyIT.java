@@ -1,9 +1,9 @@
 package ar.com.carloscurotto.storm.complex.topology;
 
-import java.util.ArrayList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.activemq.broker.BrokerService;
 import org.junit.After;
@@ -15,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import ar.com.carloscurotto.storm.complex.model.Result;
+import ar.com.carloscurotto.storm.complex.model.ResultRow;
 import ar.com.carloscurotto.storm.complex.model.Update;
 import ar.com.carloscurotto.storm.complex.model.UpdateRow;
 import ar.com.carloscurotto.storm.complex.service.UpdateService;
@@ -47,12 +48,14 @@ public class LocalStormTopologyIT {
         brokerService.setUseJmx(false);
         brokerService.addConnector(BROKER_URL);
         brokerService.start();
+        //TODO see if we can remove this sleep by making the broker servie start synchronous.
+        Thread.sleep(2000);
+        updateService.open();
     }
 
     /**
      * Encontre que Nathan hace referencia a testear la topology basandose en los siguientes ejemplos:
      * https://github.com/xumingming/storm-lib/blob/master/src/jvm/storm/TestingApiDemo.java
-     *
      */
     @Test
     public void test() {
@@ -65,39 +68,30 @@ public class LocalStormTopologyIT {
             @Override
             public void run(final ILocalCluster cluster) throws AlreadyAliveException, InvalidTopologyException {
                 cluster.submitTopology("complex-updates", daemonConf, updateTopologyConfiguration.getStormTopology());
-                updateService.open();
-                Update firstUpdate = createUpdateFor("id-1", "SEMS", "row-1");
+                Update firstUpdate = UpdateFixture.createUpdateFor("SEMS", "row-1");
                 Result firstResult = updateService.submit(firstUpdate);
-                System.out.println("First result: " + firstResult);
-                Update secondUpdate = createUpdateFor("id-2", "ANOTHER", "row-2");
+                assertSuccessfullResult(firstUpdate, firstResult);
+                Update secondUpdate = UpdateFixture.createUpdateFor("ANOTHER", "row-2");
                 Result secondResult = updateService.submit(secondUpdate);
-                System.out.println("Second result: " + secondResult);
+                assertSuccessfullResult(secondUpdate, secondResult);
             }
         });
     }
 
-    // TODO move this method somewhere else, it is repeated with FixedUpdatesSpout
-    private static Update createUpdateFor(final String theId, final String theSystemId, final String theRowId) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("parameter-key1", "parameter-value1");
-
-        Collection<UpdateRow> rows = new ArrayList<UpdateRow>();
-        Map<String, Object> keyColumns = new HashMap<String, Object>();
-
-        keyColumns.put("key-column1", "key-value1");
-        Map<String, Object> updateColumns = new HashMap<String, Object>();
-
-        updateColumns.put("update-column1", "update-value1");
-
-        UpdateRow row = new UpdateRow(theRowId, keyColumns, updateColumns);
-        rows.add(row);
-
-        return new Update(theId, theSystemId, "table", parameters, rows);
+    private static void assertSuccessfullResult(final Update theUpdate, final Result theResult) {
+        assertThat("The update id does not match the result id.", theUpdate.getId(), equalTo(theResult.getId()));
+        assertThat("The update rows quantity not match the result rows quantity.", theUpdate.getRows().size(), equalTo(theResult.getRows().size()));
+        Collection<UpdateRow> updateRows = theUpdate.getRows();
+        for (UpdateRow updateRow : updateRows) {
+            ResultRow resultRow = theResult.getRow(updateRow.getId());
+            assertThat("An update row id does not match its result row id.", updateRow.getId(), equalTo(resultRow.getId()));
+            assertThat("An update row was not successfull.", resultRow.isSuccessful(), equalTo(Boolean.TRUE));
+        }
     }
 
     @After
     public void after() throws Exception {
-        brokerService.stop();
         updateService.close();
+        brokerService.stop();
     }
 }

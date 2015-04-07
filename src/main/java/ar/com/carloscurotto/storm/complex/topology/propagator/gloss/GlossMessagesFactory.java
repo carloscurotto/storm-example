@@ -1,5 +1,6 @@
 package ar.com.carloscurotto.storm.complex.topology.propagator.gloss;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +17,9 @@ import ar.com.carloscurotto.storm.complex.topology.propagator.gloss.message.buil
  * @author D540601
  *
  */
-public class GlossMessagesFactory {
+public class GlossMessagesFactory implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private List<GlossMessageBuilder> builders;
 

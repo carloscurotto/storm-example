@@ -1,7 +1,6 @@
 package ar.com.carloscurotto.storm.complex.transport.activemq;
 
 import javax.jms.BytesMessage;
-import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
@@ -23,8 +22,8 @@ public class ActiveMQUpdateSubmitter extends OpenAwareSubmitter<Update, Result> 
 
     private ActiveMQConfiguration activeMQConfiguration;
     private Session session;
-    private Destination requestTopic;
-    private Destination replyTopic;
+    private Destination requestQueue;
+    private Destination replyQueue;
     private MessageProducer producer;
 
     public ActiveMQUpdateSubmitter(final ActiveMQConfiguration theActiveMQConfiguration) {
@@ -37,10 +36,9 @@ public class ActiveMQUpdateSubmitter extends OpenAwareSubmitter<Update, Result> 
         try {
             activeMQConfiguration.open();
             session = activeMQConfiguration.getSession();
-            requestTopic = session.createTopic("updates");
-            replyTopic = session.createTopic("results?consumer.retroactive=true");
-            producer = session.createProducer(requestTopic);
-            producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+            requestQueue = session.createQueue("updates");
+            replyQueue = session.createQueue("results");
+            producer = session.createProducer(requestQueue);
         } catch (Exception e) {
             close();
             throw new RuntimeException("Error creating active mq update submitter.", e);
@@ -66,7 +64,7 @@ public class ActiveMQUpdateSubmitter extends OpenAwareSubmitter<Update, Result> 
     public Result doSubmit(Update theUpdate) {
         MessageConsumer consumer = null;
         try {
-            consumer = session.createConsumer(replyTopic, "JMSCorrelationID='" + theUpdate.getId() + "'");
+            consumer = session.createConsumer(replyQueue, "JMSCorrelationID='" + theUpdate.getId() + "'");
 
             BytesMessage request = session.createBytesMessage();
             byte[] serializedBytes = SerializationUtils.serialize(theUpdate);
