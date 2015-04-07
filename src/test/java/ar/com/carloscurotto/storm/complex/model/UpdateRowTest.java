@@ -25,7 +25,7 @@ public class UpdateRowTest {
         Map<String, Object> theUpdateColumns = new HashMap<String, Object>();
         theUpdateColumns.put("a key", "a value");
         
-        UpdateRow updateRow = new UpdateRow(theId, theKeyColumns, theUpdateColumns);
+        UpdateRow updateRow = new UpdateRow(theId, 1l, theKeyColumns, theUpdateColumns);
         
         assertEquals(theId, updateRow.getId());
         assertEquals("a value", updateRow.getKeyColumnValue("a key"));
@@ -41,7 +41,7 @@ public class UpdateRowTest {
         Map<String, Object> theKeyColumns = new HashMap<String, Object>();
         Map<String, Object> theUpdateColumns = new HashMap<String, Object>();
         
-        UpdateRow updateRow = new UpdateRow(theId, theKeyColumns, theUpdateColumns);
+        UpdateRow updateRow = new UpdateRow(theId, 1l, theKeyColumns, theUpdateColumns);
         
         assertEquals(theId, updateRow.getId());
         assertEquals(null, updateRow.getKeyColumnValue("a key"));
@@ -55,40 +55,40 @@ public class UpdateRowTest {
     public void constructorWithNullId(){
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("The id can not be blank");
-        new UpdateRow(null, new HashMap<String, Object>(), new HashMap<String, Object>());
+        new UpdateRow(null, 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
     }
     
     @Test
     public void constructorWithEmptyId(){
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("The id can not be blank");
-        new UpdateRow("", new HashMap<String, Object>(), new HashMap<String, Object>());
+        new UpdateRow("", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
     }
     
     @Test
     public void constructorWithBlankId(){
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("The id can not be blank");
-        new UpdateRow(" ", new HashMap<String, Object>(), new HashMap<String, Object>());
+        new UpdateRow(" ", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
     }
     
     @Test
     public void constructorWithNullKeyColumns() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("The key columns cannot be null.");
-        new UpdateRow("theId", null, new HashMap<String, Object>());
+        new UpdateRow("theId", 1l, null, new HashMap<String, Object>());
     }
     
     @Test
     public void constructorWithNullUpdateColumns() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("The update columns cannot be null.");
-        new UpdateRow("theId", new HashMap<String, Object>(), null);
+        new UpdateRow("theId", 1l, new HashMap<String, Object>(), null);
     }
     
     @Test
     public void getIdShouldReturnIdPassedOnConstructor() {
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertEquals("theId", updateRow.getId());
     }
     
@@ -96,7 +96,7 @@ public class UpdateRowTest {
     public void getKeyColumnEntriesShouldReturnEntrySetWithCorrectSize(){
         Map<String, Object> keyColumns = new HashMap<String, Object>();
         keyColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", keyColumns, new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, keyColumns, new HashMap<String, Object>());
         
         assertEquals(keyColumns.entrySet().size(), updateRow.getKeyColumnEntries().size());
     }
@@ -105,7 +105,7 @@ public class UpdateRowTest {
     public void getKeyColumnEntriesShouldReturnCorrectEntrySet(){
         Map<String, Object> keyColumns = new HashMap<String, Object>();
         keyColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", keyColumns, new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, keyColumns, new HashMap<String, Object>());
         
         Entry<String, Object> entry = updateRow.getKeyColumnEntries().iterator().next();
         assertEquals(keyColumns.get(entry.getKey()), entry.getValue());
@@ -116,7 +116,7 @@ public class UpdateRowTest {
     public void getKeyColumnNamesShouldReturnKeyCollectionWithCorrectSize() {
         Map<String, Object> keyColumns = new HashMap<String, Object>();
         keyColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", keyColumns, new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, keyColumns, new HashMap<String, Object>());
         
         assertEquals(keyColumns.keySet().size(), updateRow.getKeyColumnNames().size());
     }
@@ -125,7 +125,7 @@ public class UpdateRowTest {
     public void getKeyColumnNamesShouldReturnCorrectKeyCollection() {
         Map<String, Object> keyColumns = new HashMap<String, Object>();
         keyColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", keyColumns, new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, keyColumns, new HashMap<String, Object>());
         assertTrue(updateRow.getKeyColumnNames().containsAll(keyColumns.keySet()));
     }
     
@@ -133,13 +133,13 @@ public class UpdateRowTest {
     public void getKeyColumnValueShouldReturnCorrectValue() {
         Map<String, Object> keyColumns = new HashMap<String, Object>();
         keyColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", keyColumns, new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, keyColumns, new HashMap<String, Object>());
         assertEquals(keyColumns.get("a key"), updateRow.getKeyColumnValue("a key"));
     }
     
     @Test
     public void getKeyColumnValueShouldWithNullKey() {
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("The key column name cannot be blank.");
@@ -149,7 +149,7 @@ public class UpdateRowTest {
     
     @Test
     public void getKeyColumnValueShouldWithEmptyKey() {
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("The key column name cannot be blank.");
@@ -159,7 +159,7 @@ public class UpdateRowTest {
     
     @Test
     public void getKeyColumnValueShouldWithBlankKey() {
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("The key column name cannot be blank.");
@@ -171,7 +171,7 @@ public class UpdateRowTest {
     public void getUpdateColumnEntriesShouldReturnEntrySetWithCorrectSize(){
         Map<String, Object> updateColumns = new HashMap<String, Object>();
         updateColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), updateColumns);
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), updateColumns);
         
         assertEquals(updateColumns.entrySet().size(), updateRow.getUpdateColumnEntries().size());
     }
@@ -180,7 +180,7 @@ public class UpdateRowTest {
     public void getUpdateColumnEntriesShouldReturnCorrectEntrySet(){
         Map<String, Object> updateColumns = new HashMap<String, Object>();
         updateColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), updateColumns);
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), updateColumns);
         
         Entry<String, Object> entry = updateRow.getUpdateColumnEntries().iterator().next();
         assertEquals(updateColumns.get(entry.getKey()), entry.getValue());
@@ -191,7 +191,7 @@ public class UpdateRowTest {
     public void getUpdateColumnNamesShouldReturnKeyCollectionWithCorrectSize() {
         Map<String, Object> updateColumns = new HashMap<String, Object>();
         updateColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), updateColumns);
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), updateColumns);
         
         assertEquals(updateColumns.keySet().size(), updateRow.getUpdateColumnNames().size());
     }
@@ -200,7 +200,7 @@ public class UpdateRowTest {
     public void getUpdateColumnNamesShouldReturnCorrectKeyCollection() {
         Map<String, Object> updateColumns = new HashMap<String, Object>();
         updateColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), updateColumns);
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), updateColumns);
         
         assertTrue(updateRow.getUpdateColumnNames().containsAll(updateColumns.keySet()));
      }
@@ -209,14 +209,14 @@ public class UpdateRowTest {
     public void getUpdateColumnValueShouldReturnCorrectValue() {
         Map<String, Object> updateColumns = new HashMap<String, Object>();
         updateColumns.put("a key", "a value");
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), updateColumns);
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), updateColumns);
         
         assertEquals(updateColumns.get("a key"), updateRow.getUpdateColumnValue("a key"));
     }
     
     @Test
     public void getUpdateColumnValueShouldWithNullKey() {
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("The update column name cannot be blank.");
@@ -226,7 +226,7 @@ public class UpdateRowTest {
     
     @Test
     public void getUpdateColumnValueShouldWithEmptyKey() {
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("The update column name cannot be blank.");
@@ -236,7 +236,7 @@ public class UpdateRowTest {
     
     @Test
     public void getUpdateColumnValueShouldWithBlankKey() {
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("The update column name cannot be blank.");
@@ -246,27 +246,27 @@ public class UpdateRowTest {
     
     @Test
     public void equalsWithNullParameter(){
-        UpdateRow updateRowLeft = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowLeft = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertFalse(updateRowLeft.equals(null));
     }
     
     @Test
     public void equalsWithParameterOfTypeOtherThanUpdateRow(){
-        UpdateRow updateRowLeft = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowLeft = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertFalse(updateRowLeft.equals(new Object()));
     }
     
     @Test
     public void equalsShouldReturnTrueWhenComparedToAnotherIdenticalUpdateRow(){
-        UpdateRow updateRowLeft = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
-        UpdateRow updateRowRight = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowLeft = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowRight = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertTrue(updateRowLeft.equals(updateRowRight));
     }
     
     @Test
     public void equalsShouldReturnFalseWhenIdIsNotEqual(){
-        UpdateRow updateRowLeft = new UpdateRow("theIdLeft", new HashMap<String, Object>(), new HashMap<String, Object>());
-        UpdateRow updateRowRight = new UpdateRow("theIdRight", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowLeft = new UpdateRow("theIdLeft", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowRight = new UpdateRow("theIdRight", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertFalse(updateRowLeft.equals(updateRowRight));
     }
     
@@ -278,8 +278,8 @@ public class UpdateRowTest {
         Map<String, Object> keyColumnsRight = new HashMap<String, Object>();
         keyColumnsRight.put("right key", "right value");
         
-        UpdateRow updateRowLeft = new UpdateRow("theId", keyColumnsLeft , new HashMap<String, Object>());
-        UpdateRow updateRowRight = new UpdateRow("theId", keyColumnsRight, new HashMap<String, Object>());
+        UpdateRow updateRowLeft = new UpdateRow("theId", 1l, keyColumnsLeft , new HashMap<String, Object>());
+        UpdateRow updateRowRight = new UpdateRow("theId", 1l, keyColumnsRight, new HashMap<String, Object>());
         assertFalse(updateRowLeft.equals(updateRowRight));
     }
     
@@ -291,22 +291,22 @@ public class UpdateRowTest {
         Map<String, Object> updateColumnsRight = new HashMap<String, Object>();
         updateColumnsRight.put("right key", "right value");
         
-        UpdateRow updateRowLeft = new UpdateRow("theId", new HashMap<String, Object>(), updateColumnsLeft);
-        UpdateRow updateRowRight = new UpdateRow("theId", new HashMap<String, Object>(), updateColumnsRight);
+        UpdateRow updateRowLeft = new UpdateRow("theId", 1l, new HashMap<String, Object>(), updateColumnsLeft);
+        UpdateRow updateRowRight = new UpdateRow("theId", 1l, new HashMap<String, Object>(), updateColumnsRight);
         assertFalse(updateRowLeft.equals(updateRowRight));
     }
     
     @Test
     public void hashCodeShouldBeEqualWhenBothObjectsAreEqual(){
-        UpdateRow updateRowLeft = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
-        UpdateRow updateRowRight = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowLeft = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowRight = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertTrue(updateRowLeft.equals(updateRowRight));
         assertEquals(updateRowLeft.hashCode(), updateRowRight.hashCode());
     }
     
     @Test
     public void toStringShouldReturnASpecificString(){
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertEquals("UpdateRow{id=theId, keyColumns={}, updateColumns={}}", updateRow.toString());
     }
 }
