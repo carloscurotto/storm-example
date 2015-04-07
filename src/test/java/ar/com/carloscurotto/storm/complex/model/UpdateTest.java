@@ -1,15 +1,8 @@
 package ar.com.carloscurotto.storm.complex.model;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,14 +10,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.easymock.EasyMockRunner;
-import org.easymock.Mock;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class UpdateTest {
 
@@ -36,13 +24,13 @@ public class UpdateTest {
         Map<String, Object> theParameters = new HashMap<String, Object>();
         theParameters.put("a key", "a value");
         
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("update-row-id", new HashMap<String, Object>(), new HashMap<String, Object>());
         
         Collection<UpdateRow> updateRows = new ArrayList<UpdateRow>();
         updateRows.add(updateRow);
         
-        Update update = new Update("theId", "theSystemId", "theTableName", theParameters, updateRows);
-        assertEquals("theId", update.getId());
+        Update update = new Update("update-id", "theSystemId", "theTableName", theParameters, updateRows);
+        assertEquals("update-id", update.getId());
         assertEquals("theSystemId", update.getSystemId());
         assertEquals("theTableName", update.getTableName());
         assertEquals(theParameters, update.getParameters());
@@ -213,10 +201,10 @@ public class UpdateTest {
     
     @Test
     public void getRowsShouldReturnCorrectRows() {
-        UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRow = new UpdateRow("update-row-id", new HashMap<String, Object>(), new HashMap<String, Object>());
         Collection<UpdateRow> theRows = new ArrayList<UpdateRow>();
         theRows.add(updateRow);
-        Update update = new Update("theId", "theSystemId", "theTableName", new HashMap<String, Object>(), theRows);
+        Update update = new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), theRows);
         assertEquals(theRows.size(), update.getRows().size());
         assertTrue(update.getRows().containsAll(theRows));
     }
@@ -246,5 +234,71 @@ public class UpdateTest {
         thrown.expectMessage("The id can not be blank");
         
         update.getRow(null);
+    }
+    
+    @Test
+    public void equalsShouldReturnTrueWhenComparedToAnotherIdenticalUpdate() {
+        Update updateLeft = new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        Update updateRight = new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        
+        assertEquals(updateLeft, updateRight);
+    }
+    
+    @Test
+    public void equalsShouldReturnFalseWhenIdIsNotEqual() {
+        Update updateLeft = new Update("update-id-left", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        Update updateRight = new Update("update-id-right", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        
+        assertNotEquals(updateLeft, updateRight);
+    }
+    
+    @Test
+    public void equalsShouldReturnFalseWhenSystemIdIsNotEqual() {
+        Update updateLeft = new Update("update-id", "theSystemId-left", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        Update updateRight = new Update("update-id", "theSystemId-right", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        
+        assertNotEquals(updateLeft, updateRight);
+    }
+    
+    @Test
+    public void equalsShouldReturnFalseWhenTableNameIsNotEqual() {
+        Update updateLeft = new Update("update-id", "theSystemId", "theTableName-left", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        Update updateRight = new Update("update-id", "theSystemId", "theTableName-right", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        
+        assertNotEquals(updateLeft, updateRight);
+    }
+    
+    @Test
+    public void equalsShouldReturnFalseWhenParametersAreNotEqual() {
+        Map<String, Object> parametersLeft = new HashMap<String, Object>();
+        parametersLeft.put("a key", "a value");
+        Update updateLeft = new Update("update-id", "theSystemId", "theTableName", parametersLeft, new ArrayList<UpdateRow>());
+        Update updateRight = new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        
+        assertNotEquals(updateLeft, updateRight);
+    }
+    
+    @Test
+    public void equalsShouldReturnFalseWhenRowsAreNotEqual() {
+        Update updateLeft = new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), 
+            Arrays.asList(new UpdateRow("updateRow-id", new HashMap<String, Object>(), new HashMap<String, Object>())));
+        Update updateRight = new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        
+        assertNotEquals(updateLeft, updateRight);
+    }
+    
+    @Test
+    public void toStringShouldReturnCorrectRepresentation() {
+        assertEquals(
+            "Update{id=update-id, systemId=theSystemId, tableName=theTableName, parameters={}, rows={}}",        
+            new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>()).toString());
+    }
+    
+    @Test
+    public void hashcodeShouldBeEqualForIdenticalUpdates() {
+        Update updateLeft = new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        Update updateRight = new Update("update-id", "theSystemId", "theTableName", new HashMap<String, Object>(), new ArrayList<UpdateRow>());
+        
+        assertEquals(updateLeft.hashCode(), updateRight.hashCode());
     }
 }

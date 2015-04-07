@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -108,11 +107,9 @@ public class UpdateRowTest {
         keyColumns.put("a key", "a value");
         UpdateRow updateRow = new UpdateRow("theId", keyColumns, new HashMap<String, Object>());
         
-        Iterator<Entry<String, Object>> it = updateRow.getKeyColumnEntries().iterator();
-        while(it.hasNext()){ 
-            Entry<String, Object> entry = it.next();
-            assertEquals(keyColumns.get(entry.getKey()), entry.getValue());
-        }
+        Entry<String, Object> entry = updateRow.getKeyColumnEntries().iterator().next();
+        assertEquals(keyColumns.get(entry.getKey()), entry.getValue());
+        
     }
     
     @Test
@@ -129,10 +126,7 @@ public class UpdateRowTest {
         Map<String, Object> keyColumns = new HashMap<String, Object>();
         keyColumns.put("a key", "a value");
         UpdateRow updateRow = new UpdateRow("theId", keyColumns, new HashMap<String, Object>());
-        
-        for(String keyElement: keyColumns.keySet()) {
-            assertTrue(updateRow.getKeyColumnNames().contains(keyElement));
-        }
+        assertTrue(updateRow.getKeyColumnNames().containsAll(keyColumns.keySet()));
     }
     
     @Test
@@ -140,7 +134,6 @@ public class UpdateRowTest {
         Map<String, Object> keyColumns = new HashMap<String, Object>();
         keyColumns.put("a key", "a value");
         UpdateRow updateRow = new UpdateRow("theId", keyColumns, new HashMap<String, Object>());
-        
         assertEquals(keyColumns.get("a key"), updateRow.getKeyColumnValue("a key"));
     }
     
@@ -174,8 +167,6 @@ public class UpdateRowTest {
         updateRow.getKeyColumnValue(" ");
     }
     
-    //----------------------------------------------------------------------
-    
     @Test
     public void getUpdateColumnEntriesShouldReturnEntrySetWithCorrectSize(){
         Map<String, Object> updateColumns = new HashMap<String, Object>();
@@ -191,11 +182,9 @@ public class UpdateRowTest {
         updateColumns.put("a key", "a value");
         UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), updateColumns);
         
-        Iterator<Entry<String, Object>> it = updateRow.getUpdateColumnEntries().iterator();
-        while(it.hasNext()){ 
-            Entry<String, Object> entry = it.next();
-            assertEquals(updateColumns.get(entry.getKey()), entry.getValue());
-        }
+        Entry<String, Object> entry = updateRow.getUpdateColumnEntries().iterator().next();
+        assertEquals(updateColumns.get(entry.getKey()), entry.getValue());
+        
     }
     
     @Test
@@ -213,10 +202,8 @@ public class UpdateRowTest {
         updateColumns.put("a key", "a value");
         UpdateRow updateRow = new UpdateRow("theId", new HashMap<String, Object>(), updateColumns);
         
-        for(String keyElement: updateColumns.keySet()) {
-            assertTrue(updateRow.getUpdateColumnNames().contains(keyElement));
-        }
-    }
+        assertTrue(updateRow.getUpdateColumnNames().containsAll(updateColumns.keySet()));
+     }
     
     @Test
     public void getUpdateColumnValueShouldReturnCorrectValue() {
