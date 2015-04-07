@@ -73,6 +73,13 @@ public class UpdateRowTest {
     }
     
     @Test
+    public void constructorWithTimestampMinorThanZero() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("The timestamp must be greater or equal to 0.");
+        new UpdateRow("theId", -1l, new HashMap<String, Object>(), new HashMap<String, Object>());
+    }
+    
+    @Test
     public void constructorWithNullKeyColumns() {
         thrown.expect(NullPointerException.class);
         thrown.expectMessage("The key columns cannot be null.");
@@ -267,6 +274,13 @@ public class UpdateRowTest {
     public void equalsShouldReturnFalseWhenIdIsNotEqual(){
         UpdateRow updateRowLeft = new UpdateRow("theIdLeft", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
         UpdateRow updateRowRight = new UpdateRow("theIdRight", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
+        assertFalse(updateRowLeft.equals(updateRowRight));
+    }
+    
+    @Test
+    public void equalsShouldReturnFalseWhenTimestampIsNotEqual(){
+        UpdateRow updateRowLeft = new UpdateRow("theId", 1l, new HashMap<String, Object>(), new HashMap<String, Object>());
+        UpdateRow updateRowRight = new UpdateRow("theId", 2l, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertFalse(updateRowLeft.equals(updateRowRight));
     }
     
