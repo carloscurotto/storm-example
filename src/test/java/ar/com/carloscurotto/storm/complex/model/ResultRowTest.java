@@ -1,6 +1,9 @@
 package ar.com.carloscurotto.storm.complex.model;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
@@ -25,6 +28,13 @@ public class ResultRowTest {
         thrown.expectMessage(equalTo("The id can not be blank."));
         ResultRow.create(StringUtils.EMPTY, ResultStatus.SUCCESS, "test-message");
     }
+    
+    @Test
+    public void creationWithBlankId() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(equalTo("The id can not be blank."));
+        ResultRow.create(StringUtils.SPACE, ResultStatus.SUCCESS, "test-message");
+    }
 
     @Test
     public void creationWithNullStatus() {
@@ -33,4 +43,21 @@ public class ResultRowTest {
         ResultRow.create("test-id", null, "test-message");
     }
 
+    @Test
+    public void creationWithValidIdAndValidStatusAndAMessage(){
+        ResultRow resultRow = ResultRow.create("test-id", ResultStatus.SUCCESS, "test-message");
+        assertEquals("test-id", resultRow.getId());
+        assertTrue(resultRow.isSuccessful());
+        assertEquals("test-message", resultRow.getMessage());
+    }
+    
+    @Test
+    public void skipShouldReturnASkipStatus() {
+        ResultRow resultRow = ResultRow.skip("theId");
+        assertEquals("theId", resultRow.getId());
+        assertNull(resultRow.getMessage());
+        assertTrue(resultRow.isSkipped());
+    }
+    
+    
 }
