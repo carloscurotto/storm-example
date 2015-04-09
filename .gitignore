@@ -1,0 +1,18 @@
+# Common file extenions #
+*.class
+*.classpath
+*.project
+
+# Target folder #
+target/
+bin/
+
+# Package files #
+*.jar
+*.war
+*.ear
+
+# IDE files
+*.settings
+*.iml
+.idea/
